@@ -17,7 +17,63 @@ namespace Quickenshtein
 #if NETSTANDARD2_0
 		public static int GetDistance(string source, string target)
 		{
-			return GetDistance(source.AsSpan(), target.AsSpan());
+			//Shortcut any processing if either string is empty
+			if (source == null || source.Length == 0)
+			{
+				return target?.Length ?? 0;
+			}
+			if (target == null || target.Length == 0)
+			{
+				return source?.Length ?? 0;
+			}
+
+			//Identify and trim any common prefix or suffix between the strings
+			var startIndex = 0;
+			var sourceEnd = source.Length;
+			var targetEnd = target.Length;
+
+			while (startIndex < sourceEnd && startIndex < targetEnd && source[startIndex] == target[startIndex])
+			{
+				startIndex++;
+			}
+			while (startIndex < sourceEnd && startIndex < targetEnd && source[sourceEnd - 1] == target[targetEnd - 1])
+			{
+				sourceEnd--;
+				targetEnd--;
+			}
+
+			var sourceLength = sourceEnd - startIndex;
+			var targetLength = targetEnd - startIndex;
+
+			//Check the trimmed values are not empty
+			if (sourceLength == 0)
+			{
+				return targetLength;
+			}
+			if (targetLength == 0)
+			{
+				return sourceLength;
+			}
+
+			//Switch around variables so outer loop has fewer iterations
+			if (targetLength < sourceLength)
+			{
+				var tempSource = source;
+				source = target;
+				target = tempSource;
+
+				var tempSourceLength = sourceLength;
+				sourceLength = targetLength;
+				targetLength = tempSourceLength;
+			}
+
+			var sourceSpan = source.AsSpan();
+			var targetSpan = target.AsSpan();
+
+			return GetDistanceInternal(
+				sourceSpan.Slice(startIndex, sourceLength),
+				targetSpan.Slice(startIndex, targetLength)
+			);
 		}
 #endif
 
@@ -94,77 +150,12 @@ namespace Quickenshtein
 
 			FillRow(previousRow);
 
-#if NETCOREAPP3_0
-
 			Calculate_Standard(previousRow, source, target);
-			//if (targetLength > INTRINSIC_CALCULATION_THRESHOLD && (Avx2.IsSupported || Sse2.IsSupported))
-			//{
-			//	Calculate_Core(previousRow, source, target);
-			//}
-			//else
-			//{
-			//	Calculate_Standard(previousRow, source, target);
-			//}
-#else
-			Calculate_Standard(previousRow, source, target);
-#endif
 
 			var result = previousRow[targetLength - 1];
 			arrayPool.Return(pooledArray);
 			return result;
 		}
-
-#if NETCOREAPP3_0
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private static unsafe void Calculate_Core(Span<int> previousRow, ReadOnlySpan<char> source, ReadOnlySpan<char> target)
-		{
-			var sourceLength = source.Length;
-			var targetLength = target.Length;
-
-			fixed (char* targetPtr = target)
-			fixed (int* previousRowPtr = previousRow)
-			{
-				var ushortTargetPtr = (ushort*)targetPtr;
-
-				for (var rowIndex = 0; rowIndex < sourceLength; rowIndex++)
-				{
-					var lastSubstitutionCost = rowIndex;
-					var lastInsertionCost = rowIndex + 1;
-
-					var sourcePrevChar = source[rowIndex];
-
-					var columnIndex = 0;
-
-					if (Avx2.IsSupported)
-					{
-						CalculateDistance_Avx2(sourcePrevChar, ushortTargetPtr, targetLength, ref lastInsertionCost, ref lastSubstitutionCost, previousRowPtr, ref columnIndex);
-					}
-					else if (Sse2.IsSupported)
-					{
-						CalculateDistance_Sse3(sourcePrevChar, ushortTargetPtr, targetLength, ref lastInsertionCost, ref lastSubstitutionCost, previousRowPtr, ref columnIndex);
-					}
-
-					int lastDeletionCost;
-					int localCost;
-
-					while (columnIndex < targetLength)
-					{
-						localCost = lastSubstitutionCost;
-						lastDeletionCost = previousRowPtr[columnIndex];
-						if (sourcePrevChar != targetPtr[columnIndex])
-						{
-							localCost = Math.Min(lastInsertionCost, localCost);
-							localCost = Math.Min(lastDeletionCost, localCost);
-							localCost++;
-						}
-						lastInsertionCost = localCost;
-						previousRowPtr[columnIndex++] = localCost;
-						lastSubstitutionCost = lastDeletionCost;
-					}
-				}
-			}
-		}
-#endif
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		private static unsafe void Calculate_Standard(Span<int> previousRow, ReadOnlySpan<char> source, ReadOnlySpan<char> target)
