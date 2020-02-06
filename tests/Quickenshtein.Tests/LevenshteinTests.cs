@@ -153,5 +153,12 @@ namespace Quickenshtein.Tests
 			var distance = Levenshtein.GetDistance("Hello World", "hello world");
 			Assert.AreEqual(2, distance);
 		}
+
+		[TestMethod]
+		public void Shorter_Target()
+		{
+			var distance = Levenshtein.GetDistance("This is a longer sentence.", "This is shorter.");
+			Assert.AreEqual(13, distance);
+		}
 	}
 }
