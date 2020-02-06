@@ -6,6 +6,9 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Quickenshtein", "src\Quickenshtein\Quickenshtein.csproj", "{DCE01DEC-B0B7-460A-BA86-E8D4403CDBFA}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{337D486C-6B89-45C2-B8A8-4F56AF1AFBFF}"
+	ProjectSection(SolutionItems) = preProject
+		src\Directory.Build.props = src\Directory.Build.props
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{5A33DAE4-5C3F-4CF0-805F-EEEC9070CE72}"
 EndProject
@@ -17,6 +20,14 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Quickenshtein.Benchmarks", 
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "global", "global", "{3A1516CB-1B80-4662-85A3-3130452B211E}"
 	ProjectSection(SolutionItems) = preProject
+		.appveyor.yml = .appveyor.yml
+		.codecov.yml = .codecov.yml
+		.editorconfig = .editorconfig
+		.gitignore = .gitignore
+		build.appveyor.ps1 = build.appveyor.ps1
+		build.ps1 = build.ps1
+		buildconfig.json = buildconfig.json
+		License.txt = License.txt
 		readme.md = readme.md
 	EndProjectSection
 EndProject

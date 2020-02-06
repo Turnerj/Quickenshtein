@@ -3,9 +3,14 @@
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0;netcoreapp3.0</TargetFrameworks>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    
+    <Title>Quickenshtein</Title>
+    <Description>A quick and memory efficient Levenshtein Distance calculator for .NET</Description>
+    <PackageTags>$(PackageBaseTags)</PackageTags>
+    <Authors>James Turner</Authors>
   </PropertyGroup>
 
-  <ItemGroup>
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
     <PackageReference Include="System.Memory" Version="4.5.3" />
   </ItemGroup>
 

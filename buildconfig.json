@@ -1,0 +1,4 @@
+{
+  "TestProject": "tests/Quickenshtein.Tests/Quickenshtein.Tests.csproj",
+  "TestCoverageFilter": "+[Quickenshtein]* +[Quickenshtein.*]* -[Quickenshtein.Tests]*"
+}
