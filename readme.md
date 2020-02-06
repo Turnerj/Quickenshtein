@@ -6,7 +6,7 @@ A quick and memory efficient Levenshtein Distance calculator for .NET
 [![Codecov](https://img.shields.io/codecov/c/github/Turnerj/Quickenshtein/master.svg)](https://codecov.io/gh/Turnerj/Quickenshtein)
 [![NuGet](https://img.shields.io/nuget/v/Quickenshtein.svg)](https://www.nuget.org/packages/Quickenshtein/)
 
-# Performance
+## Performance
 
 Quickenshtein gets its speed and memory effiency from a number of different optimizations.
 For .NET Core in particular, Quickenshtein attempts to make use of AVX2 and SSE2 intrinsics to speed up various parts of the calculation.
