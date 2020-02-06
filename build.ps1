@@ -52,7 +52,7 @@ if ($RunTests) {
 	}
 	else {
 		Write-Host "Running tests with coverage..." -ForegroundColor "Magenta"
-		OpenCover.Console.exe -register:user -target:"%LocalAppData%\Microsoft\dotnet\dotnet.exe" -targetargs:"test $($config.TestProject) /p:DebugType=Full" -filter:"$($config.TestCoverageFilter)" -output:"$packageOutputFolder\coverage.xml" -oldstyle
+		OpenCover.Console.exe -register -target:"%LocalAppData%\Microsoft\dotnet\dotnet.exe" -targetargs:"test $($config.TestProject) /p:DebugType=Full" -filter:"$($config.TestCoverageFilter)" -output:"$packageOutputFolder\coverage.xml" -oldstyle
 		if ($LastExitCode -ne 0 -Or -Not $?) {
 			Write-Host "Failure performing tests with coverage, aborting!" -Foreground "Red"
 			Exit 1
