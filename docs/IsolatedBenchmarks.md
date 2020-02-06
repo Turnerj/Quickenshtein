@@ -46,3 +46,34 @@ The calculation is forced to compute the worst possible case due to no matching 
 |      Baseline |                 40 | 7,152.43 ns | 43.605 ns | 34.044 ns |  1.00 | 2.6779 |     - |     - |    8400 B |
 | Quickenshtein |                 40 | 2,977.93 ns | 31.614 ns | 28.025 ns |  0.42 |      - |     - |     - |         - |
 |  Fastenshtein |                 40 | 3,745.75 ns | 36.140 ns | 32.037 ns |  0.52 | 0.0572 |     - |     - |     184 B |
+
+## Huge Text Benchmark
+
+This benchmark really pushes the calculator to the limit with extremely long string lengths.
+This is combined with the fact that this is a worst case run with no matching characters.
+
+|        Method |       Runtime | NumberOfCharacters |       Mean |    Error |   StdDev | Gen 0 | Gen 1 | Gen 2 | Allocated |
+|-------------- |-------------- |------------------- |-----------:|---------:|---------:|------:|------:|------:|----------:|
+| Quickenshtein |    .NET 4.7.2 |               8192 |   124.0 ms |  0.50 ms |  0.47 ms |     - |     - |     - |         - |
+|  Fastenshtein |    .NET 4.7.2 |               8192 |   154.0 ms |  1.71 ms |  1.60 ms |     - |     - |     - |   32816 B |
+| Quickenshtein | .NET Core 3.0 |               8192 |   108.8 ms |  0.48 ms |  0.45 ms |     - |     - |     - |         - |
+|  Fastenshtein | .NET Core 3.0 |               8192 |   136.6 ms |  2.73 ms |  4.09 ms |     - |     - |     - |   32840 B |
+| Quickenshtein |    .NET 4.7.2 |              32768 | 1,968.3 ms | 19.63 ms | 17.40 ms |     - |     - |     - |         - |
+|  Fastenshtein |    .NET 4.7.2 |              32768 | 2,483.4 ms | 12.36 ms | 10.96 ms |     - |     - |     - |  131096 B |
+| Quickenshtein | .NET Core 3.0 |              32768 | 2,103.5 ms |  6.38 ms |  5.33 ms |     - |     - |     - |         - |
+|  Fastenshtein | .NET Core 3.0 |              32768 | 2,226.3 ms | 27.75 ms | 24.60 ms |     - |     - |     - |  131096 B |
+
+## Edge Match Benchmark
+
+This benchmark shows how well the calculator can optimise matching characters at the start and end.
+
+|        Method |       Runtime | NumberOfCharacters |             Mean |            Error |           StdDev |  Gen 0 | Gen 1 | Gen 2 | Allocated |
+|-------------- |-------------- |------------------- |-----------------:|-----------------:|-----------------:|-------:|------:|------:|----------:|
+| Quickenshtein |    .NET 4.7.2 |                 40 |        132.92 ns |         1.441 ns |         1.348 ns |      - |     - |     - |         - |
+|  Fastenshtein |    .NET 4.7.2 |                 40 |      2,622.65 ns |        23.465 ns |        21.949 ns | 0.0572 |     - |     - |     185 B |
+| Quickenshtein | .NET Core 3.0 |                 40 |         79.94 ns |         0.846 ns |         0.792 ns |      - |     - |     - |         - |
+|  Fastenshtein | .NET Core 3.0 |                 40 |      2,432.23 ns |        28.872 ns |        25.594 ns | 0.0572 |     - |     - |     184 B |
+| Quickenshtein |    .NET 4.7.2 |               8192 |      8,902.75 ns |        81.773 ns |        76.491 ns |      - |     - |     - |         - |
+|  Fastenshtein |    .NET 4.7.2 |               8192 | 97,871,204.44 ns | 1,248,954.715 ns | 1,168,273.015 ns |      - |     - |     - |   32816 B |
+| Quickenshtein | .NET Core 3.0 |               8192 |        742.43 ns |         6.004 ns |         5.616 ns |      - |     - |     - |         - |
+|  Fastenshtein | .NET Core 3.0 |               8192 | 85,940,415.56 ns | 1,157,319.269 ns | 1,082,557.162 ns |      - |     - |     - |   33597 B |
