@@ -11,9 +11,8 @@
                 <ModulePath>.*\.dll$</ModulePath>
               </Include>  
               <Exclude>
-                <ModulePath>CacheTower.Tests.dll</ModulePath>
-                <ModulePath>CacheTower.Benchmarks.dll</ModulePath>
-                <ModulePath>CacheTower.AlternativesBenchmark.dll</ModulePath>
+                <ModulePath>Quickenshtein.Tests.dll</ModulePath>
+                <ModulePath>Quickenshtein.Benchmarks.dll</ModulePath>
               </Exclude>  
             </ModulePaths>  
 
