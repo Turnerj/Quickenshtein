@@ -11,9 +11,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{5A33DAE4
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "benchmarks", "benchmarks", "{DAE1C59D-4C1C-46DF-B932-2B0ABA44CE13}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Quickenshtein.Tests", "tests\Quickenshtein.Tests\Quickenshtein.Tests.csproj", "{35739384-BE79-4F3E-BF25-0CEFB539911A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Quickenshtein.Tests", "tests\Quickenshtein.Tests\Quickenshtein.Tests.csproj", "{35739384-BE79-4F3E-BF25-0CEFB539911A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Quickenshtein.Benchmarks", "benchmarks\Quickenshtein.Benchmarks\Quickenshtein.Benchmarks.csproj", "{28A4E191-52AE-4B57-B756-4351FF4F368D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Quickenshtein.Benchmarks", "benchmarks\Quickenshtein.Benchmarks\Quickenshtein.Benchmarks.csproj", "{28A4E191-52AE-4B57-B756-4351FF4F368D}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "global", "global", "{3A1516CB-1B80-4662-85A3-3130452B211E}"
 	ProjectSection(SolutionItems) = preProject

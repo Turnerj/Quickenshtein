@@ -12,8 +12,6 @@ namespace Quickenshtein
 	/// </summary>
 	public static partial class Levenshtein
 	{
-		private const int INTRINSIC_CALCULATION_THRESHOLD = 32;
-
 #if NETSTANDARD2_0
 		public static int GetDistance(string source, string target)
 		{
@@ -149,7 +147,6 @@ namespace Quickenshtein
 			previousRow = previousRow.Slice(0, targetLength);
 
 			FillRow(previousRow);
-
 			Calculate_Standard(previousRow, source, target);
 
 			var result = previousRow[targetLength - 1];
