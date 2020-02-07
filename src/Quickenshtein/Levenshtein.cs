@@ -13,7 +13,8 @@ namespace Quickenshtein
 	/// </summary>
 	public static partial class Levenshtein
 	{
-		private const int MINIMUM_CHARACTERS_FOR_INTRINSIC_TRIM = 32;
+		private const byte VECTOR256_NUMBER_OF_CHARACTERS = 16;
+		private const byte VECTOR256_COMPARISON_ALL_EQUAL = 255;
 
 #if NETSTANDARD2_0
 		public static int GetDistance(string source, string target)
@@ -104,7 +105,7 @@ namespace Quickenshtein
 			var charactersAvailableToTrim = Math.Min(targetEnd, sourceEnd);
 
 #if NETCOREAPP3_0
-			if (Avx2.IsSupported && charactersAvailableToTrim > MINIMUM_CHARACTERS_FOR_INTRINSIC_TRIM)
+			if (Avx2.IsSupported && charactersAvailableToTrim >= VECTOR256_NUMBER_OF_CHARACTERS)
 			{
 				fixed (char* sourcePtr = source)
 				fixed (char* targetPtr = target)
@@ -112,7 +113,7 @@ namespace Quickenshtein
 					var sourceUShortPtr = (ushort*)sourcePtr;
 					var targetUShortPtr = (ushort*)targetPtr;
 
-					while (charactersAvailableToTrim >= 16)
+					while (charactersAvailableToTrim >= VECTOR256_NUMBER_OF_CHARACTERS)
 					{
 						var sectionEquality = Avx.MoveMask(
 							Avx2.CompareEqual(
@@ -121,32 +122,32 @@ namespace Quickenshtein
 							).AsSingle()
 						);
 
-						if (sectionEquality < 255)
+						if (sectionEquality != VECTOR256_COMPARISON_ALL_EQUAL)
 						{
 							break;
 						}
 
-						startIndex += 16;
-						charactersAvailableToTrim -= 16;
+						startIndex += VECTOR256_NUMBER_OF_CHARACTERS;
+						charactersAvailableToTrim -= VECTOR256_NUMBER_OF_CHARACTERS;
 					}
 
-					while (charactersAvailableToTrim >= 16)
+					while (charactersAvailableToTrim >= VECTOR256_NUMBER_OF_CHARACTERS)
 					{
 						var sectionEquality = Avx.MoveMask(
 							Avx2.CompareEqual(
-								Avx.LoadDquVector256(sourceUShortPtr + (sourceEnd - 16) - 1),
-								Avx.LoadDquVector256(targetUShortPtr + (targetEnd - 16) - 1)
+								Avx.LoadDquVector256(sourceUShortPtr + (sourceEnd - VECTOR256_NUMBER_OF_CHARACTERS) - 1),
+								Avx.LoadDquVector256(targetUShortPtr + (targetEnd - VECTOR256_NUMBER_OF_CHARACTERS) - 1)
 							).AsSingle()
 						);
 
-						if (sectionEquality < 255)
+						if (sectionEquality != VECTOR256_COMPARISON_ALL_EQUAL)
 						{
 							break;
 						}
 
-						sourceEnd -= 16;
-						targetEnd -= 16;
-						charactersAvailableToTrim -= 16;
+						sourceEnd -= VECTOR256_NUMBER_OF_CHARACTERS;
+						targetEnd -= VECTOR256_NUMBER_OF_CHARACTERS;
+						charactersAvailableToTrim -= VECTOR256_NUMBER_OF_CHARACTERS;
 					}
 				}
 			}
