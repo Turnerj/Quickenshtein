@@ -11,6 +11,9 @@ namespace Quickenshtein
 {
 	public static partial class Levenshtein
 	{
+		private const int VECTOR256_FILL_SIZE = 8;
+		private const int VECTOR128_FILL_SIZE = 4;
+
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		private static unsafe void FillRow(Span<int> previousRow)
 		{
@@ -23,42 +26,44 @@ namespace Quickenshtein
 				if (Avx2.IsSupported)
 				{
 					var lastVector256 = Vector256.Create(1, 2, 3, 4, 5, 6, 7, 8);
-					var shiftVector256 = Vector256.Create(8);
+					var shiftVector256 = Vector256.Create(VECTOR256_FILL_SIZE);
 
-					while (columnsRemaining >= 8)
+					while (columnsRemaining >= VECTOR256_FILL_SIZE)
 					{
-						columnsRemaining -= 8;
+						columnsRemaining -= VECTOR256_FILL_SIZE;
 						Avx.Store(previousRowPtr + columnIndex, lastVector256);
 						lastVector256 = Avx2.Add(lastVector256, shiftVector256);
-						columnIndex += 8;
+						columnIndex += VECTOR256_FILL_SIZE;
 					}
 				}
 				else if (Sse2.IsSupported)
 				{
 					var lastVector128 = Vector128.Create(1, 2, 3, 4);
-					var shiftVector128 = Vector128.Create(4);
+					var shiftVector128 = Vector128.Create(VECTOR128_FILL_SIZE);
 
-					while (columnsRemaining >= 4)
+					while (columnsRemaining >= VECTOR128_FILL_SIZE)
 					{
-						columnsRemaining -= 4;
+						columnsRemaining -= VECTOR128_FILL_SIZE;
 						Sse2.Store(previousRowPtr + columnIndex, lastVector128);
 						lastVector128 = Sse2.Add(lastVector128, shiftVector128);
-						columnIndex += 4;
+						columnIndex += VECTOR128_FILL_SIZE;
 					}
 				}
+				else
 #endif
-
-				while (columnsRemaining >= 8)
 				{
-					columnsRemaining -= 8;
-					previousRowPtr[columnIndex] = ++columnIndex;
-					previousRowPtr[columnIndex] = ++columnIndex;
-					previousRowPtr[columnIndex] = ++columnIndex;
-					previousRowPtr[columnIndex] = ++columnIndex;
-					previousRowPtr[columnIndex] = ++columnIndex;
-					previousRowPtr[columnIndex] = ++columnIndex;
-					previousRowPtr[columnIndex] = ++columnIndex;
-					previousRowPtr[columnIndex] = ++columnIndex;
+					while (columnsRemaining >= 8)
+					{
+						columnsRemaining -= 8;
+						previousRowPtr[columnIndex] = ++columnIndex;
+						previousRowPtr[columnIndex] = ++columnIndex;
+						previousRowPtr[columnIndex] = ++columnIndex;
+						previousRowPtr[columnIndex] = ++columnIndex;
+						previousRowPtr[columnIndex] = ++columnIndex;
+						previousRowPtr[columnIndex] = ++columnIndex;
+						previousRowPtr[columnIndex] = ++columnIndex;
+						previousRowPtr[columnIndex] = ++columnIndex;
+					}
 				}
 
 				if (columnsRemaining > 4)
