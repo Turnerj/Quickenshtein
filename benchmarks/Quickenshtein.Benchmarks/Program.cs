@@ -66,8 +66,15 @@ namespace Quickenshtein.Benchmarks
 					foreach (var group in workloadRatios.GroupBy(r => r.Workload))
 					{
 						var averageRatio = group.Sum(r => r.Ratio) / group.Count();
-						var averageSpeedUp = 1 / averageRatio;
-						Console.WriteLine($"{group.Key}: {averageSpeedUp:0.000}");
+						if (Math.Round(averageRatio, 3) == 0)
+						{
+							Console.WriteLine($"{group.Key}: > 1000.000");
+						}
+						else
+						{
+							var averageSpeedUp = 1 / averageRatio;
+							Console.WriteLine($"{group.Key}: {averageSpeedUp:0.000}");
+						}
 					}
 
 					Console.WriteLine();
