@@ -202,44 +202,95 @@ namespace Quickenshtein
 		{
 			var targetLength = target.Length;
 
-			var arrayPool = ArrayPool<int>.Shared;
-			var pooledArray = arrayPool.Rent(targetLength);
-			Span<int> previousRow = pooledArray;
+			if (source.Length == targetLength)
+			{
+				return CalculateDistance_EqualLength(source, target);
+			}
+			else
+			{
+				var arrayPool = ArrayPool<int>.Shared;
+				var pooledArray = arrayPool.Rent(targetLength);
+				Span<int> previousRow = pooledArray;
 
-			//ArrayPool values are sometimes bigger than allocated, let's trim our span to exactly what we use
-			previousRow = previousRow.Slice(0, targetLength);
+				//ArrayPool values are sometimes bigger than allocated, let's trim our span to exactly what we use
+				previousRow = previousRow.Slice(0, targetLength);
 
-			FillRow(previousRow);
-			Calculate_Standard(previousRow, source, target);
+				FillRow(previousRow);
+				CalculateDistance(previousRow, source, target);
 
-			var result = previousRow[targetLength - 1];
-			arrayPool.Return(pooledArray);
-			return result;
+				var result = previousRow[targetLength - 1];
+				arrayPool.Return(pooledArray);
+				return result;
+			}
 		}
 
+		/// <summary>
+		/// This takes advantage that two equal length strings, represented as a matrix, converge on the same value
+		/// by doing character comparisons alone.
+		/// </summary>
+		/// <param name="source"></param>
+		/// <param name="target"></param>
+		/// <returns></returns>
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private static unsafe void Calculate_Standard(Span<int> previousRow, ReadOnlySpan<char> source, ReadOnlySpan<char> target)
+		private static unsafe int CalculateDistance_EqualLength(ReadOnlySpan<char> source, ReadOnlySpan<char> target)
+		{
+			var distance = 0;
+			var charactersRemaining = source.Length;
+			var characterIndex = 0;
+
+			while (charactersRemaining > 0)
+			{
+				if (source[characterIndex] != target[characterIndex])
+				{
+					distance++;
+				}
+
+				charactersRemaining--;
+				characterIndex++;
+			}
+
+			return distance;
+		}
+		
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		private static unsafe void CalculateDistance(Span<int> previousRow, ReadOnlySpan<char> source, ReadOnlySpan<char> target)
 		{
 			var sourceLength = source.Length;
 			var targetLength = target.Length;
 
+			var arrayPool = ArrayPool<int>.Shared;
+			var comparisonCosts = arrayPool.Rent(sourceLength);
+
 			fixed (char* targetPtr = target)
 			fixed (int* previousRowPtr = previousRow)
 			{
+				var charIndex = 0;
+				var lastCost = 0;
+				while (charIndex < sourceLength)
+				{
+					if (source[charIndex] != targetPtr[charIndex])
+					{
+						lastCost++;
+					}
+					comparisonCosts[charIndex] = lastCost;
+					charIndex++;
+				}
+
 				for (var rowIndex = 0; rowIndex < sourceLength; rowIndex++)
 				{
-					var lastSubstitutionCost = rowIndex;
-					var lastInsertionCost = rowIndex + 1;
+					var lastInsertionCost = comparisonCosts[rowIndex];
+					var lastSubstitutionCost = previousRowPtr[rowIndex];
 
 					var sourcePrevChar = source[rowIndex];
 
-					var columnIndex = 0;
+					var columnIndex = rowIndex + 1;
 					int lastDeletionCost;
 					int localCost;
 
+					var rowColumnsRemaining = targetLength - columnIndex;
+					
 					//Loop unrolling inspired by CoreLib SpanHelpers
 					//https://github.com/dotnet/runtime/blob/4f9ae42d861fcb4be2fcd5d3d55d5f227d30e723/src/libraries/System.Private.CoreLib/src/System/SpanHelpers.T.cs#L62-L118
-					var rowColumnsRemaining = targetLength;
 					while (rowColumnsRemaining >= 8)
 					{
 						rowColumnsRemaining -= 8;
@@ -412,6 +463,8 @@ namespace Quickenshtein
 					}
 				}
 			}
+
+			arrayPool.Return(comparisonCosts);
 		}
 	}
 }
