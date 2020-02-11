@@ -49,7 +49,10 @@ namespace Quickenshtein
 				if (source[characterIndex] != target[characterIndex])
 				{
 					//Check validity of fast path
-					if (source[characterIndex] == target[characterIndex - 1])
+					if (
+						source[characterIndex] == target[characterIndex - 1] ||
+						source[characterIndex - 1] == target[characterIndex]
+					)
 					{
 						result = 0;
 						return false;
@@ -78,7 +81,10 @@ namespace Quickenshtein
 			{
 				if (
 					source[characterIndex] != target[characterIndex] &&
-					source[characterIndex] == target[characterIndex - 1]
+					(
+						source[characterIndex] == target[characterIndex - 1] ||
+						source[characterIndex - 1] == target[characterIndex]
+					)
 				)
 				{
 					result = 0;
