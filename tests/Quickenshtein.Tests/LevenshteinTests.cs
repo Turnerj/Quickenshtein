@@ -160,5 +160,33 @@ namespace Quickenshtein.Tests
 			var distance = Levenshtein.GetDistance("This is a longer sentence.", "This is shorter.");
 			Assert.AreEqual(13, distance);
 		}
+
+		[TestMethod]
+		public void TranspositionHandling_1()
+		{
+			var distance = Levenshtein.GetDistance("yorwyeawgn", "xcodeuwtnx");
+			Assert.AreEqual(8, distance);
+		}
+
+		[TestMethod]
+		public void TranspositionHandling_2()
+		{
+			var distance = Levenshtein.GetDistance("yorwyeagwn", "xcodeuwtnx");
+			Assert.AreEqual(9, distance);
+		}
+
+		[TestMethod]
+		public void TranspositionHandling_3()
+		{
+			var distance = Levenshtein.GetDistance("yorwyeagnw", "xcodeuwtnx");
+			Assert.AreEqual(9, distance);
+		}
+
+		[TestMethod]
+		public void TranspositionHandling_4()
+		{
+			var distance = Levenshtein.GetDistance("yorwyaegnw", "xcodeuwtnx");
+			Assert.AreEqual(9, distance);
+		}
 	}
 }
