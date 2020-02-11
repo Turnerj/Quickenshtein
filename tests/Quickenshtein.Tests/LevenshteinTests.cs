@@ -190,9 +190,30 @@ namespace Quickenshtein.Tests
 		}
 
 		[TestMethod]
-		public void TranspositionHandling_UnEqualLength_1()
+		public void TranspositionHandling_UnEqualLength_1a()
 		{
 			var distance = Levenshtein.GetDistance("yorwyeawgnb", "xcodeuwtnx");
+			Assert.AreEqual(8, distance);
+		}
+
+		[TestMethod]
+		public void TranspositionHandling_UnEqualLength_1b()
+		{
+			var distance = Levenshtein.GetDistance("byorwyeawgn", "xcodeuwtnx");
+			Assert.AreEqual(8, distance);
+		}
+
+		[TestMethod]
+		public void TranspositionHandling_UnEqualLength_1c()
+		{
+			var distance = Levenshtein.GetDistance("yorwyeawgn", "xcodeuwtnxb");
+			Assert.AreEqual(9, distance);
+		}
+
+		[TestMethod]
+		public void TranspositionHandling_UnEqualLength_1d()
+		{
+			var distance = Levenshtein.GetDistance("yorwyeawgn", "bxcodeuwtnx");
 			Assert.AreEqual(8, distance);
 		}
 
@@ -215,6 +236,34 @@ namespace Quickenshtein.Tests
 		{
 			var distance = Levenshtein.GetDistance("yorwyaegnwb", "xcodeuwtnx");
 			Assert.AreEqual(10, distance);
+		}
+
+		[TestMethod]
+		public void AdditionalTest_EqualLength_1()
+		{
+			var distance = Levenshtein.GetDistance("abdegjklsjgofmdlacmpdv", "adbegjlkjsogmdaalcmpvd");
+			Assert.AreEqual(10, distance);
+		}
+
+		[TestMethod]
+		public void AdditionalTest_EqualLength_2()
+		{
+			var distance = Levenshtein.GetDistance("aaaabbbbccccddddeeee", "aaababbcbccdcddedeee");
+			Assert.AreEqual(5, distance);
+		}
+
+		[TestMethod]
+		public void AdditionalTest_UnEqualLength_1()
+		{
+			var distance = Levenshtein.GetDistance("aaaabbbbccffccddddeeee", "aaababbcbcfcdcddedeee");
+			Assert.AreEqual(7, distance);
+		}
+
+		[TestMethod]
+		public void AdditionalTest_UnEqualLength_2()
+		{
+			var distance = Levenshtein.GetDistance("aaaabbbbccfccddddeeee", "aaababbcbcffcdcddedeee");
+			Assert.AreEqual(6, distance);
 		}
 	}
 }
