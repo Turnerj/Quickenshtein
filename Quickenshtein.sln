@@ -31,6 +31,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "global", "global", "{3A1516
 		readme.md = readme.md
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Quickenshtein.TestCaseFinder", "Quickenshtein.TestCaseFinder\Quickenshtein.TestCaseFinder.csproj", "{C0F1E826-F17B-439F-9BBC-43F2FBFEBA28}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -49,6 +51,10 @@ Global
 		{28A4E191-52AE-4B57-B756-4351FF4F368D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{28A4E191-52AE-4B57-B756-4351FF4F368D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{28A4E191-52AE-4B57-B756-4351FF4F368D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C0F1E826-F17B-439F-9BBC-43F2FBFEBA28}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C0F1E826-F17B-439F-9BBC-43F2FBFEBA28}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C0F1E826-F17B-439F-9BBC-43F2FBFEBA28}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C0F1E826-F17B-439F-9BBC-43F2FBFEBA28}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -57,6 +63,7 @@ Global
 		{DCE01DEC-B0B7-460A-BA86-E8D4403CDBFA} = {337D486C-6B89-45C2-B8A8-4F56AF1AFBFF}
 		{35739384-BE79-4F3E-BF25-0CEFB539911A} = {5A33DAE4-5C3F-4CF0-805F-EEEC9070CE72}
 		{28A4E191-52AE-4B57-B756-4351FF4F368D} = {DAE1C59D-4C1C-46DF-B932-2B0ABA44CE13}
+		{C0F1E826-F17B-439F-9BBC-43F2FBFEBA28} = {5A33DAE4-5C3F-4CF0-805F-EEEC9070CE72}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {D57A7798-497A-44BC-B1B1-F859DC84CDBB}
