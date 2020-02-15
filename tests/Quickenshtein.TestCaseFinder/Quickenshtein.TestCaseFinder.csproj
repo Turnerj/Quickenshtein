@@ -7,8 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\benchmarks\Quickenshtein.Benchmarks\Quickenshtein.Benchmarks.csproj" />
-    <ProjectReference Include="..\src\Quickenshtein\Quickenshtein.csproj" />
+    <ProjectReference Include="..\..\benchmarks\Quickenshtein.Benchmarks\Quickenshtein.Benchmarks.csproj" />
+    <ProjectReference Include="..\..\src\Quickenshtein\Quickenshtein.csproj" />
   </ItemGroup>
 
 </Project>
