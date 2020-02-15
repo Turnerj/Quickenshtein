@@ -162,6 +162,16 @@ namespace Quickenshtein.Tests
 		}
 
 		[TestMethod]
+		public void EdgeDifference()
+		{
+			var distance = Levenshtein.GetDistance(
+				$"a{Utilities.BuildString("b", 256 + 7)}c",
+				$"y{Utilities.BuildString("b", 256 + 7)}z"
+			);
+			Assert.AreEqual(2, distance);
+		}
+
+		[TestMethod]
 		public void TranspositionHandling_EqualLength_1()
 		{
 			var distance = Levenshtein.GetDistance("yorwyeawgn", "xcodeuwtnx");

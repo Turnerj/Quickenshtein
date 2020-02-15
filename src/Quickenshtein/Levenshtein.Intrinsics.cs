@@ -9,7 +9,7 @@ namespace Quickenshtein
 	public static partial class Levenshtein
 	{
 		private const byte VECTOR256_NUMBER_OF_CHARACTERS = 16;
-		private const byte VECTOR256_COMPARISON_ALL_EQUAL = 255;
+		private const sbyte VECTOR256_COMPARISON_ALL_EQUAL = -1;
 
 		private const int VECTOR256_FILL_SIZE = 8;
 		private static readonly Vector256<int> VECTOR256_SEQUENCE = Vector256.Create(1, 2, 3, 4, 5, 6, 7, 8);
@@ -31,11 +31,11 @@ namespace Quickenshtein
 
 					while (charactersAvailableToTrim >= VECTOR256_NUMBER_OF_CHARACTERS)
 					{
-						var sectionEquality = Avx.MoveMask(
+						var sectionEquality = Avx2.MoveMask(
 							Avx2.CompareEqual(
 								Avx.LoadDquVector256(sourceUShortPtr + startIndex),
 								Avx.LoadDquVector256(targetUShortPtr + startIndex)
-							).AsSingle()
+							).AsByte()
 						);
 
 						if (sectionEquality != VECTOR256_COMPARISON_ALL_EQUAL)
@@ -49,11 +49,11 @@ namespace Quickenshtein
 
 					while (charactersAvailableToTrim >= VECTOR256_NUMBER_OF_CHARACTERS)
 					{
-						var sectionEquality = Avx.MoveMask(
+						var sectionEquality = Avx2.MoveMask(
 							Avx2.CompareEqual(
-								Avx.LoadDquVector256(sourceUShortPtr + (sourceEnd - VECTOR256_NUMBER_OF_CHARACTERS) - 1),
-								Avx.LoadDquVector256(targetUShortPtr + (targetEnd - VECTOR256_NUMBER_OF_CHARACTERS) - 1)
-							).AsSingle()
+								Avx.LoadDquVector256(sourceUShortPtr + (sourceEnd - VECTOR256_NUMBER_OF_CHARACTERS + 1)),
+								Avx.LoadDquVector256(targetUShortPtr + (targetEnd - VECTOR256_NUMBER_OF_CHARACTERS + 1))
+							).AsByte()
 						);
 
 						if (sectionEquality != VECTOR256_COMPARISON_ALL_EQUAL)
