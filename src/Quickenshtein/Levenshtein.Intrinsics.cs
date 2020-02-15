@@ -12,7 +12,10 @@ namespace Quickenshtein
 		private const byte VECTOR256_COMPARISON_ALL_EQUAL = 255;
 
 		private const int VECTOR256_FILL_SIZE = 8;
+		private static readonly Vector256<int> VECTOR256_SEQUENCE = Vector256.Create(1, 2, 3, 4, 5, 6, 7, 8);
+
 		private const int VECTOR128_FILL_SIZE = 4;
+		private static readonly Vector128<int> VECTOR128_SEQUENCE = Vector128.Create(1, 2, 3, 4);
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		private static unsafe void TrimComparison_Avx2(ReadOnlySpan<char> source, ReadOnlySpan<char> target, ref int startIndex, ref int sourceEnd, ref int targetEnd)
@@ -87,7 +90,7 @@ namespace Quickenshtein
 
 			fixed (int* previousRowPtr = previousRow)
 			{
-				var lastVector256 = Vector256.Create(1, 2, 3, 4, 5, 6, 7, 8);
+				var lastVector256 = VECTOR256_SEQUENCE;
 				var shiftVector256 = Vector256.Create(VECTOR256_FILL_SIZE);
 
 				while (columnsRemaining >= VECTOR256_FILL_SIZE)
@@ -123,7 +126,7 @@ namespace Quickenshtein
 
 			fixed (int* previousRowPtr = previousRow)
 			{
-				var lastVector128 = Vector128.Create(1, 2, 3, 4);
+				var lastVector128 = VECTOR128_SEQUENCE;
 				var shiftVector128 = Vector128.Create(VECTOR128_FILL_SIZE);
 
 				while (columnsRemaining >= VECTOR128_FILL_SIZE)
