@@ -63,9 +63,7 @@ namespace Quickenshtein
 				source = target;
 				target = tempSource;
 
-				var tempSourceLength = sourceLength;
-				sourceLength = targetLength;
-				targetLength = tempSourceLength;
+				(sourceLength, targetLength) = (targetLength, sourceLength);
 			}
 
 			return CalculateDistance(
