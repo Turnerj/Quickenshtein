@@ -8,14 +8,28 @@ namespace Quickenshtein.Tests
 	{
 #if NET472
 		[TestMethod]
-		public void Null_FirstArg()
+		public void Null_FirstArg_1()
+		{
+			var distance = Levenshtein.GetDistance(null, string.Empty);
+			Assert.AreEqual(0, distance);
+		}
+
+		[TestMethod]
+		public void Null_FirstArg_2()
 		{
 			var distance = Levenshtein.GetDistance(null, "test");
 			Assert.AreEqual(4, distance);
 		}
 
 		[TestMethod]
-		public void Null_SecondArg()
+		public void Null_SecondArg_1()
+		{
+			var distance = Levenshtein.GetDistance(string.Empty, null);
+			Assert.AreEqual(0, distance);
+		}
+
+		[TestMethod]
+		public void Null_SecondArg_2()
 		{
 			var distance = Levenshtein.GetDistance("test", null);
 			Assert.AreEqual(4, distance);
@@ -295,6 +309,13 @@ namespace Quickenshtein.Tests
 		{
 			var distance = Levenshtein.GetDistance("aaaabbbbccfccddddeeee", "aaababbcbcffcdcddedeee");
 			Assert.AreEqual(6, distance);
+		}
+
+		[TestMethod]
+		public void TrimEnd()
+		{
+			var distance = Levenshtein.GetDistance("abbbbbbbbbbbbbbbbbbbbbbbb", "zbbbbbbbbbbbbbbbbbbbbbbbb");
+			Assert.AreEqual(1, distance);
 		}
 	}
 }
