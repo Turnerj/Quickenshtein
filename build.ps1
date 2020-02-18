@@ -56,7 +56,7 @@ if ($RunTests) {
 		$env:COMPlus_EnableAVX2 = 0
 		$env:COMPlus_EnableSSE41 = 1
 		$env:COMPlus_EnableSSE2 = 1
-		dotnet test $config.TestProject --framework netcoreapp3.0
+		dotnet test $config.TestProject --framework netcoreapp3.1
 		if ($LastExitCode -ne 0) {
 			Write-Host "Tests failed, aborting build!" -Foreground "Red"
 			Exit 1
@@ -65,7 +65,7 @@ if ($RunTests) {
 		$env:COMPlus_EnableAVX2 = 0
 		$env:COMPlus_EnableSSE41 = 0
 		$env:COMPlus_EnableSSE2 = 1
-		dotnet test $config.TestProject --framework netcoreapp3.0
+		dotnet test $config.TestProject --framework netcoreapp3.1
 		if ($LastExitCode -ne 0) {
 			Write-Host "Tests failed, aborting build!" -Foreground "Red"
 			Exit 1
@@ -74,7 +74,7 @@ if ($RunTests) {
 		$env:COMPlus_EnableAVX2 = 0
 		$env:COMPlus_EnableSSE41 = 0
 		$env:COMPlus_EnableSSE2 = 0
-		dotnet test $config.TestProject --framework netcoreapp3.0
+		dotnet test $config.TestProject --framework netcoreapp3.1
 		if ($LastExitCode -ne 0) {
 			Write-Host "Tests failed, aborting build!" -Foreground "Red"
 			Exit 1
@@ -93,7 +93,7 @@ if ($RunTests) {
 		$env:COMPlus_EnableAVX2 = 0
 		$env:COMPlus_EnableSSE41 = 1
 		$env:COMPlus_EnableSSE2 = 1
-		OpenCover.Console.exe -register -target:"%LocalAppData%\Microsoft\dotnet\dotnet.exe" -targetargs:"test $($config.TestProject) /p:DebugType=Full --framework netcoreapp3.0" -filter:"$($config.TestCoverageFilter)" -output:"$packageOutputFolder\coverage-avx2-disabled.xml" -oldstyle
+		OpenCover.Console.exe -register -target:"%LocalAppData%\Microsoft\dotnet\dotnet.exe" -targetargs:"test $($config.TestProject) /p:DebugType=Full --framework netcoreapp3.1" -filter:"$($config.TestCoverageFilter)" -output:"$packageOutputFolder\coverage-avx2-disabled.xml" -oldstyle
 		if ($LastExitCode -ne 0 -Or -Not $?) {
 			Write-Host "Failure performing tests with coverage, aborting!" -Foreground "Red"
 			Exit 1
@@ -102,7 +102,7 @@ if ($RunTests) {
 		$env:COMPlus_EnableAVX2 = 0
 		$env:COMPlus_EnableSSE41 = 0
 		$env:COMPlus_EnableSSE2 = 1
-		OpenCover.Console.exe -register -target:"%LocalAppData%\Microsoft\dotnet\dotnet.exe" -targetargs:"test $($config.TestProject) /p:DebugType=Full --framework netcoreapp3.0" -filter:"$($config.TestCoverageFilter)" -output:"$packageOutputFolder\coverage-sse41-disabled.xml" -oldstyle
+		OpenCover.Console.exe -register -target:"%LocalAppData%\Microsoft\dotnet\dotnet.exe" -targetargs:"test $($config.TestProject) /p:DebugType=Full --framework netcoreapp3.1" -filter:"$($config.TestCoverageFilter)" -output:"$packageOutputFolder\coverage-sse41-disabled.xml" -oldstyle
 		if ($LastExitCode -ne 0 -Or -Not $?) {
 			Write-Host "Failure performing tests with coverage, aborting!" -Foreground "Red"
 			Exit 1
@@ -111,7 +111,7 @@ if ($RunTests) {
 		$env:COMPlus_EnableAVX2 = 0
 		$env:COMPlus_EnableSSE41 = 0
 		$env:COMPlus_EnableSSE2 = 0
-		OpenCover.Console.exe -register -target:"%LocalAppData%\Microsoft\dotnet\dotnet.exe" -targetargs:"test $($config.TestProject) /p:DebugType=Full --framework netcoreapp3.0" -filter:"$($config.TestCoverageFilter)" -output:"$packageOutputFolder\coverage-sse2-disabled.xml" -oldstyle
+		OpenCover.Console.exe -register -target:"%LocalAppData%\Microsoft\dotnet\dotnet.exe" -targetargs:"test $($config.TestProject) /p:DebugType=Full --framework netcoreapp3.1" -filter:"$($config.TestCoverageFilter)" -output:"$packageOutputFolder\coverage-sse2-disabled.xml" -oldstyle
 		if ($LastExitCode -ne 0 -Or -Not $?) {
 			Write-Host "Failure performing tests with coverage, aborting!" -Foreground "Red"
 			Exit 1
