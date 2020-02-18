@@ -17,8 +17,17 @@ namespace Quickenshtein
 		private const int VECTOR128_FILL_SIZE = 4;
 		private static readonly Vector128<int> VECTOR128_SEQUENCE = Vector128.Create(1, 2, 3, 4);
 
+		/// <summary>
+		/// Using AVX2, calculates the trim offsets at the start and end of the source and target spans where characters are equal.
+		/// AVX2 instructions allow for a maximum comparison rate of 16 characters.
+		/// </summary>
+		/// <param name="source"></param>
+		/// <param name="target"></param>
+		/// <param name="startIndex"></param>
+		/// <param name="sourceEnd"></param>
+		/// <param name="targetEnd"></param>
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private static unsafe void TrimComparison_Avx2(ReadOnlySpan<char> source, ReadOnlySpan<char> target, ref int startIndex, ref int sourceEnd, ref int targetEnd)
+		private static unsafe void TrimInput_Avx2(ReadOnlySpan<char> source, ReadOnlySpan<char> target, ref int startIndex, ref int sourceEnd, ref int targetEnd)
 		{
 			var charactersAvailableToTrim = Math.Min(sourceEnd, targetEnd);
 			if (charactersAvailableToTrim >= VECTOR256_NUMBER_OF_CHARACTERS)
@@ -82,6 +91,11 @@ namespace Quickenshtein
 			}
 		}
 
+		/// <summary>
+		/// Using AVX2, fills <paramref name="previousRow"/> with a number sequence from 1 to the length of the row.
+		/// AVX2 instructions allow for a maximum fill rate of 8 values at once.
+		/// </summary>
+		/// <param name="previousRow"></param>
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		private static unsafe void FillRow_Avx2(Span<int> previousRow)
 		{
@@ -118,6 +132,11 @@ namespace Quickenshtein
 			}
 		}
 
+		/// <summary>
+		/// Using SSE2, fills <paramref name="previousRow"/> with a number sequence from 1 to the length of the row.
+		/// SSE2 instructions provide a maximum fill rate of 4 values at once.
+		/// </summary>
+		/// <param name="previousRow"></param>
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		private static unsafe void FillRow_Sse2(Span<int> previousRow)
 		{
@@ -145,8 +164,17 @@ namespace Quickenshtein
 			}
 		}
 
+		/// <summary>
+		/// Using SSE4.1, calculates the costs for an entire row of the virtual matrix.
+		/// </summary>
+		/// <param name="previousRowPtr"></param>
+		/// <param name="targetPtr"></param>
+		/// <param name="targetLength"></param>
+		/// <param name="sourcePrevChar"></param>
+		/// <param name="lastInsertionCost"></param>
+		/// <param name="lastSubstitutionCost"></param>
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private static unsafe void CalculateRow_Unroll8_Sse41(int* previousRowPtr, char* targetPtr, int targetLength, char sourcePrevChar, int lastInsertionCost, int lastSubstitutionCost)
+		private static unsafe void CalculateRow_Sse41(int* previousRowPtr, char* targetPtr, int targetLength, char sourcePrevChar, int lastInsertionCost, int lastSubstitutionCost)
 		{
 			var columnIndex = 0;
 			var rowColumnsRemaining = targetLength;
@@ -156,7 +184,7 @@ namespace Quickenshtein
 			var lastSubstitutionCostVector = Vector128.Create(lastSubstitutionCost);
 			var lastDeletionCostVector = Vector128<int>.Zero;
 
-			//Loop unrolling inspired by CoreLib SpanHelpers
+			//Levenshtein Distance inner loop unrolling inspired by CoreLib SpanHelpers
 			//https://github.com/dotnet/runtime/blob/4f9ae42d861fcb4be2fcd5d3d55d5f227d30e723/src/libraries/System.Private.CoreLib/src/System/SpanHelpers.T.cs#L62-L118
 			while (rowColumnsRemaining >= 8)
 			{
@@ -187,6 +215,18 @@ namespace Quickenshtein
 			}
 		}
 
+		/// <summary>
+		/// Using SSE4.1, calculates the cost for an individual cell in the virtual matrix.
+		/// SSE4.1 instructions allow a virtually branchless minimum value computation when the source and target characters don't match.
+		/// </summary>
+		/// <param name="previousRowPtr"></param>
+		/// <param name="targetPtr"></param>
+		/// <param name="sourcePrevChar"></param>
+		/// <param name="lastSubstitutionCostVector"></param>
+		/// <param name="lastInsertionCostVector"></param>
+		/// <param name="lastDeletionCostVector"></param>
+		/// <param name="allOnesVector"></param>
+		/// <param name="columnIndex"></param>
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		private static unsafe void CalculateColumn_Sse41(
 			int* previousRowPtr, 
@@ -217,6 +257,173 @@ namespace Quickenshtein
 			lastInsertionCostVector = localCostVector;
 			previousRowPtr[columnIndex++] = localCostVector.GetElement(0);
 			lastSubstitutionCostVector = lastDeletionCostVector;
+		}
+
+		/// <summary>
+		/// Using SSE4.1, calculates the costs for the virtual matrix.
+		/// This performs a 4x outer loop unrolling allowing fewer lookups of target character and deletion cost data across the rows.
+		/// </summary>
+		/// <param name="previousRowPtr"></param>
+		/// <param name="source"></param>
+		/// <param name="rowIndex"></param>
+		/// <param name="targetPtr"></param>
+		/// <param name="targetLength"></param>
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		private static unsafe void CalculateRows_Sse41(int* previousRowPtr, ReadOnlySpan<char> source, ref int rowIndex, char* targetPtr, int targetLength)
+		{
+			var acceptableRowCount = source.Length - 3;
+
+			Vector128<int> row1Costs, row2Costs, row3Costs, row4Costs, row5Costs;
+			char sourceChar1, sourceChar2, sourceChar3, sourceChar4;
+			var allOnesVector = Vector128.Create(1);
+
+			for (; rowIndex < acceptableRowCount; rowIndex += 4)
+			{
+				sourceChar1 = source[rowIndex];
+				sourceChar2 = source[rowIndex + 1];
+				sourceChar3 = source[rowIndex + 2];
+				sourceChar4 = source[rowIndex + 3];
+				row1Costs = Vector128.Create(rowIndex); //Sub
+				row2Costs = Sse2.Add(row1Costs, allOnesVector); //Insert, Sub
+				row3Costs = Sse2.Add(row2Costs, allOnesVector); //Insert, Sub
+				row4Costs = Sse2.Add(row3Costs, allOnesVector); //Insert, Sub
+				row5Costs = Sse2.Add(row4Costs, allOnesVector); //Insert
+
+				var columnIndex = 0;
+				var rowColumnsRemaining = targetLength;
+
+				while (rowColumnsRemaining >= 8)
+				{
+					rowColumnsRemaining -= 8;
+					CalculateColumn_4Rows_Sse41(targetPtr, previousRowPtr, ref row1Costs, ref row2Costs, ref row3Costs, ref row4Costs, ref row5Costs, ref allOnesVector, sourceChar1, sourceChar2, sourceChar3, sourceChar4, ref columnIndex);
+					CalculateColumn_4Rows_Sse41(targetPtr, previousRowPtr, ref row1Costs, ref row2Costs, ref row3Costs, ref row4Costs, ref row5Costs, ref allOnesVector, sourceChar1, sourceChar2, sourceChar3, sourceChar4, ref columnIndex);
+					CalculateColumn_4Rows_Sse41(targetPtr, previousRowPtr, ref row1Costs, ref row2Costs, ref row3Costs, ref row4Costs, ref row5Costs, ref allOnesVector, sourceChar1, sourceChar2, sourceChar3, sourceChar4, ref columnIndex);
+					CalculateColumn_4Rows_Sse41(targetPtr, previousRowPtr, ref row1Costs, ref row2Costs, ref row3Costs, ref row4Costs, ref row5Costs, ref allOnesVector, sourceChar1, sourceChar2, sourceChar3, sourceChar4, ref columnIndex);
+					CalculateColumn_4Rows_Sse41(targetPtr, previousRowPtr, ref row1Costs, ref row2Costs, ref row3Costs, ref row4Costs, ref row5Costs, ref allOnesVector, sourceChar1, sourceChar2, sourceChar3, sourceChar4, ref columnIndex);
+					CalculateColumn_4Rows_Sse41(targetPtr, previousRowPtr, ref row1Costs, ref row2Costs, ref row3Costs, ref row4Costs, ref row5Costs, ref allOnesVector, sourceChar1, sourceChar2, sourceChar3, sourceChar4, ref columnIndex);
+					CalculateColumn_4Rows_Sse41(targetPtr, previousRowPtr, ref row1Costs, ref row2Costs, ref row3Costs, ref row4Costs, ref row5Costs, ref allOnesVector, sourceChar1, sourceChar2, sourceChar3, sourceChar4, ref columnIndex);
+					CalculateColumn_4Rows_Sse41(targetPtr, previousRowPtr, ref row1Costs, ref row2Costs, ref row3Costs, ref row4Costs, ref row5Costs, ref allOnesVector, sourceChar1, sourceChar2, sourceChar3, sourceChar4, ref columnIndex);
+				}
+
+				if (rowColumnsRemaining >= 4)
+				{
+					rowColumnsRemaining -= 4;
+					CalculateColumn_4Rows_Sse41(targetPtr, previousRowPtr, ref row1Costs, ref row2Costs, ref row3Costs, ref row4Costs, ref row5Costs, ref allOnesVector, sourceChar1, sourceChar2, sourceChar3, sourceChar4, ref columnIndex);
+					CalculateColumn_4Rows_Sse41(targetPtr, previousRowPtr, ref row1Costs, ref row2Costs, ref row3Costs, ref row4Costs, ref row5Costs, ref allOnesVector, sourceChar1, sourceChar2, sourceChar3, sourceChar4, ref columnIndex);
+					CalculateColumn_4Rows_Sse41(targetPtr, previousRowPtr, ref row1Costs, ref row2Costs, ref row3Costs, ref row4Costs, ref row5Costs, ref allOnesVector, sourceChar1, sourceChar2, sourceChar3, sourceChar4, ref columnIndex);
+					CalculateColumn_4Rows_Sse41(targetPtr, previousRowPtr, ref row1Costs, ref row2Costs, ref row3Costs, ref row4Costs, ref row5Costs, ref allOnesVector, sourceChar1, sourceChar2, sourceChar3, sourceChar4, ref columnIndex);
+				}
+
+				while (rowColumnsRemaining > 0)
+				{
+					rowColumnsRemaining--;
+					CalculateColumn_4Rows_Sse41(targetPtr, previousRowPtr, ref row1Costs, ref row2Costs, ref row3Costs, ref row4Costs, ref row5Costs, ref allOnesVector, sourceChar1, sourceChar2, sourceChar3, sourceChar4, ref columnIndex);
+				}
+			}
+		}
+
+		/// <summary>
+		/// Using SSE4.1, calculates the cost for 4 vertically adjacent cells in the virtual matrix.
+		/// Comparing 4 vertically adjacent cells prevents 3 target character lookups, 3 deletion cost lookups and 3 saves of the deletion cost.
+		/// SSE4.1 instructions allow a virtually branchless minimum value computation when the source and target characters don't match.
+		/// </summary>
+		/// <param name="targetPtr"></param>
+		/// <param name="previousRowPtr"></param>
+		/// <param name="row1Costs"></param>
+		/// <param name="row2Costs"></param>
+		/// <param name="row3Costs"></param>
+		/// <param name="row4Costs"></param>
+		/// <param name="row5Costs"></param>
+		/// <param name="allOnesVector"></param>
+		/// <param name="sourceChar1"></param>
+		/// <param name="sourceChar2"></param>
+		/// <param name="sourceChar3"></param>
+		/// <param name="sourceChar4"></param>
+		/// <param name="columnIndex"></param>
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		private static unsafe void CalculateColumn_4Rows_Sse41(
+			char* targetPtr, 
+			int* previousRowPtr, 
+			ref Vector128<int> row1Costs, 
+			ref Vector128<int> row2Costs, 
+			ref Vector128<int> row3Costs, 
+			ref Vector128<int> row4Costs, 
+			ref Vector128<int> row5Costs, 
+			ref Vector128<int> allOnesVector,
+			char sourceChar1, 
+			char sourceChar2, 
+			char sourceChar3, 
+			char sourceChar4, 
+			ref int columnIndex
+		)
+		{
+			var targetChar = targetPtr[columnIndex];
+			var lastDeletionCost = Vector128.Create(previousRowPtr[columnIndex]);
+			var localCost = row1Costs;
+			if (sourceChar1 != targetChar)
+			{
+				localCost = Sse2.Add(
+					Sse41.Min(
+						Sse41.Min(
+							row2Costs,
+							localCost
+						),
+						lastDeletionCost
+					),
+					allOnesVector
+				);
+			}
+			row1Costs = lastDeletionCost;
+			lastDeletionCost = localCost;
+			localCost = row2Costs;
+			if (sourceChar2 != targetChar)
+			{
+				localCost = Sse2.Add(
+					Sse41.Min(
+						Sse41.Min(
+							row3Costs,
+							localCost
+						),
+						lastDeletionCost
+					),
+					allOnesVector
+				);
+			}
+			row2Costs = lastDeletionCost;
+			lastDeletionCost = localCost;
+			localCost = row3Costs;
+			if (sourceChar3 != targetChar)
+			{
+				localCost = Sse2.Add(
+					Sse41.Min(
+						Sse41.Min(
+							row4Costs,
+							localCost
+						),
+						lastDeletionCost
+					),
+					allOnesVector
+				);
+			}
+			row3Costs = lastDeletionCost;
+			lastDeletionCost = localCost;
+			localCost = row4Costs;
+			if (sourceChar4 != targetChar)
+			{
+				localCost = Sse2.Add(
+					Sse41.Min(
+						Sse41.Min(
+							row5Costs,
+							localCost
+						),
+						lastDeletionCost
+					),
+					allOnesVector
+				);
+			}
+			row4Costs = lastDeletionCost;
+			row5Costs = localCost;
+			previousRowPtr[columnIndex++] = row5Costs.GetElement(0);
 		}
 	}
 }

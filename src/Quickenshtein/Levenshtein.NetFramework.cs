@@ -19,7 +19,7 @@ namespace Quickenshtein
 			}
 
 			//Identify and trim any common prefix or suffix between the strings
-			TrimComparison_Framework(source, target, out var startIndex, out var sourceEnd, out var targetEnd);
+			TrimInput_NetFramework(source, target, out var startIndex, out var sourceEnd, out var targetEnd);
 
 			var sourceLength = sourceEnd - startIndex;
 			var targetLength = targetEnd - startIndex;
@@ -64,7 +64,7 @@ namespace Quickenshtein
 		/// <param name="sourceEnd"></param>
 		/// <param name="targetEnd"></param>
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private static unsafe void TrimComparison_Framework(string source, string target, out int startIndex, out int sourceEnd, out int targetEnd)
+		private static unsafe void TrimInput_NetFramework(string source, string target, out int startIndex, out int sourceEnd, out int targetEnd)
 		{
 			sourceEnd = source.Length;
 			targetEnd = target.Length;
