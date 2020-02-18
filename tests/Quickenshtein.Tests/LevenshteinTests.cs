@@ -277,6 +277,13 @@ namespace Quickenshtein.Tests
 		}
 
 		[TestMethod]
+		public void AdditionalTest_EqualLength_5()
+		{
+			var distance = Levenshtein.GetDistance("cBFZNfiKhzCtgbyoxqMP", "wwyUZFQsRbyUcozbPrtR");
+			Assert.AreEqual(20, distance);
+		}
+
+		[TestMethod]
 		public void AdditionalTest_UnEqualLength_1()
 		{
 			var distance = Levenshtein.GetDistance("aaaabbbbccffccddddeeee", "aaababbcbcfcdcddedeee");
