@@ -9,16 +9,14 @@ A quick and memory efficient Levenshtein Distance calculator for .NET
 ## Performance
 
 Quickenshtein gets its speed and memory effiency from a number of different optimizations.
-For .NET Core in particular, Quickenshtein attempts to make use of hardware intrinsics to speed up various parts of the calculation.
-Additionally, Quickenshtein utilises other recent features in .NET which help prevent any memory allocations that need to be GC'ed.
+To get the most performance out of the library, you will need .NET Core 3 or higher as this has support for hardware intrinsics.
 
-To get the most performance out of Quickenshtein, you will need:
-- .NET Core 3+
-- [SSE2 Support](https://en.wikipedia.org/wiki/SSE2#CPU_support) - You very likely have this on your CPU
-- [SSE 4.1 Support](https://en.wikipedia.org/wiki/SSE4#Supporting_CPUs) - You likely have this on your CPU
-- [AVX2 Support](https://en.wikipedia.org/wiki/Advanced_Vector_Extensions#CPUs_with_AVX2) - You likely have this on your CPU
+Quickenshtein takes advantage of the following hardware intrinsics. On any recent x86 system, you will likely have these available.
+- [SSE2](https://en.wikipedia.org/wiki/SSE2#CPU_support)
+- [SSE4.1](https://en.wikipedia.org/wiki/SSE4#Supporting_CPUs)
+- [AVX2](https://en.wikipedia.org/wiki/Advanced_Vector_Extensions#CPUs_with_AVX2)
 
-If your computer doesn't have one of the hardware intrinsics available, Quickenshtein will still work - just slower.
+If your computer doesn't have one of the hardware intrinsics available, Quickenshtein will still work - just slower than optimal.
 
 ## Benchmarking
 
@@ -27,7 +25,7 @@ There are a number of benchmarks in the repository that you can run on your syst
 Most of these benchmarks...
 - Run .NET Framework and .NET Core so you can see how the performance changes between them
 - Compare against a simple baseline Levenshtein Distance implementation with no specific optimizations
-- Compare against [Fastenshtein](https://github.com/DanHarltey/Fastenshtein/), one of the other fastest .NET Levenshtein Distance implementations
+- Compare against [Fastenshtein](https://github.com/DanHarltey/Fastenshtein/), one of the other fast .NET Levenshtein Distance implementations
 
 You can view results to these benchmarks at the links below:
 - [Benchmarking against Fastenshtein](/docs/OverallBenchmarks.md)
