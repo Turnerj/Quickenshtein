@@ -15,7 +15,7 @@ namespace Quickenshtein
 			}
 			if (target == null || target.Length == 0)
 			{
-				return source?.Length ?? 0;
+				return source.Length;
 			}
 
 			//Identify and trim any common prefix or suffix between the strings
