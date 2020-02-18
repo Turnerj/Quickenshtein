@@ -8,8 +8,8 @@ All benchmarks were run with the following configuration:
 ```
 BenchmarkDotNet=v0.12.0, OS=Windows 10.0.18362
 Intel Core i7-6700HQ CPU 2.60GHz (Skylake), 1 CPU, 8 logical and 4 physical cores
-  [Host]     : .NET Framework 4.8 (4.8.4075.0), X64 RyuJIT
-  Job-VTGAFA : .NET Framework 4.8 (4.8.4075.0), X64 RyuJIT
+  [Host]     : .NET Framework 4.8 (4.8.4121.0), X64 RyuJIT
+  Job-VTGAFA : .NET Framework 4.8 (4.8.4121.0), X64 RyuJIT
   Job-ZVNHQX : .NET Core 3.0.1 (CoreCLR 4.700.19.51502, CoreFX 4.700.19.51609), X64 RyuJIT
 ```
 
@@ -18,243 +18,243 @@ Intel Core i7-6700HQ CPU 2.60GHz (Skylake), 1 CPU, 8 logical and 4 physical core
 |          Name | Avg. Speed Up |
 |-------------- |--------------:|
 |      Baseline |         1.000 |
-| Quickenshtein |        11.036 |
-|  Fastenshtein |         7.081 |
+| Quickenshtein |         9.662 |
+|  Fastenshtein |         7.314 |
 
-|        Method |       Runtime |    StringA |    StringB |         Mean |      Error |     StdDev |       Median | Ratio |  Gen 0 | Gen 1 | Gen 2 | Allocated |
-|-------------- |-------------- |----------- |----------- |-------------:|-----------:|-----------:|-------------:|------:|-------:|------:|------:|----------:|
-|      Baseline |    .NET 4.7.2 |            |            |   197.577 ns |  1.7194 ns |  1.4358 ns |   197.635 ns |  1.00 | 0.1018 |     - |     - |     321 B |
-| Quickenshtein |    .NET 4.7.2 |            |            |    11.988 ns |  0.0754 ns |  0.0705 ns |    11.992 ns |  0.06 |      - |     - |     - |         - |
-|  Fastenshtein |    .NET 4.7.2 |            |            |     2.296 ns |  0.0303 ns |  0.0268 ns |     2.294 ns |  0.01 |      - |     - |     - |         - |
-|               |               |            |            |              |            |            |              |       |        |       |       |           |
-|      Baseline | .NET Core 3.0 |            |            |   103.745 ns |  1.4577 ns |  1.3635 ns |   103.322 ns |  1.00 | 0.0764 |     - |     - |     240 B |
-| Quickenshtein | .NET Core 3.0 |            |            |     5.054 ns |  0.0390 ns |  0.0365 ns |     5.049 ns |  0.05 |      - |     - |     - |         - |
-|  Fastenshtein | .NET Core 3.0 |            |            |     2.943 ns |  0.0280 ns |  0.0248 ns |     2.941 ns |  0.03 |      - |     - |     - |         - |
-|               |               |            |            |              |            |            |              |       |        |       |       |           |
-|      Baseline |    .NET 4.7.2 |            | abcdefghij |   206.151 ns |  1.5801 ns |  1.4008 ns |   206.433 ns |  1.00 | 0.1147 |     - |     - |     361 B |
-| Quickenshtein |    .NET 4.7.2 |            | abcdefghij |    12.059 ns |  0.1274 ns |  0.1192 ns |    12.047 ns |  0.06 |      - |     - |     - |         - |
-|  Fastenshtein |    .NET 4.7.2 |            | abcdefghij |    15.219 ns |  0.1262 ns |  0.1180 ns |    15.238 ns |  0.07 | 0.0204 |     - |     - |      64 B |
-|               |               |            |            |              |            |            |              |       |        |       |       |           |
-|      Baseline | .NET Core 3.0 |            | abcdefghij |   114.022 ns |  1.8917 ns |  1.6769 ns |   113.917 ns |  1.00 | 0.0892 |     - |     - |     280 B |
-| Quickenshtein | .NET Core 3.0 |            | abcdefghij |     5.100 ns |  0.0707 ns |  0.0661 ns |     5.121 ns |  0.04 |      - |     - |     - |         - |
-|  Fastenshtein | .NET Core 3.0 |            | abcdefghij |    15.666 ns |  0.1540 ns |  0.1440 ns |    15.624 ns |  0.14 | 0.0204 |     - |     - |      64 B |
-|               |               |            |            |              |            |            |              |       |        |       |       |           |
-|      Baseline |    .NET 4.7.2 |            | jihgfedcba |   211.465 ns |  1.6962 ns |  1.5036 ns |   211.569 ns |  1.00 | 0.1147 |     - |     - |     361 B |
-| Quickenshtein |    .NET 4.7.2 |            | jihgfedcba |    14.127 ns |  0.2408 ns |  0.2011 ns |    14.199 ns |  0.07 |      - |     - |     - |         - |
-|  Fastenshtein |    .NET 4.7.2 |            | jihgfedcba |    19.148 ns |  0.4037 ns |  0.4649 ns |    19.142 ns |  0.09 | 0.0204 |     - |     - |      64 B |
-|               |               |            |            |              |            |            |              |       |        |       |       |           |
-|      Baseline | .NET Core 3.0 |            | jihgfedcba |   117.201 ns |  3.5509 ns |  4.6172 ns |   115.880 ns |  1.00 | 0.0892 |     - |     - |     280 B |
-| Quickenshtein | .NET Core 3.0 |            | jihgfedcba |     4.728 ns |  0.0429 ns |  0.0401 ns |     4.731 ns |  0.04 |      - |     - |     - |         - |
-|  Fastenshtein | .NET Core 3.0 |            | jihgfedcba |    15.485 ns |  0.1975 ns |  0.1751 ns |    15.513 ns |  0.13 | 0.0204 |     - |     - |      64 B |
-|               |               |            |            |              |            |            |              |       |        |       |       |           |
-|      Baseline |    .NET 4.7.2 | abcdefghij |            |   766.600 ns |  2.9119 ns |  2.5814 ns |   767.436 ns | 1.000 | 0.3052 |     - |     - |     963 B |
-| Quickenshtein |    .NET 4.7.2 | abcdefghij |            |    12.494 ns |  0.1185 ns |  0.1108 ns |    12.526 ns | 0.016 |      - |     - |     - |         - |
-|  Fastenshtein |    .NET 4.7.2 | abcdefghij |            |     2.337 ns |  0.0352 ns |  0.0329 ns |     2.329 ns | 0.003 |      - |     - |     - |         - |
-|               |               |            |            |              |            |            |              |       |        |       |       |           |
-|      Baseline | .NET Core 3.0 | abcdefghij |            |   300.820 ns |  2.5575 ns |  2.3923 ns |   300.090 ns | 1.000 | 0.2036 |     - |     - |     640 B |
-| Quickenshtein | .NET Core 3.0 | abcdefghij |            |     5.512 ns |  0.0390 ns |  0.0346 ns |     5.505 ns | 0.018 |      - |     - |     - |         - |
-|  Fastenshtein | .NET Core 3.0 | abcdefghij |            |     2.217 ns |  0.0400 ns |  0.0374 ns |     2.223 ns | 0.007 |      - |     - |     - |         - |
-|               |               |            |            |              |            |            |              |       |        |       |       |           |
-|      Baseline |    .NET 4.7.2 | abcdefghij | abcdefghij | 1,137.291 ns | 10.5860 ns |  9.9022 ns | 1,139.545 ns |  1.00 | 0.4463 |     - |     - |    1404 B |
-| Quickenshtein |    .NET 4.7.2 | abcdefghij | abcdefghij |    22.697 ns |  0.2021 ns |  0.1791 ns |    22.684 ns |  0.02 |      - |     - |     - |         - |
-|  Fastenshtein |    .NET 4.7.2 | abcdefghij | abcdefghij |   233.399 ns |  4.5150 ns |  5.0184 ns |   233.520 ns |  0.21 | 0.0203 |     - |     - |      64 B |
-|               |               |            |            |              |            |            |              |       |        |       |       |           |
-|      Baseline | .NET Core 3.0 | abcdefghij | abcdefghij |   759.784 ns | 16.8996 ns | 49.2968 ns |   732.746 ns |  1.00 | 0.3443 |     - |     - |    1080 B |
-| Quickenshtein | .NET Core 3.0 | abcdefghij | abcdefghij |    16.352 ns |  0.3397 ns |  0.3178 ns |    16.460 ns |  0.02 |      - |     - |     - |         - |
-|  Fastenshtein | .NET Core 3.0 | abcdefghij | abcdefghij |   211.369 ns |  2.2843 ns |  2.0250 ns |   211.857 ns |  0.25 | 0.0203 |     - |     - |      64 B |
-|               |               |            |            |              |            |            |              |       |        |       |       |           |
-|      Baseline |    .NET 4.7.2 | abcdefghij | jihgfedcba | 1,216.135 ns | 13.4144 ns | 12.5478 ns | 1,218.322 ns |  1.00 | 0.4463 |     - |     - |    1404 B |
-| Quickenshtein |    .NET 4.7.2 | abcdefghij | jihgfedcba |   288.745 ns |  2.8551 ns |  2.6707 ns |   289.237 ns |  0.24 |      - |     - |     - |         - |
-|  Fastenshtein |    .NET 4.7.2 | abcdefghij | jihgfedcba |   249.454 ns |  2.5594 ns |  2.3941 ns |   249.327 ns |  0.21 | 0.0200 |     - |     - |      64 B |
-|               |               |            |            |              |            |            |              |       |        |       |       |           |
-|      Baseline | .NET Core 3.0 | abcdefghij | jihgfedcba |   697.494 ns |  5.4684 ns |  5.1151 ns |   696.755 ns |  1.00 | 0.3443 |     - |     - |    1080 B |
-| Quickenshtein | .NET Core 3.0 | abcdefghij | jihgfedcba |   239.061 ns |  1.8918 ns |  1.7696 ns |   239.149 ns |  0.34 |      - |     - |     - |         - |
-|  Fastenshtein | .NET Core 3.0 | abcdefghij | jihgfedcba |   244.821 ns |  2.3952 ns |  2.2405 ns |   244.168 ns |  0.35 | 0.0200 |     - |     - |      64 B |
-|               |               |            |            |              |            |            |              |       |        |       |       |           |
-|      Baseline |    .NET 4.7.2 | jihgfedcba |            |   743.001 ns |  9.2866 ns |  8.2323 ns |   740.712 ns | 1.000 | 0.3052 |     - |     - |     963 B |
-| Quickenshtein |    .NET 4.7.2 | jihgfedcba |            |    12.643 ns |  0.0923 ns |  0.0863 ns |    12.615 ns | 0.017 |      - |     - |     - |         - |
-|  Fastenshtein |    .NET 4.7.2 | jihgfedcba |            |     2.728 ns |  0.0275 ns |  0.0244 ns |     2.732 ns | 0.004 |      - |     - |     - |         - |
-|               |               |            |            |              |            |            |              |       |        |       |       |           |
-|      Baseline | .NET Core 3.0 | jihgfedcba |            |   294.069 ns |  1.8320 ns |  1.7136 ns |   294.376 ns | 1.000 | 0.2036 |     - |     - |     640 B |
-| Quickenshtein | .NET Core 3.0 | jihgfedcba |            |     5.829 ns |  0.0396 ns |  0.0371 ns |     5.837 ns | 0.020 |      - |     - |     - |         - |
-|  Fastenshtein | .NET Core 3.0 | jihgfedcba |            |     2.311 ns |  0.0335 ns |  0.0297 ns |     2.309 ns | 0.008 |      - |     - |     - |         - |
-|               |               |            |            |              |            |            |              |       |        |       |       |           |
-|      Baseline |    .NET 4.7.2 | jihgfedcba | abcdefghij | 1,171.652 ns | 18.7567 ns | 16.6273 ns | 1,170.391 ns |  1.00 | 0.4463 |     - |     - |    1404 B |
-| Quickenshtein |    .NET 4.7.2 | jihgfedcba | abcdefghij |   275.818 ns |  1.6594 ns |  1.5522 ns |   275.415 ns |  0.24 |      - |     - |     - |         - |
-|  Fastenshtein |    .NET 4.7.2 | jihgfedcba | abcdefghij |   249.203 ns |  2.0110 ns |  1.8811 ns |   249.658 ns |  0.21 | 0.0200 |     - |     - |      64 B |
-|               |               |            |            |              |            |            |              |       |        |       |       |           |
-|      Baseline | .NET Core 3.0 | jihgfedcba | abcdefghij |   706.025 ns |  3.8601 ns |  3.4219 ns |   706.622 ns |  1.00 | 0.3443 |     - |     - |    1080 B |
-| Quickenshtein | .NET Core 3.0 | jihgfedcba | abcdefghij |   239.639 ns |  1.9640 ns |  1.8371 ns |   239.556 ns |  0.34 |      - |     - |     - |         - |
-|  Fastenshtein | .NET Core 3.0 | jihgfedcba | abcdefghij |   247.187 ns |  2.1758 ns |  2.0353 ns |   246.824 ns |  0.35 | 0.0200 |     - |     - |      64 B |
-|               |               |            |            |              |            |            |              |       |        |       |       |           |
-|      Baseline |    .NET 4.7.2 | jihgfedcba | jihgfedcba | 1,161.702 ns | 22.4212 ns | 22.0206 ns | 1,157.439 ns |  1.00 | 0.4463 |     - |     - |    1404 B |
-| Quickenshtein |    .NET 4.7.2 | jihgfedcba | jihgfedcba |    23.918 ns |  0.4892 ns |  0.5634 ns |    24.029 ns |  0.02 |      - |     - |     - |         - |
-|  Fastenshtein |    .NET 4.7.2 | jihgfedcba | jihgfedcba |   224.521 ns |  2.9209 ns |  2.7322 ns |   224.377 ns |  0.19 | 0.0203 |     - |     - |      64 B |
-|               |               |            |            |              |            |            |              |       |        |       |       |           |
-|      Baseline | .NET Core 3.0 | jihgfedcba | jihgfedcba |   754.939 ns | 14.9221 ns | 20.4255 ns |   756.211 ns |  1.00 | 0.3443 |     - |     - |    1080 B |
-| Quickenshtein | .NET Core 3.0 | jihgfedcba | jihgfedcba |    13.032 ns |  0.2578 ns |  0.2412 ns |    12.978 ns |  0.02 |      - |     - |     - |         - |
-|  Fastenshtein | .NET Core 3.0 | jihgfedcba | jihgfedcba |   210.461 ns |  2.4807 ns |  2.3205 ns |   210.250 ns |  0.28 | 0.0203 |     - |     - |      64 B |
+|        Method |       Runtime |    StringA |    StringB |         Mean |      Error |     StdDev | Ratio |  Gen 0 | Gen 1 | Gen 2 | Allocated |
+|-------------- |-------------- |----------- |----------- |-------------:|-----------:|-----------:|------:|-------:|------:|------:|----------:|
+|      Baseline |    .NET 4.7.2 |            |            |   195.740 ns |  1.1865 ns |  1.1098 ns |  1.00 | 0.1018 |     - |     - |     321 B |
+| Quickenshtein |    .NET 4.7.2 |            |            |    15.475 ns |  0.2066 ns |  0.1725 ns |  0.08 |      - |     - |     - |         - |
+|  Fastenshtein |    .NET 4.7.2 |            |            |     2.241 ns |  0.0682 ns |  0.0638 ns |  0.01 |      - |     - |     - |         - |
+|               |               |            |            |              |            |            |       |        |       |       |           |
+|      Baseline | .NET Core 3.0 |            |            |   105.939 ns |  0.9124 ns |  0.8535 ns |  1.00 | 0.0764 |     - |     - |     240 B |
+| Quickenshtein | .NET Core 3.0 |            |            |    13.651 ns |  0.1773 ns |  0.1658 ns |  0.13 |      - |     - |     - |         - |
+|  Fastenshtein | .NET Core 3.0 |            |            |     2.208 ns |  0.0452 ns |  0.0423 ns |  0.02 |      - |     - |     - |         - |
+|               |               |            |            |              |            |            |       |        |       |       |           |
+|      Baseline |    .NET 4.7.2 |            | abcdefghij |   230.018 ns |  2.8817 ns |  2.5546 ns |  1.00 | 0.1144 |     - |     - |     361 B |
+| Quickenshtein |    .NET 4.7.2 |            | abcdefghij |    15.515 ns |  0.2361 ns |  0.2209 ns |  0.07 |      - |     - |     - |         - |
+|  Fastenshtein |    .NET 4.7.2 |            | abcdefghij |    15.277 ns |  0.1749 ns |  0.1636 ns |  0.07 | 0.0204 |     - |     - |      64 B |
+|               |               |            |            |              |            |            |       |        |       |       |           |
+|      Baseline | .NET Core 3.0 |            | abcdefghij |   110.449 ns |  1.3865 ns |  1.2970 ns |  1.00 | 0.0892 |     - |     - |     280 B |
+| Quickenshtein | .NET Core 3.0 |            | abcdefghij |    13.844 ns |  0.2570 ns |  0.2404 ns |  0.13 |      - |     - |     - |         - |
+|  Fastenshtein | .NET Core 3.0 |            | abcdefghij |    15.536 ns |  0.2720 ns |  0.2544 ns |  0.14 | 0.0204 |     - |     - |      64 B |
+|               |               |            |            |              |            |            |       |        |       |       |           |
+|      Baseline |    .NET 4.7.2 |            | jihgfedcba |   211.850 ns |  3.0182 ns |  2.6756 ns |  1.00 | 0.1147 |     - |     - |     361 B |
+| Quickenshtein |    .NET 4.7.2 |            | jihgfedcba |    15.545 ns |  0.1252 ns |  0.1110 ns |  0.07 |      - |     - |     - |         - |
+|  Fastenshtein |    .NET 4.7.2 |            | jihgfedcba |    15.340 ns |  0.1530 ns |  0.1431 ns |  0.07 | 0.0204 |     - |     - |      64 B |
+|               |               |            |            |              |            |            |       |        |       |       |           |
+|      Baseline | .NET Core 3.0 |            | jihgfedcba |   111.079 ns |  1.1222 ns |  1.0497 ns |  1.00 | 0.0892 |     - |     - |     280 B |
+| Quickenshtein | .NET Core 3.0 |            | jihgfedcba |    13.643 ns |  0.1520 ns |  0.1269 ns |  0.12 |      - |     - |     - |         - |
+|  Fastenshtein | .NET Core 3.0 |            | jihgfedcba |    15.826 ns |  0.2929 ns |  0.2740 ns |  0.14 | 0.0204 |     - |     - |      64 B |
+|               |               |            |            |              |            |            |       |        |       |       |           |
+|      Baseline |    .NET 4.7.2 | abcdefghij |            |   730.924 ns | 12.2063 ns | 11.4177 ns | 1.000 | 0.3052 |     - |     - |     963 B |
+| Quickenshtein |    .NET 4.7.2 | abcdefghij |            |    16.123 ns |  0.2240 ns |  0.2095 ns | 0.022 |      - |     - |     - |         - |
+|  Fastenshtein |    .NET 4.7.2 | abcdefghij |            |     2.253 ns |  0.0717 ns |  0.0599 ns | 0.003 |      - |     - |     - |         - |
+|               |               |            |            |              |            |            |       |        |       |       |           |
+|      Baseline | .NET Core 3.0 | abcdefghij |            |   285.335 ns |  2.6090 ns |  2.1786 ns | 1.000 | 0.2036 |     - |     - |     640 B |
+| Quickenshtein | .NET Core 3.0 | abcdefghij |            |    13.614 ns |  0.1338 ns |  0.1251 ns | 0.048 |      - |     - |     - |         - |
+|  Fastenshtein | .NET Core 3.0 | abcdefghij |            |     2.206 ns |  0.0396 ns |  0.0371 ns | 0.008 |      - |     - |     - |         - |
+|               |               |            |            |              |            |            |       |        |       |       |           |
+|      Baseline |    .NET 4.7.2 | abcdefghij | abcdefghij | 1,384.793 ns | 10.6727 ns |  9.9833 ns |  1.00 | 0.4463 |     - |     - |    1404 B |
+| Quickenshtein |    .NET 4.7.2 | abcdefghij | abcdefghij |    29.313 ns |  0.3490 ns |  0.3265 ns |  0.02 |      - |     - |     - |         - |
+|  Fastenshtein |    .NET 4.7.2 | abcdefghij | abcdefghij |   198.691 ns |  2.5870 ns |  2.4199 ns |  0.14 | 0.0203 |     - |     - |      64 B |
+|               |               |            |            |              |            |            |       |        |       |       |           |
+|      Baseline | .NET Core 3.0 | abcdefghij | abcdefghij |   678.478 ns |  7.1475 ns |  6.6857 ns |  1.00 | 0.3443 |     - |     - |    1080 B |
+| Quickenshtein | .NET Core 3.0 | abcdefghij | abcdefghij |    25.362 ns |  0.1824 ns |  0.1617 ns |  0.04 |      - |     - |     - |         - |
+|  Fastenshtein | .NET Core 3.0 | abcdefghij | abcdefghij |   203.290 ns |  2.6461 ns |  2.4752 ns |  0.30 | 0.0203 |     - |     - |      64 B |
+|               |               |            |            |              |            |            |       |        |       |       |           |
+|      Baseline |    .NET 4.7.2 | abcdefghij | jihgfedcba | 1,385.150 ns | 13.3516 ns | 11.8358 ns |  1.00 | 0.4463 |     - |     - |    1404 B |
+| Quickenshtein |    .NET 4.7.2 | abcdefghij | jihgfedcba |   338.759 ns |  4.2267 ns |  3.9537 ns |  0.24 |      - |     - |     - |         - |
+|  Fastenshtein |    .NET 4.7.2 | abcdefghij | jihgfedcba |   239.560 ns |  2.3204 ns |  2.1705 ns |  0.17 | 0.0203 |     - |     - |      64 B |
+|               |               |            |            |              |            |            |       |        |       |       |           |
+|      Baseline | .NET Core 3.0 | abcdefghij | jihgfedcba |   693.211 ns |  5.8551 ns |  5.1904 ns |  1.00 | 0.3443 |     - |     - |    1080 B |
+| Quickenshtein | .NET Core 3.0 | abcdefghij | jihgfedcba |   168.395 ns |  1.3449 ns |  1.2580 ns |  0.24 |      - |     - |     - |         - |
+|  Fastenshtein | .NET Core 3.0 | abcdefghij | jihgfedcba |   238.492 ns |  3.5812 ns |  3.3499 ns |  0.34 | 0.0200 |     - |     - |      64 B |
+|               |               |            |            |              |            |            |       |        |       |       |           |
+|      Baseline |    .NET 4.7.2 | jihgfedcba |            |   984.623 ns |  4.4791 ns |  4.1898 ns | 1.000 | 0.3052 |     - |     - |     963 B |
+| Quickenshtein |    .NET 4.7.2 | jihgfedcba |            |    16.085 ns |  0.1205 ns |  0.1127 ns | 0.016 |      - |     - |     - |         - |
+|  Fastenshtein |    .NET 4.7.2 | jihgfedcba |            |     2.269 ns |  0.0346 ns |  0.0307 ns | 0.002 |      - |     - |     - |         - |
+|               |               |            |            |              |            |            |       |        |       |       |           |
+|      Baseline | .NET Core 3.0 | jihgfedcba |            |   286.402 ns |  3.1903 ns |  2.9842 ns | 1.000 | 0.2036 |     - |     - |     640 B |
+| Quickenshtein | .NET Core 3.0 | jihgfedcba |            |    13.401 ns |  0.2048 ns |  0.1916 ns | 0.047 |      - |     - |     - |         - |
+|  Fastenshtein | .NET Core 3.0 | jihgfedcba |            |     2.264 ns |  0.0412 ns |  0.0386 ns | 0.008 |      - |     - |     - |         - |
+|               |               |            |            |              |            |            |       |        |       |       |           |
+|      Baseline |    .NET 4.7.2 | jihgfedcba | abcdefghij | 1,135.711 ns |  6.6567 ns |  6.2267 ns |  1.00 | 0.4463 |     - |     - |    1404 B |
+| Quickenshtein |    .NET 4.7.2 | jihgfedcba | abcdefghij |   341.170 ns |  2.8479 ns |  2.3781 ns |  0.30 |      - |     - |     - |         - |
+|  Fastenshtein |    .NET 4.7.2 | jihgfedcba | abcdefghij |   243.029 ns |  2.8899 ns |  2.7032 ns |  0.21 | 0.0200 |     - |     - |      64 B |
+|               |               |            |            |              |            |            |       |        |       |       |           |
+|      Baseline | .NET Core 3.0 | jihgfedcba | abcdefghij |   687.974 ns |  6.7678 ns |  6.3306 ns |  1.00 | 0.3443 |     - |     - |    1080 B |
+| Quickenshtein | .NET Core 3.0 | jihgfedcba | abcdefghij |   161.045 ns |  1.7999 ns |  1.6836 ns |  0.23 |      - |     - |     - |         - |
+|  Fastenshtein | .NET Core 3.0 | jihgfedcba | abcdefghij |   239.243 ns |  3.0669 ns |  2.7187 ns |  0.35 | 0.0200 |     - |     - |      64 B |
+|               |               |            |            |              |            |            |       |        |       |       |           |
+|      Baseline |    .NET 4.7.2 | jihgfedcba | jihgfedcba | 1,139.077 ns | 12.3701 ns | 10.9658 ns |  1.00 | 0.4463 |     - |     - |    1404 B |
+| Quickenshtein |    .NET 4.7.2 | jihgfedcba | jihgfedcba |    27.335 ns |  0.1215 ns |  0.1136 ns |  0.02 |      - |     - |     - |         - |
+|  Fastenshtein |    .NET 4.7.2 | jihgfedcba | jihgfedcba |   199.568 ns |  2.6660 ns |  2.4938 ns |  0.18 | 0.0203 |     - |     - |      64 B |
+|               |               |            |            |              |            |            |       |        |       |       |           |
+|      Baseline | .NET Core 3.0 | jihgfedcba | jihgfedcba |   684.668 ns |  9.2611 ns |  8.2097 ns |  1.00 | 0.3443 |     - |     - |    1080 B |
+| Quickenshtein | .NET Core 3.0 | jihgfedcba | jihgfedcba |    24.767 ns |  0.2143 ns |  0.2004 ns |  0.04 |      - |     - |     - |         - |
+|  Fastenshtein | .NET Core 3.0 | jihgfedcba | jihgfedcba |   202.760 ns |  2.2859 ns |  2.1382 ns |  0.30 | 0.0203 |     - |     - |      64 B |
 
 ## Medium Text Benchmark
 
 |          Name | Avg. Speed Up |
 |-------------- |--------------:|
 |      Baseline |         1.000 |
-| Quickenshtein |         6.198 |
-|  Fastenshtein |         2.839 |
+| Quickenshtein |         7.241 |
+|  Fastenshtein |         2.855 |
 
 |        Method |       Runtime |             StringA |             StringB |           Mean |          Error |         StdDev | Ratio | RatioSD |    Gen 0 |   Gen 1 | Gen 2 | Allocated |
 |-------------- |-------------- |-------------------- |-------------------- |---------------:|---------------:|---------------:|------:|--------:|---------:|--------:|------:|----------:|
-|      Baseline |    .NET 4.7.2 |                     |                     |     201.617 ns |      4.0677 ns |      6.6833 ns |  1.00 |    0.00 |   0.1018 |       - |     - |     321 B |
-| Quickenshtein |    .NET 4.7.2 |                     |                     |      11.944 ns |      0.1112 ns |      0.1041 ns |  0.06 |    0.00 |        - |       - |     - |         - |
-|  Fastenshtein |    .NET 4.7.2 |                     |                     |       2.248 ns |      0.0459 ns |      0.0407 ns |  0.01 |    0.00 |        - |       - |     - |         - |
+|      Baseline |    .NET 4.7.2 |                     |                     |     197.023 ns |      1.7118 ns |      1.6013 ns |  1.00 |    0.00 |   0.1018 |       - |     - |     321 B |
+| Quickenshtein |    .NET 4.7.2 |                     |                     |      17.406 ns |      0.2781 ns |      0.2601 ns |  0.09 |    0.00 |        - |       - |     - |         - |
+|  Fastenshtein |    .NET 4.7.2 |                     |                     |       2.238 ns |      0.0379 ns |      0.0354 ns |  0.01 |    0.00 |        - |       - |     - |         - |
 |               |               |                     |                     |                |                |                |       |         |          |         |       |           |
-|      Baseline | .NET Core 3.0 |                     |                     |     108.505 ns |      1.0544 ns |      0.9863 ns |  1.00 |    0.00 |   0.0764 |       - |     - |     240 B |
-| Quickenshtein | .NET Core 3.0 |                     |                     |       5.380 ns |      0.0754 ns |      0.0705 ns |  0.05 |    0.00 |        - |       - |     - |         - |
-|  Fastenshtein | .NET Core 3.0 |                     |                     |       2.219 ns |      0.0427 ns |      0.0400 ns |  0.02 |    0.00 |        - |       - |     - |         - |
+|      Baseline | .NET Core 3.0 |                     |                     |     101.540 ns |      0.8181 ns |      0.7653 ns |  1.00 |    0.00 |   0.0764 |       - |     - |     240 B |
+| Quickenshtein | .NET Core 3.0 |                     |                     |      13.591 ns |      0.2820 ns |      0.2638 ns |  0.13 |    0.00 |        - |       - |     - |         - |
+|  Fastenshtein | .NET Core 3.0 |                     |                     |       2.215 ns |      0.0291 ns |      0.0258 ns |  0.02 |    0.00 |        - |       - |     - |         - |
 |               |               |                     |                     |                |                |                |       |         |          |         |       |           |
-|      Baseline |    .NET 4.7.2 |                     | aaba(...)bade [400] |     609.553 ns |      5.3495 ns |      4.7422 ns |  1.00 |    0.00 |   0.6113 |       - |     - |    1926 B |
-| Quickenshtein |    .NET 4.7.2 |                     | aaba(...)bade [400] |      11.958 ns |      0.0683 ns |      0.0639 ns |  0.02 |    0.00 |        - |       - |     - |         - |
-|  Fastenshtein |    .NET 4.7.2 |                     | aaba(...)bade [400] |     378.666 ns |      4.7112 ns |      3.9341 ns |  0.62 |    0.01 |   0.5174 |       - |     - |    1629 B |
+|      Baseline |    .NET 4.7.2 |                     | aaba(...)bade [400] |     605.315 ns |      5.5808 ns |      4.9472 ns |  1.00 |    0.00 |   0.6113 |       - |     - |    1926 B |
+| Quickenshtein |    .NET 4.7.2 |                     | aaba(...)bade [400] |      23.028 ns |      0.2501 ns |      0.2339 ns |  0.04 |    0.00 |        - |       - |     - |         - |
+|  Fastenshtein |    .NET 4.7.2 |                     | aaba(...)bade [400] |     384.604 ns |      2.8927 ns |      2.7059 ns |  0.64 |    0.01 |   0.5174 |       - |     - |    1629 B |
 |               |               |                     |                     |                |                |                |       |         |          |         |       |           |
-|      Baseline | .NET Core 3.0 |                     | aaba(...)bade [400] |     478.573 ns |      5.1581 ns |      4.8249 ns | 1.000 |    0.00 |   0.5865 |       - |     - |    1840 B |
-| Quickenshtein | .NET Core 3.0 |                     | aaba(...)bade [400] |       4.732 ns |      0.0235 ns |      0.0220 ns | 0.010 |    0.00 |        - |       - |     - |         - |
-|  Fastenshtein | .NET Core 3.0 |                     | aaba(...)bade [400] |     360.052 ns |      4.4403 ns |      4.1535 ns | 0.752 |    0.01 |   0.5174 |       - |     - |    1624 B |
+|      Baseline | .NET Core 3.0 |                     | aaba(...)bade [400] |     479.039 ns |      5.1389 ns |      4.8069 ns |  1.00 |    0.00 |   0.5865 |       - |     - |    1840 B |
+| Quickenshtein | .NET Core 3.0 |                     | aaba(...)bade [400] |      13.936 ns |      0.0822 ns |      0.0729 ns |  0.03 |    0.00 |        - |       - |     - |         - |
+|  Fastenshtein | .NET Core 3.0 |                     | aaba(...)bade [400] |     338.406 ns |      6.5874 ns |      6.1618 ns |  0.71 |    0.02 |   0.5174 |       - |     - |    1624 B |
 |               |               |                     |                     |                |                |                |       |         |          |         |       |           |
-|      Baseline |    .NET 4.7.2 |                     | bbeb(...)aabe [400] |     620.371 ns |     12.1686 ns |     18.2134 ns |  1.00 |    0.00 |   0.6113 |       - |     - |    1926 B |
-| Quickenshtein |    .NET 4.7.2 |                     | bbeb(...)aabe [400] |      11.970 ns |      0.1656 ns |      0.1549 ns |  0.02 |    0.00 |        - |       - |     - |         - |
-|  Fastenshtein |    .NET 4.7.2 |                     | bbeb(...)aabe [400] |     377.954 ns |      2.5624 ns |      2.3968 ns |  0.61 |    0.02 |   0.5174 |       - |     - |    1629 B |
+|      Baseline |    .NET 4.7.2 |                     | bbeb(...)aabe [400] |     634.821 ns |      4.6708 ns |      4.3691 ns |  1.00 |    0.00 |   0.6113 |       - |     - |    1926 B |
+| Quickenshtein |    .NET 4.7.2 |                     | bbeb(...)aabe [400] |      15.420 ns |      0.2342 ns |      0.2191 ns |  0.02 |    0.00 |        - |       - |     - |         - |
+|  Fastenshtein |    .NET 4.7.2 |                     | bbeb(...)aabe [400] |     385.320 ns |      5.1582 ns |      4.5726 ns |  0.61 |    0.01 |   0.5174 |       - |     - |    1629 B |
 |               |               |                     |                     |                |                |                |       |         |          |         |       |           |
-|      Baseline | .NET Core 3.0 |                     | bbeb(...)aabe [400] |     476.900 ns |      4.4747 ns |      4.1856 ns |  1.00 |    0.00 |   0.5865 |       - |     - |    1840 B |
-| Quickenshtein | .NET Core 3.0 |                     | bbeb(...)aabe [400] |       5.065 ns |      0.0706 ns |      0.0661 ns |  0.01 |    0.00 |        - |       - |     - |         - |
-|  Fastenshtein | .NET Core 3.0 |                     | bbeb(...)aabe [400] |     383.337 ns |      7.3674 ns |      6.8914 ns |  0.80 |    0.02 |   0.5174 |       - |     - |    1624 B |
+|      Baseline | .NET Core 3.0 |                     | bbeb(...)aabe [400] |     477.282 ns |      4.1545 ns |      3.6828 ns |  1.00 |    0.00 |   0.5865 |       - |     - |    1840 B |
+| Quickenshtein | .NET Core 3.0 |                     | bbeb(...)aabe [400] |      13.986 ns |      0.1742 ns |      0.1629 ns |  0.03 |    0.00 |        - |       - |     - |         - |
+|  Fastenshtein | .NET Core 3.0 |                     | bbeb(...)aabe [400] |     337.712 ns |      6.2462 ns |      5.8427 ns |  0.71 |    0.02 |   0.5174 |       - |     - |    1624 B |
 |               |               |                     |                     |                |                |                |       |         |          |         |       |           |
-|      Baseline |    .NET 4.7.2 | aaba(...)bade [400] |                     |  19,256.127 ns |    373.3783 ns |    349.2583 ns | 1.000 |    0.00 |   7.8430 |       - |     - |   24689 B |
-| Quickenshtein |    .NET 4.7.2 | aaba(...)bade [400] |                     |      12.932 ns |      0.3090 ns |      0.2890 ns | 0.001 |    0.00 |        - |       - |     - |         - |
-|  Fastenshtein |    .NET 4.7.2 | aaba(...)bade [400] |                     |       2.406 ns |      0.0656 ns |      0.0613 ns | 0.000 |    0.00 |        - |       - |     - |         - |
+|      Baseline |    .NET 4.7.2 | aaba(...)bade [400] |                     |  17,425.651 ns |    233.5566 ns |    218.4690 ns | 1.000 |    0.00 |   7.8430 |       - |     - |   24689 B |
+| Quickenshtein |    .NET 4.7.2 | aaba(...)bade [400] |                     |      15.960 ns |      0.2147 ns |      0.2008 ns | 0.001 |    0.00 |        - |       - |     - |         - |
+|  Fastenshtein |    .NET 4.7.2 | aaba(...)bade [400] |                     |       2.331 ns |      0.0688 ns |      0.0610 ns | 0.000 |    0.00 |        - |       - |     - |         - |
 |               |               |                     |                     |                |                |                |       |         |          |         |       |           |
-|      Baseline | .NET Core 3.0 | aaba(...)bade [400] |                     |   7,347.427 ns |    101.2861 ns |     84.5785 ns | 1.000 |    0.00 |   5.1727 |       - |     - |   16240 B |
-| Quickenshtein | .NET Core 3.0 | aaba(...)bade [400] |                     |       5.780 ns |      0.1251 ns |      0.1171 ns | 0.001 |    0.00 |        - |       - |     - |         - |
-|  Fastenshtein | .NET Core 3.0 | aaba(...)bade [400] |                     |       2.447 ns |      0.0843 ns |      0.0788 ns | 0.000 |    0.00 |        - |       - |     - |         - |
+|      Baseline | .NET Core 3.0 | aaba(...)bade [400] |                     |   6,885.818 ns |     63.6982 ns |     59.5834 ns | 1.000 |    0.00 |   5.1727 |       - |     - |   16240 B |
+| Quickenshtein | .NET Core 3.0 | aaba(...)bade [400] |                     |      13.344 ns |      0.1814 ns |      0.1697 ns | 0.002 |    0.00 |        - |       - |     - |         - |
+|  Fastenshtein | .NET Core 3.0 | aaba(...)bade [400] |                     |       2.203 ns |      0.0492 ns |      0.0411 ns | 0.000 |    0.00 |        - |       - |     - |         - |
 |               |               |                     |                     |                |                |                |       |         |          |         |       |           |
-|      Baseline |    .NET 4.7.2 | aaba(...)bade [400] | aaba(...)bade [400] | 809,916.729 ns | 15,937.0943 ns | 28,328.1690 ns | 1.000 |    0.00 | 139.6484 | 56.6406 |     - |  668257 B |
-| Quickenshtein |    .NET 4.7.2 | aaba(...)bade [400] | aaba(...)bade [400] |     358.738 ns |      3.1872 ns |      2.6615 ns | 0.000 |    0.00 |        - |       - |     - |         - |
-|  Fastenshtein |    .NET 4.7.2 | aaba(...)bade [400] | aaba(...)bade [400] | 301,947.140 ns |  5,396.0158 ns |  4,783.4275 ns | 0.385 |    0.01 |   0.4883 |       - |     - |    1633 B |
+|      Baseline |    .NET 4.7.2 | aaba(...)bade [400] | aaba(...)bade [400] | 729,674.499 ns |  6,787.7264 ns |  6,349.2435 ns | 1.000 |    0.00 | 139.6484 | 56.6406 |     - |  668257 B |
+| Quickenshtein |    .NET 4.7.2 | aaba(...)bade [400] | aaba(...)bade [400] |     355.110 ns |      4.8682 ns |      4.5537 ns | 0.000 |    0.00 |        - |       - |     - |         - |
+|  Fastenshtein |    .NET 4.7.2 | aaba(...)bade [400] | aaba(...)bade [400] | 283,061.891 ns |  3,996.0984 ns |  3,737.9529 ns | 0.388 |    0.01 |   0.4883 |       - |     - |    1633 B |
 |               |               |                     |                     |                |                |                |       |         |          |         |       |           |
-|      Baseline | .NET Core 3.0 | aaba(...)bade [400] | aaba(...)bade [400] | 718,330.951 ns | 10,566.6908 ns |  9,884.0891 ns | 1.000 |    0.00 | 121.0938 | 60.5469 |     - |  657841 B |
-| Quickenshtein | .NET Core 3.0 | aaba(...)bade [400] | aaba(...)bade [400] |     348.213 ns |      3.4491 ns |      3.2263 ns | 0.000 |    0.00 |        - |       - |     - |         - |
-|  Fastenshtein | .NET Core 3.0 | aaba(...)bade [400] | aaba(...)bade [400] | 291,673.405 ns |  2,670.9939 ns |  2,498.4494 ns | 0.406 |    0.00 |   0.4883 |       - |     - |    1625 B |
+|      Baseline | .NET Core 3.0 | aaba(...)bade [400] | aaba(...)bade [400] | 670,330.378 ns |  6,699.6008 ns |  6,266.8107 ns | 1.000 |    0.00 | 121.0938 | 60.5469 |     - |  657841 B |
+| Quickenshtein | .NET Core 3.0 | aaba(...)bade [400] | aaba(...)bade [400] |      37.848 ns |      0.1176 ns |      0.1042 ns | 0.000 |    0.00 |        - |       - |     - |         - |
+|  Fastenshtein | .NET Core 3.0 | aaba(...)bade [400] | aaba(...)bade [400] | 273,922.562 ns |  3,285.7310 ns |  3,073.4748 ns | 0.409 |    0.01 |   0.4883 |       - |     - |    1625 B |
 |               |               |                     |                     |                |                |                |       |         |          |         |       |           |
-|      Baseline |    .NET 4.7.2 | aaba(...)bade [400] | bbeb(...)aabe [400] | 847,076.758 ns | 12,031.3026 ns | 11,254.0879 ns |  1.00 |    0.00 | 138.6719 | 55.6641 |     - |  668316 B |
-| Quickenshtein |    .NET 4.7.2 | aaba(...)bade [400] | bbeb(...)aabe [400] | 523,633.255 ns |  8,734.3176 ns |  8,170.0861 ns |  0.62 |    0.01 |        - |       - |     - |         - |
-|  Fastenshtein |    .NET 4.7.2 | aaba(...)bade [400] | bbeb(...)aabe [400] | 405,253.770 ns |  5,827.4305 ns |  5,450.9821 ns |  0.48 |    0.01 |   0.4883 |       - |     - |    1632 B |
+|      Baseline |    .NET 4.7.2 | aaba(...)bade [400] | bbeb(...)aabe [400] | 796,480.931 ns | 11,127.4097 ns | 10,408.5860 ns |  1.00 |    0.00 | 138.6719 | 55.6641 |     - |  668316 B |
+| Quickenshtein |    .NET 4.7.2 | aaba(...)bade [400] | bbeb(...)aabe [400] | 721,459.648 ns |  6,840.2613 ns |  6,398.3846 ns |  0.91 |    0.02 |        - |       - |     - |         - |
+|  Fastenshtein |    .NET 4.7.2 | aaba(...)bade [400] | bbeb(...)aabe [400] | 379,693.929 ns |  5,322.3761 ns |  4,978.5539 ns |  0.48 |    0.01 |   0.4883 |       - |     - |    1632 B |
 |               |               |                     |                     |                |                |                |       |         |          |         |       |           |
-|      Baseline | .NET Core 3.0 | aaba(...)bade [400] | bbeb(...)aabe [400] | 837,523.223 ns | 14,259.3312 ns | 13,338.1872 ns |  1.00 |    0.00 | 121.0938 | 60.5469 |     - |  657848 B |
-| Quickenshtein | .NET Core 3.0 | aaba(...)bade [400] | bbeb(...)aabe [400] | 603,136.251 ns |  4,214.5585 ns |  3,736.0963 ns |  0.72 |    0.01 |        - |       - |     - |         - |
-|  Fastenshtein | .NET Core 3.0 | aaba(...)bade [400] | bbeb(...)aabe [400] | 415,975.376 ns |  5,517.3183 ns |  5,160.9030 ns |  0.50 |    0.01 |   0.4883 |       - |     - |    1625 B |
+|      Baseline | .NET Core 3.0 | aaba(...)bade [400] | bbeb(...)aabe [400] | 763,913.190 ns | 11,322.1042 ns | 10,590.7033 ns |  1.00 |    0.00 | 120.1172 | 59.5703 |     - |  657841 B |
+| Quickenshtein | .NET Core 3.0 | aaba(...)bade [400] | bbeb(...)aabe [400] | 115,824.089 ns |  1,348.7765 ns |  1,053.0360 ns |  0.15 |    0.00 |        - |       - |     - |         - |
+|  Fastenshtein | .NET Core 3.0 | aaba(...)bade [400] | bbeb(...)aabe [400] | 394,268.281 ns |  5,374.2455 ns |  5,027.0726 ns |  0.52 |    0.01 |   0.4883 |       - |     - |    1626 B |
 |               |               |                     |                     |                |                |                |       |         |          |         |       |           |
-|      Baseline |    .NET 4.7.2 | bbeb(...)aabe [400] |                     |  19,126.668 ns |    379.6868 ns |    519.7196 ns | 1.000 |    0.00 |   7.8430 |       - |     - |   24689 B |
-| Quickenshtein |    .NET 4.7.2 | bbeb(...)aabe [400] |                     |      12.418 ns |      0.0889 ns |      0.0831 ns | 0.001 |    0.00 |        - |       - |     - |         - |
-|  Fastenshtein |    .NET 4.7.2 | bbeb(...)aabe [400] |                     |       2.269 ns |      0.0423 ns |      0.0396 ns | 0.000 |    0.00 |        - |       - |     - |         - |
+|      Baseline |    .NET 4.7.2 | bbeb(...)aabe [400] |                     |  17,462.321 ns |    203.9125 ns |    190.7399 ns | 1.000 |    0.00 |   7.8430 |       - |     - |   24689 B |
+| Quickenshtein |    .NET 4.7.2 | bbeb(...)aabe [400] |                     |      24.891 ns |      0.2231 ns |      0.2087 ns | 0.001 |    0.00 |        - |       - |     - |         - |
+|  Fastenshtein |    .NET 4.7.2 | bbeb(...)aabe [400] |                     |       2.247 ns |      0.0376 ns |      0.0352 ns | 0.000 |    0.00 |        - |       - |     - |         - |
 |               |               |                     |                     |                |                |                |       |         |          |         |       |           |
-|      Baseline | .NET Core 3.0 | bbeb(...)aabe [400] |                     |   6,670.389 ns |    111.3552 ns |     98.7135 ns | 1.000 |    0.00 |   5.1727 |       - |     - |   16240 B |
-| Quickenshtein | .NET Core 3.0 | bbeb(...)aabe [400] |                     |       5.455 ns |      0.1010 ns |      0.0945 ns | 0.001 |    0.00 |        - |       - |     - |         - |
-|  Fastenshtein | .NET Core 3.0 | bbeb(...)aabe [400] |                     |       2.292 ns |      0.0339 ns |      0.0317 ns | 0.000 |    0.00 |        - |       - |     - |         - |
+|      Baseline | .NET Core 3.0 | bbeb(...)aabe [400] |                     |   6,558.226 ns |    104.5617 ns |     97.8071 ns | 1.000 |    0.00 |   5.1727 |       - |     - |   16240 B |
+| Quickenshtein | .NET Core 3.0 | bbeb(...)aabe [400] |                     |      13.609 ns |      0.1689 ns |      0.1411 ns | 0.002 |    0.00 |        - |       - |     - |         - |
+|  Fastenshtein | .NET Core 3.0 | bbeb(...)aabe [400] |                     |       2.197 ns |      0.0482 ns |      0.0451 ns | 0.000 |    0.00 |        - |       - |     - |         - |
 |               |               |                     |                     |                |                |                |       |         |          |         |       |           |
-|      Baseline |    .NET 4.7.2 | bbeb(...)aabe [400] | aaba(...)bade [400] | 796,420.098 ns |  4,055.6595 ns |  3,793.6664 ns |  1.00 |    0.00 | 138.6719 | 55.6641 |     - |  668316 B |
-| Quickenshtein |    .NET 4.7.2 | bbeb(...)aabe [400] | aaba(...)bade [400] | 500,883.949 ns |  5,353.4989 ns |  4,745.7374 ns |  0.63 |    0.01 |        - |       - |     - |         - |
-|  Fastenshtein |    .NET 4.7.2 | bbeb(...)aabe [400] | aaba(...)bade [400] | 385,177.897 ns |  3,207.6234 ns |  3,000.4129 ns |  0.48 |    0.00 |   0.4883 |       - |     - |    1632 B |
+|      Baseline |    .NET 4.7.2 | bbeb(...)aabe [400] | aaba(...)bade [400] | 783,196.875 ns |  5,738.9296 ns |  5,368.1983 ns |  1.00 |    0.00 | 138.6719 | 55.6641 |     - |  668316 B |
+| Quickenshtein |    .NET 4.7.2 | bbeb(...)aabe [400] | aaba(...)bade [400] | 728,991.296 ns | 10,615.6260 ns |  9,929.8631 ns |  0.93 |    0.02 |        - |       - |     - |         - |
+|  Fastenshtein |    .NET 4.7.2 | bbeb(...)aabe [400] | aaba(...)bade [400] | 379,858.089 ns |  3,026.7450 ns |  2,831.2191 ns |  0.49 |    0.01 |   0.4883 |       - |     - |    1632 B |
 |               |               |                     |                     |                |                |                |       |         |          |         |       |           |
-|      Baseline | .NET Core 3.0 | bbeb(...)aabe [400] | aaba(...)bade [400] | 764,360.299 ns |  4,703.5741 ns |  3,927.6974 ns |  1.00 |    0.00 | 121.0938 | 59.5703 |     - |  657848 B |
-| Quickenshtein | .NET Core 3.0 | bbeb(...)aabe [400] | aaba(...)bade [400] | 578,130.964 ns |  4,609.7424 ns |  4,311.9559 ns |  0.76 |    0.01 |        - |       - |     - |         - |
-|  Fastenshtein | .NET Core 3.0 | bbeb(...)aabe [400] | aaba(...)bade [400] | 346,342.236 ns |  4,291.9674 ns |  4,014.7090 ns |  0.45 |    0.01 |   0.4883 |       - |     - |    1625 B |
+|      Baseline | .NET Core 3.0 | bbeb(...)aabe [400] | aaba(...)bade [400] | 763,283.975 ns |  6,392.3526 ns |  5,979.4106 ns |  1.00 |    0.00 | 121.0938 | 60.5469 |     - |  657845 B |
+| Quickenshtein | .NET Core 3.0 | bbeb(...)aabe [400] | aaba(...)bade [400] | 115,810.563 ns |  1,134.6754 ns |  1,005.8602 ns |  0.15 |    0.00 |        - |       - |     - |         - |
+|  Fastenshtein | .NET Core 3.0 | bbeb(...)aabe [400] | aaba(...)bade [400] | 384,485.052 ns |  6,287.4124 ns |  5,881.2494 ns |  0.50 |    0.01 |   0.4883 |       - |     - |    1625 B |
 |               |               |                     |                     |                |                |                |       |         |          |         |       |           |
-|      Baseline |    .NET 4.7.2 | bbeb(...)aabe [400] | bbeb(...)aabe [400] | 726,502.402 ns |  6,164.8706 ns |  5,766.6238 ns | 1.000 |    0.00 | 139.6484 | 56.6406 |     - |  668257 B |
-| Quickenshtein |    .NET 4.7.2 | bbeb(...)aabe [400] | bbeb(...)aabe [400] |     347.403 ns |      6.9058 ns |      6.4597 ns | 0.000 |    0.00 |        - |       - |     - |         - |
-|  Fastenshtein |    .NET 4.7.2 | bbeb(...)aabe [400] | bbeb(...)aabe [400] | 305,745.110 ns |  4,293.8562 ns |  3,806.3917 ns | 0.421 |    0.01 |   0.4883 |       - |     - |    1633 B |
+|      Baseline |    .NET 4.7.2 | bbeb(...)aabe [400] | bbeb(...)aabe [400] | 722,671.094 ns |  5,506.6038 ns |  5,150.8806 ns | 1.000 |    0.00 | 139.6484 | 56.6406 |     - |  668257 B |
+| Quickenshtein |    .NET 4.7.2 | bbeb(...)aabe [400] | bbeb(...)aabe [400] |     359.816 ns |      3.4561 ns |      2.8860 ns | 0.000 |    0.00 |        - |       - |     - |         - |
+|  Fastenshtein |    .NET 4.7.2 | bbeb(...)aabe [400] | bbeb(...)aabe [400] | 290,177.669 ns |  2,944.2092 ns |  2,754.0152 ns | 0.402 |    0.00 |   0.4883 |       - |     - |    1633 B |
 |               |               |                     |                     |                |                |                |       |         |          |         |       |           |
-|      Baseline | .NET Core 3.0 | bbeb(...)aabe [400] | bbeb(...)aabe [400] | 710,180.247 ns | 12,629.4737 ns | 11,813.6176 ns | 1.000 |    0.00 | 122.0703 | 60.5469 |     - |  657848 B |
-| Quickenshtein | .NET Core 3.0 | bbeb(...)aabe [400] | bbeb(...)aabe [400] |     341.467 ns |      4.0213 ns |      3.7616 ns | 0.000 |    0.00 |        - |       - |     - |         - |
-|  Fastenshtein | .NET Core 3.0 | bbeb(...)aabe [400] | bbeb(...)aabe [400] | 288,544.839 ns |  2,895.9713 ns |  2,708.8934 ns | 0.406 |    0.01 |   0.4883 |       - |     - |    1625 B |
+|      Baseline | .NET Core 3.0 | bbeb(...)aabe [400] | bbeb(...)aabe [400] | 663,216.370 ns |  7,158.3374 ns |  6,695.9132 ns | 1.000 |    0.00 | 121.0938 | 60.5469 |     - |  657841 B |
+| Quickenshtein | .NET Core 3.0 | bbeb(...)aabe [400] | bbeb(...)aabe [400] |      42.361 ns |      0.4857 ns |      0.4544 ns | 0.000 |    0.00 |        - |       - |     - |         - |
+|  Fastenshtein | .NET Core 3.0 | bbeb(...)aabe [400] | bbeb(...)aabe [400] | 275,902.041 ns |  2,837.0661 ns |  2,653.7934 ns | 0.416 |    0.01 |   0.4883 |       - |     - |    1626 B |
 
 ## Long Text Comparison
 
 |          Name | Avg. Speed Up |
 |-------------- |--------------:|
 |      Baseline |         1.000 |
-| Quickenshtein |        12.278 |
-|  Fastenshtein |         2.895 |
+| Quickenshtein |        17.176 |
+|  Fastenshtein |         2.978 |
 
 |        Method |       Runtime |              StringA |              StringB |               Mean |             Error |            StdDev | Ratio | RatioSD |      Gen 0 |      Gen 1 |     Gen 2 |   Allocated |
 |-------------- |-------------- |--------------------- |--------------------- |-------------------:|------------------:|------------------:|------:|--------:|-----------:|-----------:|----------:|------------:|
-|      Baseline |    .NET 4.7.2 |                      |                      |         192.750 ns |         0.9976 ns |         0.9332 ns |  1.00 |    0.00 |     0.1018 |          - |         - |       321 B |
-| Quickenshtein |    .NET 4.7.2 |                      |                      |          11.802 ns |         0.1287 ns |         0.1204 ns |  0.06 |    0.00 |          - |          - |         - |           - |
-|  Fastenshtein |    .NET 4.7.2 |                      |                      |           2.244 ns |         0.0290 ns |         0.0243 ns |  0.01 |    0.00 |          - |          - |         - |           - |
+|      Baseline |    .NET 4.7.2 |                      |                      |         196.816 ns |         1.9785 ns |         1.6521 ns |  1.00 |    0.00 |     0.1018 |          - |         - |       321 B |
+| Quickenshtein |    .NET 4.7.2 |                      |                      |          15.708 ns |         0.2174 ns |         0.2033 ns |  0.08 |    0.00 |          - |          - |         - |           - |
+|  Fastenshtein |    .NET 4.7.2 |                      |                      |           2.329 ns |         0.0769 ns |         0.0642 ns |  0.01 |    0.00 |          - |          - |         - |           - |
 |               |               |                      |                      |                    |                   |                   |       |         |            |            |           |             |
-|      Baseline | .NET Core 3.0 |                      |                      |         100.859 ns |         1.1278 ns |         1.0549 ns |  1.00 |    0.00 |     0.0764 |          - |         - |       240 B |
-| Quickenshtein | .NET Core 3.0 |                      |                      |           4.647 ns |         0.0793 ns |         0.0742 ns |  0.05 |    0.00 |          - |          - |         - |           - |
-|  Fastenshtein | .NET Core 3.0 |                      |                      |           2.198 ns |         0.0466 ns |         0.0436 ns |  0.02 |    0.00 |          - |          - |         - |           - |
+|      Baseline | .NET Core 3.0 |                      |                      |         102.702 ns |         1.2210 ns |         1.1421 ns |  1.00 |    0.00 |     0.0764 |          - |         - |       240 B |
+| Quickenshtein | .NET Core 3.0 |                      |                      |          13.511 ns |         0.1152 ns |         0.1078 ns |  0.13 |    0.00 |          - |          - |         - |           - |
+|  Fastenshtein | .NET Core 3.0 |                      |                      |           2.925 ns |         0.0406 ns |         0.0380 ns |  0.03 |    0.00 |          - |          - |         - |           - |
 |               |               |                      |                      |                    |                   |                   |       |         |            |            |           |             |
-|      Baseline |    .NET 4.7.2 |                      | aabc(...)ecba [7999] |       7,895.033 ns |       156.6692 ns |       130.8259 ns | 1.000 |    0.00 |    10.1929 |          - |         - |     32382 B |
-| Quickenshtein |    .NET 4.7.2 |                      | aabc(...)ecba [7999] |          11.866 ns |         0.1384 ns |         0.1294 ns | 0.002 |    0.00 |          - |          - |         - |           - |
-|  Fastenshtein |    .NET 4.7.2 |                      | aabc(...)ecba [7999] |       6,732.158 ns |        68.7164 ns |        64.2773 ns | 0.852 |    0.02 |    10.0937 |          - |         - |     32048 B |
+|      Baseline |    .NET 4.7.2 |                      | aabc(...)ecba [7999] |       8,074.978 ns |       147.0423 ns |       137.5435 ns | 1.000 |    0.00 |    10.1929 |          - |         - |     32382 B |
+| Quickenshtein |    .NET 4.7.2 |                      | aabc(...)ecba [7999] |          17.688 ns |         0.2402 ns |         0.2247 ns | 0.002 |    0.00 |          - |          - |         - |           - |
+|  Fastenshtein |    .NET 4.7.2 |                      | aabc(...)ecba [7999] |       6,978.405 ns |        73.7075 ns |        65.3398 ns | 0.866 |    0.02 |    10.0937 |          - |         - |     32048 B |
 |               |               |                      |                      |                    |                   |                   |       |         |            |            |           |             |
-|      Baseline | .NET Core 3.0 |                      | aabc(...)ecba [7999] |       7,766.478 ns |        79.9472 ns |        70.8711 ns | 1.000 |    0.00 |    10.1929 |          - |         - |     32232 B |
-| Quickenshtein | .NET Core 3.0 |                      | aabc(...)ecba [7999] |           5.532 ns |         0.1485 ns |         0.2481 ns | 0.001 |    0.00 |          - |          - |         - |           - |
-|  Fastenshtein | .NET Core 3.0 |                      | aabc(...)ecba [7999] |       6,901.137 ns |       248.7993 ns |       305.5479 ns | 0.899 |    0.05 |    10.0937 |          - |         - |     32024 B |
+|      Baseline | .NET Core 3.0 |                      | aabc(...)ecba [7999] |       7,112.579 ns |        81.4836 ns |        76.2198 ns | 1.000 |    0.00 |    10.2005 |          - |         - |     32232 B |
+| Quickenshtein | .NET Core 3.0 |                      | aabc(...)ecba [7999] |          13.577 ns |         0.2074 ns |         0.1940 ns | 0.002 |    0.00 |          - |          - |         - |           - |
+|  Fastenshtein | .NET Core 3.0 |                      | aabc(...)ecba [7999] |       7,043.130 ns |        66.3289 ns |        62.0441 ns | 0.990 |    0.01 |    10.0937 |          - |         - |     32024 B |
 |               |               |                      |                      |                    |                   |                   |       |         |            |            |           |             |
-|      Baseline |    .NET 4.7.2 |                      | babd(...)cbaa [7999] |       8,021.664 ns |        67.1231 ns |        59.5028 ns | 1.000 |    0.00 |    10.1929 |          - |         - |     32382 B |
-| Quickenshtein |    .NET 4.7.2 |                      | babd(...)cbaa [7999] |          13.159 ns |         0.3013 ns |         0.7334 ns | 0.002 |    0.00 |          - |          - |         - |           - |
-|  Fastenshtein |    .NET 4.7.2 |                      | babd(...)cbaa [7999] |       7,532.363 ns |       150.3953 ns |       147.7083 ns | 0.938 |    0.02 |    10.0937 |          - |         - |     32048 B |
+|      Baseline |    .NET 4.7.2 |                      | babd(...)cbaa [7999] |       8,103.947 ns |       161.8313 ns |       143.4592 ns | 1.000 |    0.00 |    10.1929 |          - |         - |     32382 B |
+| Quickenshtein |    .NET 4.7.2 |                      | babd(...)cbaa [7999] |          15.595 ns |         0.2691 ns |         0.2517 ns | 0.002 |    0.00 |          - |          - |         - |           - |
+|  Fastenshtein |    .NET 4.7.2 |                      | babd(...)cbaa [7999] |       6,973.487 ns |        57.2032 ns |        53.5079 ns | 0.861 |    0.02 |    10.0937 |          - |         - |     32048 B |
 |               |               |                      |                      |                    |                   |                   |       |         |            |            |           |             |
-|      Baseline | .NET Core 3.0 |                      | babd(...)cbaa [7999] |       7,927.764 ns |       154.7524 ns |       221.9412 ns | 1.000 |    0.00 |    10.1929 |          - |         - |     32232 B |
-| Quickenshtein | .NET Core 3.0 |                      | babd(...)cbaa [7999] |           5.076 ns |         0.1362 ns |         0.1398 ns | 0.001 |    0.00 |          - |          - |         - |           - |
-|  Fastenshtein | .NET Core 3.0 |                      | babd(...)cbaa [7999] |       7,291.226 ns |       103.7682 ns |        97.0649 ns | 0.910 |    0.03 |    10.1013 |          - |         - |     32024 B |
+|      Baseline | .NET Core 3.0 |                      | babd(...)cbaa [7999] |       7,988.915 ns |       166.6674 ns |       155.9008 ns | 1.000 |    0.00 |    10.1929 |          - |         - |     32232 B |
+| Quickenshtein | .NET Core 3.0 |                      | babd(...)cbaa [7999] |          13.337 ns |         0.2232 ns |         0.2087 ns | 0.002 |    0.00 |          - |          - |         - |           - |
+|  Fastenshtein | .NET Core 3.0 |                      | babd(...)cbaa [7999] |       6,193.093 ns |        74.0674 ns |        69.2827 ns | 0.776 |    0.02 |    10.1013 |          - |         - |     32024 B |
 |               |               |                      |                      |                    |                   |                   |       |         |            |            |           |             |
-|      Baseline |    .NET 4.7.2 | aabc(...)ecba [7999] |                      |     354,240.063 ns |     2,969.2365 ns |     2,777.4257 ns | 1.000 |    0.00 |   142.5781 |          - |         - |    452484 B |
-| Quickenshtein |    .NET 4.7.2 | aabc(...)ecba [7999] |                      |          12.382 ns |         0.1270 ns |         0.1188 ns | 0.000 |    0.00 |          - |          - |         - |           - |
-|  Fastenshtein |    .NET 4.7.2 | aabc(...)ecba [7999] |                      |           2.284 ns |         0.0315 ns |         0.0295 ns | 0.000 |    0.00 |          - |          - |         - |           - |
+|      Baseline |    .NET 4.7.2 | aabc(...)ecba [7999] |                      |     338,494.183 ns |     6,950.6189 ns |     6,501.6132 ns | 1.000 |    0.00 |   142.5781 |          - |         - |    452484 B |
+| Quickenshtein |    .NET 4.7.2 | aabc(...)ecba [7999] |                      |          19.685 ns |         0.2563 ns |         0.2398 ns | 0.000 |    0.00 |          - |          - |         - |           - |
+|  Fastenshtein |    .NET 4.7.2 | aabc(...)ecba [7999] |                      |           2.669 ns |         0.0646 ns |         0.0604 ns | 0.000 |    0.00 |          - |          - |         - |           - |
 |               |               |                      |                      |                    |                   |                   |       |         |            |            |           |             |
-|      Baseline | .NET Core 3.0 | aabc(...)ecba [7999] |                      |     153,995.417 ns |     2,083.9942 ns |     1,847.4066 ns | 1.000 |    0.00 |    78.8574 |    20.5078 |         - |    320202 B |
-| Quickenshtein | .NET Core 3.0 | aabc(...)ecba [7999] |                      |           4.719 ns |         0.0532 ns |         0.0498 ns | 0.000 |    0.00 |          - |          - |         - |           - |
-|  Fastenshtein | .NET Core 3.0 | aabc(...)ecba [7999] |                      |           2.227 ns |         0.0342 ns |         0.0319 ns | 0.000 |    0.00 |          - |          - |         - |           - |
+|      Baseline | .NET Core 3.0 | aabc(...)ecba [7999] |                      |     154,817.900 ns |     2,899.1411 ns |     2,847.3442 ns | 1.000 |    0.00 |    95.9473 |     4.3945 |         - |    320202 B |
+| Quickenshtein | .NET Core 3.0 | aabc(...)ecba [7999] |                      |          13.802 ns |         0.1482 ns |         0.1314 ns | 0.000 |    0.00 |          - |          - |         - |           - |
+|  Fastenshtein | .NET Core 3.0 | aabc(...)ecba [7999] |                      |           2.295 ns |         0.0647 ns |         0.0606 ns | 0.000 |    0.00 |          - |          - |         - |           - |
 |               |               |                      |                      |                    |                   |                   |       |         |            |            |           |             |
-|      Baseline |    .NET 4.7.2 | aabc(...)ecba [7999] | aabc(...)ecba [7999] | 370,839,257.143 ns | 1,914,061.5911 ns | 1,696,765.7450 ns | 1.000 |    0.00 | 44000.0000 | 23000.0000 | 4000.0000 | 256587504 B |
-| Quickenshtein |    .NET 4.7.2 | aabc(...)ecba [7999] | aabc(...)ecba [7999] |       6,218.058 ns |        68.7499 ns |        64.3087 ns | 0.000 |    0.00 |          - |          - |         - |           - |
-|  Fastenshtein |    .NET 4.7.2 | aabc(...)ecba [7999] | aabc(...)ecba [7999] | 116,873,678.571 ns | 1,459,302.7517 ns | 1,293,633.8790 ns | 0.315 |    0.00 |          - |          - |         - |     32048 B |
+|      Baseline |    .NET 4.7.2 | aabc(...)ecba [7999] | aabc(...)ecba [7999] | 371,687,828.571 ns | 3,001,669.3388 ns | 2,660,901.6845 ns | 1.000 |    0.00 | 44000.0000 | 23000.0000 | 4000.0000 | 256587504 B |
+| Quickenshtein |    .NET 4.7.2 | aabc(...)ecba [7999] | aabc(...)ecba [7999] |       6,704.293 ns |        84.6719 ns |        75.0594 ns | 0.000 |    0.00 |          - |          - |         - |           - |
+|  Fastenshtein |    .NET 4.7.2 | aabc(...)ecba [7999] | aabc(...)ecba [7999] | 117,494,400.000 ns | 1,387,491.7796 ns | 1,297,860.6715 ns | 0.316 |    0.00 |          - |          - |         - |     32048 B |
 |               |               |                      |                      |                    |                   |                   |       |         |            |            |           |             |
-|      Baseline | .NET Core 3.0 | aabc(...)ecba [7999] | aabc(...)ecba [7999] | 362,763,686.667 ns | 2,053,582.8256 ns | 1,920,922.6492 ns | 1.000 |    0.00 | 44000.0000 | 23000.0000 | 4000.0000 | 256256200 B |
-| Quickenshtein | .NET Core 3.0 | aabc(...)ecba [7999] | aabc(...)ecba [7999] |       6,252.661 ns |        43.5173 ns |        40.7061 ns | 0.000 |    0.00 |          - |          - |         - |           - |
-|  Fastenshtein | .NET Core 3.0 | aabc(...)ecba [7999] | aabc(...)ecba [7999] | 117,985,237.333 ns |   383,070.5673 ns |   358,324.4463 ns | 0.325 |    0.00 |          - |          - |         - |     32272 B |
+|      Baseline | .NET Core 3.0 | aabc(...)ecba [7999] | aabc(...)ecba [7999] | 365,743,780.000 ns | 4,699,600.8790 ns | 4,396,009.5780 ns | 1.000 |    0.00 | 44000.0000 | 23000.0000 | 4000.0000 | 256256200 B |
+| Quickenshtein | .NET Core 3.0 | aabc(...)ecba [7999] | aabc(...)ecba [7999] |         535.536 ns |         7.0728 ns |         6.6159 ns | 0.000 |    0.00 |          - |          - |         - |           - |
+|  Fastenshtein | .NET Core 3.0 | aabc(...)ecba [7999] | aabc(...)ecba [7999] | 100,187,800.000 ns |   606,781.6514 ns |   537,896.1292 ns | 0.274 |    0.00 |          - |          - |         - |     32829 B |
 |               |               |                      |                      |                    |                   |                   |       |         |            |            |           |             |
-|      Baseline |    .NET 4.7.2 | aabc(...)ecba [7999] | babd(...)cbaa [7999] | 369,703,260.000 ns | 2,942,339.4699 ns | 2,752,266.1657 ns |  1.00 |    0.00 | 44000.0000 | 23000.0000 | 4000.0000 | 256587504 B |
-| Quickenshtein |    .NET 4.7.2 | aabc(...)ecba [7999] | babd(...)cbaa [7999] | 121,278,736.000 ns | 1,489,570.8897 ns | 1,393,345.5345 ns |  0.33 |    0.00 |          - |          - |         - |           - |
-|  Fastenshtein |    .NET 4.7.2 | aabc(...)ecba [7999] | babd(...)cbaa [7999] | 125,332,941.667 ns |   948,324.9666 ns |   887,063.7622 ns |  0.34 |    0.00 |          - |          - |         - |     32048 B |
+|      Baseline |    .NET 4.7.2 | aabc(...)ecba [7999] | babd(...)cbaa [7999] | 371,757,450.000 ns | 2,739,361.6515 ns | 2,428,372.7520 ns |  1.00 |    0.00 | 44000.0000 | 23000.0000 | 4000.0000 | 256587504 B |
+| Quickenshtein |    .NET 4.7.2 | aabc(...)ecba [7999] | babd(...)cbaa [7999] | 105,897,741.333 ns | 1,343,981.0622 ns | 1,257,160.7195 ns |  0.28 |    0.00 |          - |          - |         - |           - |
+|  Fastenshtein |    .NET 4.7.2 | aabc(...)ecba [7999] | babd(...)cbaa [7999] | 124,382,023.333 ns |   877,244.0641 ns |   820,574.6419 ns |  0.33 |    0.00 |          - |          - |         - |     32048 B |
 |               |               |                      |                      |                    |                   |                   |       |         |            |            |           |             |
-|      Baseline | .NET Core 3.0 | aabc(...)ecba [7999] | babd(...)cbaa [7999] | 365,339,933.333 ns | 3,070,780.9476 ns | 2,872,410.4036 ns |  1.00 |    0.00 | 44000.0000 | 23000.0000 | 4000.0000 | 256256200 B |
-| Quickenshtein | .NET Core 3.0 | aabc(...)ecba [7999] | babd(...)cbaa [7999] | 114,895,071.429 ns |   698,514.8330 ns |   619,215.2052 ns |  0.31 |    0.00 |          - |          - |         - |           - |
-|  Fastenshtein | .NET Core 3.0 | aabc(...)ecba [7999] | babd(...)cbaa [7999] | 116,593,050.667 ns |   616,084.8032 ns |   576,286.1072 ns |  0.32 |    0.00 |          - |          - |         - |     32291 B |
+|      Baseline | .NET Core 3.0 | aabc(...)ecba [7999] | babd(...)cbaa [7999] | 356,313,906.667 ns | 5,260,450.7722 ns | 4,920,628.9162 ns |  1.00 |    0.00 | 44000.0000 | 23000.0000 | 4000.0000 | 256256200 B |
+| Quickenshtein | .NET Core 3.0 | aabc(...)ecba [7999] | babd(...)cbaa [7999] |  46,681,844.242 ns |   681,397.4159 ns |   637,379.5656 ns |  0.13 |    0.00 |          - |          - |         - |           - |
+|  Fastenshtein | .NET Core 3.0 | aabc(...)ecba [7999] | babd(...)cbaa [7999] | 115,847,282.667 ns | 1,295,961.4801 ns | 1,212,243.1725 ns |  0.33 |    0.01 |          - |          - |         - |     32990 B |
 |               |               |                      |                      |                    |                   |                   |       |         |            |            |           |             |
-|      Baseline |    .NET 4.7.2 | babd(...)cbaa [7999] |                      |     338,068.561 ns |     2,998.6038 ns |     2,804.8959 ns | 1.000 |    0.00 |   142.5781 |          - |         - |    452484 B |
-| Quickenshtein |    .NET 4.7.2 | babd(...)cbaa [7999] |                      |          12.385 ns |         0.1019 ns |         0.0953 ns | 0.000 |    0.00 |          - |          - |         - |           - |
-|  Fastenshtein |    .NET 4.7.2 | babd(...)cbaa [7999] |                      |           2.240 ns |         0.0490 ns |         0.0459 ns | 0.000 |    0.00 |          - |          - |         - |           - |
+|      Baseline |    .NET 4.7.2 | babd(...)cbaa [7999] |                      |     553,788.197 ns |     5,876.6344 ns |     5,497.0074 ns | 1.000 |    0.00 |   142.5781 |          - |         - |    452488 B |
+| Quickenshtein |    .NET 4.7.2 | babd(...)cbaa [7999] |                      |          16.218 ns |         0.1996 ns |         0.1770 ns | 0.000 |    0.00 |          - |          - |         - |           - |
+|  Fastenshtein |    .NET 4.7.2 | babd(...)cbaa [7999] |                      |           2.280 ns |         0.0421 ns |         0.0373 ns | 0.000 |    0.00 |          - |          - |         - |           - |
 |               |               |                      |                      |                    |                   |                   |       |         |            |            |           |             |
-|      Baseline | .NET Core 3.0 | babd(...)cbaa [7999] |                      |     156,538.476 ns |     3,182.9676 ns |     5,574.7111 ns | 1.000 |    0.00 |    98.1445 |     1.7090 |         - |    320200 B |
-| Quickenshtein | .NET Core 3.0 | babd(...)cbaa [7999] |                      |           5.387 ns |         0.0583 ns |         0.0517 ns | 0.000 |    0.00 |          - |          - |         - |           - |
-|  Fastenshtein | .NET Core 3.0 | babd(...)cbaa [7999] |                      |           2.245 ns |         0.0470 ns |         0.0439 ns | 0.000 |    0.00 |          - |          - |         - |           - |
+|      Baseline | .NET Core 3.0 | babd(...)cbaa [7999] |                      |     150,890.346 ns |     2,881.3464 ns |     2,958.9306 ns | 1.000 |    0.00 |    94.4824 |     5.1270 |         - |    320201 B |
+| Quickenshtein | .NET Core 3.0 | babd(...)cbaa [7999] |                      |          13.718 ns |         0.1959 ns |         0.1833 ns | 0.000 |    0.00 |          - |          - |         - |           - |
+|  Fastenshtein | .NET Core 3.0 | babd(...)cbaa [7999] |                      |           2.147 ns |         0.0376 ns |         0.0352 ns | 0.000 |    0.00 |          - |          - |         - |           - |
 |               |               |                      |                      |                    |                   |                   |       |         |            |            |           |             |
-|      Baseline |    .NET 4.7.2 | babd(...)cbaa [7999] | aabc(...)ecba [7999] | 369,287,333.333 ns | 1,660,558.0096 ns | 1,553,286.9925 ns |  1.00 |    0.00 | 44000.0000 | 23000.0000 | 4000.0000 | 256587504 B |
-| Quickenshtein |    .NET 4.7.2 | babd(...)cbaa [7999] | aabc(...)ecba [7999] | 121,385,274.667 ns | 1,479,366.8719 ns | 1,383,800.6898 ns |  0.33 |    0.00 |          - |          - |         - |           - |
-|  Fastenshtein |    .NET 4.7.2 | babd(...)cbaa [7999] | aabc(...)ecba [7999] | 125,036,863.333 ns | 1,241,648.3963 ns | 1,161,438.6802 ns |  0.34 |    0.00 |          - |          - |         - |     32048 B |
+|      Baseline |    .NET 4.7.2 | babd(...)cbaa [7999] | aabc(...)ecba [7999] | 368,561,258.333 ns | 3,948,644.2839 ns | 3,082,841.7261 ns |  1.00 |    0.00 | 44000.0000 | 23000.0000 | 4000.0000 | 256587504 B |
+| Quickenshtein |    .NET 4.7.2 | babd(...)cbaa [7999] | aabc(...)ecba [7999] | 106,214,789.333 ns | 1,319,035.4994 ns | 1,233,826.6245 ns |  0.29 |    0.00 |          - |          - |         - |           - |
+|  Fastenshtein |    .NET 4.7.2 | babd(...)cbaa [7999] | aabc(...)ecba [7999] | 124,291,400.000 ns | 1,899,951.5292 ns | 1,777,215.8392 ns |  0.34 |    0.01 |          - |          - |         - |     32048 B |
 |               |               |                      |                      |                    |                   |                   |       |         |            |            |           |             |
-|      Baseline | .NET Core 3.0 | babd(...)cbaa [7999] | aabc(...)ecba [7999] | 360,123,100.000 ns | 1,837,984.5525 ns | 1,629,325.4319 ns |  1.00 |    0.00 | 44000.0000 | 23000.0000 | 4000.0000 | 256256200 B |
-| Quickenshtein | .NET Core 3.0 | babd(...)cbaa [7999] | aabc(...)ecba [7999] | 136,293,608.333 ns |   877,946.9249 ns |   821,232.0982 ns |  0.38 |    0.00 |          - |          - |         - |           - |
-|  Fastenshtein | .NET Core 3.0 | babd(...)cbaa [7999] | aabc(...)ecba [7999] | 125,518,110.000 ns |   718,665.3783 ns |   672,240.0408 ns |  0.35 |    0.00 |          - |          - |         - |     32024 B |
+|      Baseline | .NET Core 3.0 | babd(...)cbaa [7999] | aabc(...)ecba [7999] | 360,519,780.000 ns | 4,399,574.2678 ns | 4,115,364.4998 ns |  1.00 |    0.00 | 44000.0000 | 23000.0000 | 4000.0000 | 256256200 B |
+| Quickenshtein | .NET Core 3.0 | babd(...)cbaa [7999] | aabc(...)ecba [7999] |  47,307,625.455 ns |   399,505.2949 ns |   373,697.5007 ns |  0.13 |    0.00 |          - |          - |         - |           - |
+|  Fastenshtein | .NET Core 3.0 | babd(...)cbaa [7999] | aabc(...)ecba [7999] | 115,781,706.154 ns |   853,302.2128 ns |   712,545.9939 ns |  0.32 |    0.01 |          - |          - |         - |     32291 B |
 |               |               |                      |                      |                    |                   |                   |       |         |            |            |           |             |
-|      Baseline |    .NET 4.7.2 | babd(...)cbaa [7999] | babd(...)cbaa [7999] | 371,723,653.333 ns | 2,047,129.3954 ns | 1,914,886.1066 ns | 1.000 |    0.00 | 44000.0000 | 23000.0000 | 4000.0000 | 256587504 B |
-| Quickenshtein |    .NET 4.7.2 | babd(...)cbaa [7999] | babd(...)cbaa [7999] |       6,243.217 ns |        47.8579 ns |        42.4248 ns | 0.000 |    0.00 |          - |          - |         - |           - |
-|  Fastenshtein |    .NET 4.7.2 | babd(...)cbaa [7999] | babd(...)cbaa [7999] | 118,475,233.333 ns |   526,877.2818 ns |   492,841.3363 ns | 0.319 |    0.00 |          - |          - |         - |     32048 B |
+|      Baseline |    .NET 4.7.2 | babd(...)cbaa [7999] | babd(...)cbaa [7999] | 370,644,760.000 ns | 2,930,612.1506 ns | 2,741,296.4240 ns | 1.000 |    0.00 | 44000.0000 | 23000.0000 | 4000.0000 | 256587504 B |
+| Quickenshtein |    .NET 4.7.2 | babd(...)cbaa [7999] | babd(...)cbaa [7999] |       6,659.875 ns |        89.8308 ns |        84.0277 ns | 0.000 |    0.00 |          - |          - |         - |           - |
+|  Fastenshtein |    .NET 4.7.2 | babd(...)cbaa [7999] | babd(...)cbaa [7999] | 117,084,244.000 ns | 1,357,318.8050 ns | 1,269,636.8523 ns | 0.316 |    0.01 |          - |          - |         - |     32048 B |
 |               |               |                      |                      |                    |                   |                   |       |         |            |            |           |             |
-|      Baseline | .NET Core 3.0 | babd(...)cbaa [7999] | babd(...)cbaa [7999] | 364,028,266.667 ns | 2,421,943.7256 ns | 2,265,487.6636 ns | 1.000 |    0.00 | 44000.0000 | 23000.0000 | 4000.0000 | 256257536 B |
-| Quickenshtein | .NET Core 3.0 | babd(...)cbaa [7999] | babd(...)cbaa [7999] |       5,310.181 ns |        48.5102 ns |        45.3765 ns | 0.000 |    0.00 |          - |          - |         - |           - |
-|  Fastenshtein | .NET Core 3.0 | babd(...)cbaa [7999] | babd(...)cbaa [7999] | 101,903,851.429 ns |   922,637.9750 ns |   817,894.5329 ns | 0.280 |    0.00 |          - |          - |         - |     32291 B |
+|      Baseline | .NET Core 3.0 | babd(...)cbaa [7999] | babd(...)cbaa [7999] | 360,076,193.333 ns | 4,325,400.7985 ns | 4,045,982.5906 ns | 1.000 |    0.00 | 44000.0000 | 23000.0000 | 4000.0000 | 256256200 B |
+| Quickenshtein | .NET Core 3.0 | babd(...)cbaa [7999] | babd(...)cbaa [7999] |         534.866 ns |         5.6158 ns |         4.9783 ns | 0.000 |    0.00 |          - |          - |         - |           - |
+|  Fastenshtein | .NET Core 3.0 | babd(...)cbaa [7999] | babd(...)cbaa [7999] | 102,655,793.333 ns |   964,573.5569 ns |   902,262.7035 ns | 0.285 |    0.00 |          - |          - |         - |     33942 B |
