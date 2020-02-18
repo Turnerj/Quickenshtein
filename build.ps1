@@ -43,30 +43,91 @@ Write-Host "Solution built!" -ForegroundColor "Green"
 if ($RunTests) {
 	if (-Not $CheckCoverage) {
 		Write-Host "Running tests without coverage..." -ForegroundColor "Magenta"
+		
+		$env:COMPlus_EnableAVX2 = 1
+		$env:COMPlus_EnableSSE41 = 1
+		$env:COMPlus_EnableSSE2 = 1
 		dotnet test $config.TestProject
 		if ($LastExitCode -ne 0) {
 			Write-Host "Tests failed, aborting build!" -Foreground "Red"
 			Exit 1
 		}
+
+		$env:COMPlus_EnableAVX2 = 0
+		$env:COMPlus_EnableSSE41 = 1
+		$env:COMPlus_EnableSSE2 = 1
+		dotnet test $config.TestProject --framework netcoreapp3.1
+		if ($LastExitCode -ne 0) {
+			Write-Host "Tests failed, aborting build!" -Foreground "Red"
+			Exit 1
+		}
+
+		$env:COMPlus_EnableAVX2 = 0
+		$env:COMPlus_EnableSSE41 = 0
+		$env:COMPlus_EnableSSE2 = 1
+		dotnet test $config.TestProject --framework netcoreapp3.1
+		if ($LastExitCode -ne 0) {
+			Write-Host "Tests failed, aborting build!" -Foreground "Red"
+			Exit 1
+		}
+
+		$env:COMPlus_EnableAVX2 = 0
+		$env:COMPlus_EnableSSE41 = 0
+		$env:COMPlus_EnableSSE2 = 0
+		dotnet test $config.TestProject --framework netcoreapp3.1
+		if ($LastExitCode -ne 0) {
+			Write-Host "Tests failed, aborting build!" -Foreground "Red"
+			Exit 1
+		}
+
 		Write-Host "Tests passed!" -ForegroundColor "Green"
 	}
 	else {
 		Write-Host "Running tests with coverage..." -ForegroundColor "Magenta"
-		OpenCover.Console.exe -register -target:"%LocalAppData%\Microsoft\dotnet\dotnet.exe" -targetargs:"test $($config.TestProject) /p:DebugType=Full" -filter:"$($config.TestCoverageFilter)" -output:"$packageOutputFolder\coverage.xml" -oldstyle
+		OpenCover.Console.exe -register -target:"%LocalAppData%\Microsoft\dotnet\dotnet.exe" -targetargs:"test $($config.TestProject) /p:DebugType=Full" -filter:"$($config.TestCoverageFilter)" -output:"$packageOutputFolder\coverage-main.xml" -oldstyle
 		if ($LastExitCode -ne 0 -Or -Not $?) {
 			Write-Host "Failure performing tests with coverage, aborting!" -Foreground "Red"
 			Exit 1
 		}
+		
+		$env:COMPlus_EnableAVX2 = 0
+		$env:COMPlus_EnableSSE41 = 1
+		$env:COMPlus_EnableSSE2 = 1
+		OpenCover.Console.exe -register -target:"%LocalAppData%\Microsoft\dotnet\dotnet.exe" -targetargs:"test $($config.TestProject) /p:DebugType=Full --framework netcoreapp3.1" -filter:"$($config.TestCoverageFilter)" -output:"$packageOutputFolder\coverage-avx2-disabled.xml" -oldstyle
+		if ($LastExitCode -ne 0 -Or -Not $?) {
+			Write-Host "Failure performing tests with coverage, aborting!" -Foreground "Red"
+			Exit 1
+		}
+
+		$env:COMPlus_EnableAVX2 = 0
+		$env:COMPlus_EnableSSE41 = 0
+		$env:COMPlus_EnableSSE2 = 1
+		OpenCover.Console.exe -register -target:"%LocalAppData%\Microsoft\dotnet\dotnet.exe" -targetargs:"test $($config.TestProject) /p:DebugType=Full --framework netcoreapp3.1" -filter:"$($config.TestCoverageFilter)" -output:"$packageOutputFolder\coverage-sse41-disabled.xml" -oldstyle
+		if ($LastExitCode -ne 0 -Or -Not $?) {
+			Write-Host "Failure performing tests with coverage, aborting!" -Foreground "Red"
+			Exit 1
+		}
+
+		$env:COMPlus_EnableAVX2 = 0
+		$env:COMPlus_EnableSSE41 = 0
+		$env:COMPlus_EnableSSE2 = 0
+		OpenCover.Console.exe -register -target:"%LocalAppData%\Microsoft\dotnet\dotnet.exe" -targetargs:"test $($config.TestProject) /p:DebugType=Full --framework netcoreapp3.1" -filter:"$($config.TestCoverageFilter)" -output:"$packageOutputFolder\coverage-sse2-disabled.xml" -oldstyle
+		if ($LastExitCode -ne 0 -Or -Not $?) {
+			Write-Host "Failure performing tests with coverage, aborting!" -Foreground "Red"
+			Exit 1
+		}
+
+		Write-Host "Combining test coverage reports..." -Foreground "DarkGreen"
+		reportgenerator -reports:$packageOutputFolder/coverage-*.xml -targetdir:$packageOutputFolder -reporttypes:Cobertura
+
+		Write-Host "Tests passed!" -ForegroundColor "Green"
+		Write-Host "Saving code coverage..." -ForegroundColor "Magenta"
+		codecov -f "$packageOutputFolder\Cobertura.xml"
+		if ($LastExitCode -ne 0 -Or -Not $?) {
+			Write-Host "Failure saving code coverage!" -Foreground "Red"
+		}
 		else {
-			Write-Host "Tests passed!" -ForegroundColor "Green"
-			Write-Host "Saving code coverage..." -ForegroundColor "Magenta"
-			codecov -f "$packageOutputFolder\coverage.xml"
-			if ($LastExitCode -ne 0 -Or -Not $?) {
-				Write-Host "Failure saving code coverage!" -Foreground "Red"
-			}
-			else {
-				Write-Host "Coverage saved!" -ForegroundColor "Green"
-			}
+			Write-Host "Coverage saved!" -ForegroundColor "Green"
 		}
 	}
 }

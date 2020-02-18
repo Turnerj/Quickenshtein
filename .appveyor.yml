@@ -3,7 +3,7 @@ image: Visual Studio 2019
 skip_branch_with_pr: true
 
 install:
-  - choco install opencover.portable codecov
+  - choco install opencover.portable codecov reportgenerator.portable
   - ps: .\build\dotnet-install.ps1 -Version 3.0.100
   
 build_script:
