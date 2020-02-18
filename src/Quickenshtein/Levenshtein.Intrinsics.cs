@@ -155,271 +155,68 @@ namespace Quickenshtein
 			var lastInsertionCostVector = Vector128.Create(lastInsertionCost);
 			var lastSubstitutionCostVector = Vector128.Create(lastSubstitutionCost);
 			var lastDeletionCostVector = Vector128<int>.Zero;
-			var localCostVector = Vector128<int>.Zero;
 
 			//Loop unrolling inspired by CoreLib SpanHelpers
 			//https://github.com/dotnet/runtime/blob/4f9ae42d861fcb4be2fcd5d3d55d5f227d30e723/src/libraries/System.Private.CoreLib/src/System/SpanHelpers.T.cs#L62-L118
 			while (rowColumnsRemaining >= 8)
 			{
 				rowColumnsRemaining -= 8;
-
-				localCostVector = lastSubstitutionCostVector;
-				lastDeletionCostVector = Vector128.Create(previousRowPtr[columnIndex]);
-				if (sourcePrevChar != targetPtr[columnIndex])
-				{
-					localCostVector = Sse2.Add(
-						Sse41.Min(
-							Sse41.Min(
-								lastInsertionCostVector,
-								localCostVector
-							),
-							lastDeletionCostVector
-						),
-						allOnesVector
-					);
-				}
-				lastInsertionCostVector = localCostVector;
-				previousRowPtr[columnIndex++] = localCostVector.GetElement(0);
-				lastSubstitutionCostVector = lastDeletionCostVector;
-
-				localCostVector = lastSubstitutionCostVector;
-				lastDeletionCostVector = Vector128.Create(previousRowPtr[columnIndex]);
-				if (sourcePrevChar != targetPtr[columnIndex])
-				{
-					localCostVector = Sse2.Add(
-						Sse41.Min(
-							Sse41.Min(
-								lastInsertionCostVector,
-								localCostVector
-							),
-							lastDeletionCostVector
-						),
-						allOnesVector
-					);
-				}
-				lastInsertionCostVector = localCostVector;
-				previousRowPtr[columnIndex++] = localCostVector.GetElement(0);
-				lastSubstitutionCostVector = lastDeletionCostVector;
-
-				localCostVector = lastSubstitutionCostVector;
-				lastDeletionCostVector = Vector128.Create(previousRowPtr[columnIndex]);
-				if (sourcePrevChar != targetPtr[columnIndex])
-				{
-					localCostVector = Sse2.Add(
-						Sse41.Min(
-							Sse41.Min(
-								lastInsertionCostVector,
-								localCostVector
-							),
-							lastDeletionCostVector
-						),
-						allOnesVector
-					);
-				}
-				lastInsertionCostVector = localCostVector;
-				previousRowPtr[columnIndex++] = localCostVector.GetElement(0);
-				lastSubstitutionCostVector = lastDeletionCostVector;
-
-				localCostVector = lastSubstitutionCostVector;
-				lastDeletionCostVector = Vector128.Create(previousRowPtr[columnIndex]);
-				if (sourcePrevChar != targetPtr[columnIndex])
-				{
-					localCostVector = Sse2.Add(
-						Sse41.Min(
-							Sse41.Min(
-								lastInsertionCostVector,
-								localCostVector
-							),
-							lastDeletionCostVector
-						),
-						allOnesVector
-					);
-				}
-				lastInsertionCostVector = localCostVector;
-				previousRowPtr[columnIndex++] = localCostVector.GetElement(0);
-				lastSubstitutionCostVector = lastDeletionCostVector;
-
-				localCostVector = lastSubstitutionCostVector;
-				lastDeletionCostVector = Vector128.Create(previousRowPtr[columnIndex]);
-				if (sourcePrevChar != targetPtr[columnIndex])
-				{
-					localCostVector = Sse2.Add(
-						Sse41.Min(
-							Sse41.Min(
-								lastInsertionCostVector,
-								localCostVector
-							),
-							lastDeletionCostVector
-						),
-						allOnesVector
-					);
-				}
-				lastInsertionCostVector = localCostVector;
-				previousRowPtr[columnIndex++] = localCostVector.GetElement(0);
-				lastSubstitutionCostVector = lastDeletionCostVector;
-
-				localCostVector = lastSubstitutionCostVector;
-				lastDeletionCostVector = Vector128.Create(previousRowPtr[columnIndex]);
-				if (sourcePrevChar != targetPtr[columnIndex])
-				{
-					localCostVector = Sse2.Add(
-						Sse41.Min(
-							Sse41.Min(
-								lastInsertionCostVector,
-								localCostVector
-							),
-							lastDeletionCostVector
-						),
-						allOnesVector
-					);
-				}
-				lastInsertionCostVector = localCostVector;
-				previousRowPtr[columnIndex++] = localCostVector.GetElement(0);
-				lastSubstitutionCostVector = lastDeletionCostVector;
-
-				localCostVector = lastSubstitutionCostVector;
-				lastDeletionCostVector = Vector128.Create(previousRowPtr[columnIndex]);
-				if (sourcePrevChar != targetPtr[columnIndex])
-				{
-					localCostVector = Sse2.Add(
-						Sse41.Min(
-							Sse41.Min(
-								lastInsertionCostVector,
-								localCostVector
-							),
-							lastDeletionCostVector
-						),
-						allOnesVector
-					);
-				}
-				lastInsertionCostVector = localCostVector;
-				previousRowPtr[columnIndex++] = localCostVector.GetElement(0);
-				lastSubstitutionCostVector = lastDeletionCostVector;
-
-				localCostVector = lastSubstitutionCostVector;
-				lastDeletionCostVector = Vector128.Create(previousRowPtr[columnIndex]);
-				if (sourcePrevChar != targetPtr[columnIndex])
-				{
-					localCostVector = Sse2.Add(
-						Sse41.Min(
-							Sse41.Min(
-								lastInsertionCostVector,
-								localCostVector
-							),
-							lastDeletionCostVector
-						),
-						allOnesVector
-					);
-				}
-				lastInsertionCostVector = localCostVector;
-				previousRowPtr[columnIndex++] = localCostVector.GetElement(0);
-				lastSubstitutionCostVector = lastDeletionCostVector;
+				CalculateColumn_Sse41(previousRowPtr, targetPtr, sourcePrevChar, ref lastSubstitutionCostVector, ref lastInsertionCostVector, ref lastDeletionCostVector, ref allOnesVector, ref columnIndex);
+				CalculateColumn_Sse41(previousRowPtr, targetPtr, sourcePrevChar, ref lastSubstitutionCostVector, ref lastInsertionCostVector, ref lastDeletionCostVector, ref allOnesVector, ref columnIndex);
+				CalculateColumn_Sse41(previousRowPtr, targetPtr, sourcePrevChar, ref lastSubstitutionCostVector, ref lastInsertionCostVector, ref lastDeletionCostVector, ref allOnesVector, ref columnIndex);
+				CalculateColumn_Sse41(previousRowPtr, targetPtr, sourcePrevChar, ref lastSubstitutionCostVector, ref lastInsertionCostVector, ref lastDeletionCostVector, ref allOnesVector, ref columnIndex);
+				CalculateColumn_Sse41(previousRowPtr, targetPtr, sourcePrevChar, ref lastSubstitutionCostVector, ref lastInsertionCostVector, ref lastDeletionCostVector, ref allOnesVector, ref columnIndex);
+				CalculateColumn_Sse41(previousRowPtr, targetPtr, sourcePrevChar, ref lastSubstitutionCostVector, ref lastInsertionCostVector, ref lastDeletionCostVector, ref allOnesVector, ref columnIndex);
+				CalculateColumn_Sse41(previousRowPtr, targetPtr, sourcePrevChar, ref lastSubstitutionCostVector, ref lastInsertionCostVector, ref lastDeletionCostVector, ref allOnesVector, ref columnIndex);
+				CalculateColumn_Sse41(previousRowPtr, targetPtr, sourcePrevChar, ref lastSubstitutionCostVector, ref lastInsertionCostVector, ref lastDeletionCostVector, ref allOnesVector, ref columnIndex);
 			}
 
 			if (rowColumnsRemaining > 4)
 			{
 				rowColumnsRemaining -= 4;
-
-				localCostVector = lastSubstitutionCostVector;
-				lastDeletionCostVector = Vector128.Create(previousRowPtr[columnIndex]);
-				if (sourcePrevChar != targetPtr[columnIndex])
-				{
-					localCostVector = Sse2.Add(
-						Sse41.Min(
-							Sse41.Min(
-								lastInsertionCostVector,
-								localCostVector
-							),
-							lastDeletionCostVector
-						),
-						allOnesVector
-					);
-				}
-				lastInsertionCostVector = localCostVector;
-				previousRowPtr[columnIndex++] = localCostVector.GetElement(0);
-				lastSubstitutionCostVector = lastDeletionCostVector;
-
-				localCostVector = lastSubstitutionCostVector;
-				lastDeletionCostVector = Vector128.Create(previousRowPtr[columnIndex]);
-				if (sourcePrevChar != targetPtr[columnIndex])
-				{
-					localCostVector = Sse2.Add(
-						Sse41.Min(
-							Sse41.Min(
-								lastInsertionCostVector,
-								localCostVector
-							),
-							lastDeletionCostVector
-						),
-						allOnesVector
-					);
-				}
-				lastInsertionCostVector = localCostVector;
-				previousRowPtr[columnIndex++] = localCostVector.GetElement(0);
-				lastSubstitutionCostVector = lastDeletionCostVector;
-
-				localCostVector = lastSubstitutionCostVector;
-				lastDeletionCostVector = Vector128.Create(previousRowPtr[columnIndex]);
-				if (sourcePrevChar != targetPtr[columnIndex])
-				{
-					localCostVector = Sse2.Add(
-						Sse41.Min(
-							Sse41.Min(
-								lastInsertionCostVector,
-								localCostVector
-							),
-							lastDeletionCostVector
-						),
-						allOnesVector
-					);
-				}
-				lastInsertionCostVector = localCostVector;
-				previousRowPtr[columnIndex++] = localCostVector.GetElement(0);
-				lastSubstitutionCostVector = lastDeletionCostVector;
-
-				localCostVector = lastSubstitutionCostVector;
-				lastDeletionCostVector = Vector128.Create(previousRowPtr[columnIndex]);
-				if (sourcePrevChar != targetPtr[columnIndex])
-				{
-					localCostVector = Sse2.Add(
-						Sse41.Min(
-							Sse41.Min(
-								lastInsertionCostVector,
-								localCostVector
-							),
-							lastDeletionCostVector
-						),
-						allOnesVector
-					);
-				}
-				lastInsertionCostVector = localCostVector;
-				previousRowPtr[columnIndex++] = localCostVector.GetElement(0);
-				lastSubstitutionCostVector = lastDeletionCostVector;
+				CalculateColumn_Sse41(previousRowPtr, targetPtr, sourcePrevChar, ref lastSubstitutionCostVector, ref lastInsertionCostVector, ref lastDeletionCostVector, ref allOnesVector, ref columnIndex);
+				CalculateColumn_Sse41(previousRowPtr, targetPtr, sourcePrevChar, ref lastSubstitutionCostVector, ref lastInsertionCostVector, ref lastDeletionCostVector, ref allOnesVector, ref columnIndex);
+				CalculateColumn_Sse41(previousRowPtr, targetPtr, sourcePrevChar, ref lastSubstitutionCostVector, ref lastInsertionCostVector, ref lastDeletionCostVector, ref allOnesVector, ref columnIndex);
+				CalculateColumn_Sse41(previousRowPtr, targetPtr, sourcePrevChar, ref lastSubstitutionCostVector, ref lastInsertionCostVector, ref lastDeletionCostVector, ref allOnesVector, ref columnIndex);
 			}
 
 			while (rowColumnsRemaining > 0)
 			{
 				rowColumnsRemaining--;
-
-				localCostVector = lastSubstitutionCostVector;
-				lastDeletionCostVector = Vector128.Create(previousRowPtr[columnIndex]);
-				if (sourcePrevChar != targetPtr[columnIndex])
-				{
-					localCostVector = Sse2.Add(
-						Sse41.Min(
-							Sse41.Min(
-								lastInsertionCostVector,
-								localCostVector
-							),
-							lastDeletionCostVector
-						),
-						allOnesVector
-					);
-				}
-				lastInsertionCostVector = localCostVector;
-				previousRowPtr[columnIndex++] = localCostVector.GetElement(0);
-				lastSubstitutionCostVector = lastDeletionCostVector;
+				CalculateColumn_Sse41(previousRowPtr, targetPtr, sourcePrevChar, ref lastSubstitutionCostVector, ref lastInsertionCostVector, ref lastDeletionCostVector, ref allOnesVector, ref columnIndex);
 			}
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		private static unsafe void CalculateColumn_Sse41(
+			int* previousRowPtr, 
+			char* targetPtr, 
+			char sourcePrevChar, 
+			ref Vector128<int> lastSubstitutionCostVector, 
+			ref Vector128<int> lastInsertionCostVector,
+			ref Vector128<int> lastDeletionCostVector,
+			ref Vector128<int> allOnesVector,
+			ref int columnIndex
+		)
+		{
+			var localCostVector = lastSubstitutionCostVector;
+			lastDeletionCostVector = Vector128.Create(previousRowPtr[columnIndex]);
+			if (sourcePrevChar != targetPtr[columnIndex])
+			{
+				localCostVector = Sse2.Add(
+					Sse41.Min(
+						Sse41.Min(
+							lastInsertionCostVector,
+							localCostVector
+						),
+						lastDeletionCostVector
+					),
+					allOnesVector
+				);
+			}
+			lastInsertionCostVector = localCostVector;
+			previousRowPtr[columnIndex++] = localCostVector.GetElement(0);
+			lastSubstitutionCostVector = lastDeletionCostVector;
 		}
 	}
 }
