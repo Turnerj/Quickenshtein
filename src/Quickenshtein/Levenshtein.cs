@@ -72,7 +72,6 @@ namespace Quickenshtein
 			);
 		}
 
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		private static unsafe int CalculateDistance(ReadOnlySpan<char> source, ReadOnlySpan<char> target)
 		{
 			var sourceLength = source.Length;
@@ -112,7 +111,14 @@ namespace Quickenshtein
 #if NETCOREAPP3_0
 				if (Sse41.IsSupported)
 				{
-					CalculateRows_Sse41(previousRowPtr, source, ref rowIndex, targetPtr, targetLength);
+					if (sourceLength > 7)
+					{
+						CalculateRows_8Rows_Sse41(previousRowPtr, source, ref rowIndex, targetPtr, targetLength);
+					}
+					else
+					{
+						CalculateRows_4Rows_Sse41(previousRowPtr, source, ref rowIndex, targetPtr, targetLength);
+					}
 				}
 				else
 				{

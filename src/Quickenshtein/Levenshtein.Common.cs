@@ -276,7 +276,6 @@ namespace Quickenshtein
 		/// <param name="rowIndex"></param>
 		/// <param name="targetPtr"></param>
 		/// <param name="targetLength"></param>
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		private static unsafe void CalculateRows(int* previousRowPtr, ReadOnlySpan<char> source, ref int rowIndex, char* targetPtr, int targetLength)
 		{
 			var acceptableRowCount = source.Length - 3;
