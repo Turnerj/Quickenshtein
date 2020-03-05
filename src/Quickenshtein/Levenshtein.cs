@@ -122,10 +122,10 @@ namespace Quickenshtein
 				}
 				else
 				{
-					CalculateRows(previousRowPtr, source, ref rowIndex, targetPtr, targetLength);
+					CalculateRows_4Rows(previousRowPtr, source, ref rowIndex, targetPtr, targetLength);
 				}
 #else
-				CalculateRows(previousRowPtr, source, ref rowIndex, targetPtr, targetLength);
+				CalculateRows_4Rows(previousRowPtr, source, ref rowIndex, targetPtr, targetLength);
 #endif
 
 				//Calculate Single Rows
