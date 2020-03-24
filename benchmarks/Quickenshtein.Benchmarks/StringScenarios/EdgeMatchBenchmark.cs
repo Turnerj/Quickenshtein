@@ -1,17 +1,12 @@
 ﻿using BenchmarkDotNet.Attributes;
-using BenchmarkDotNet.Jobs;
-using System;
-using System.Collections.Generic;
-using System.Text;
+using Quickenshtein.Benchmarks.Config;
 
-namespace Quickenshtein.Benchmarks
+namespace Quickenshtein.Benchmarks.StringScenarios
 {
 	/// <summary>
 	/// This benchmark shows how well the calculator can optimise matching characters at the start and end.
 	/// </summary>
-	[MemoryDiagnoser]
-	[SimpleJob(RuntimeMoniker.NetCoreApp30)]
-	[SimpleJob(RuntimeMoniker.Net472)]
+	[Config(typeof(BaseRuntimeConfig))]
 	public class EdgeMatchBenchmark
 	{
 		[Params(40, 8192)]

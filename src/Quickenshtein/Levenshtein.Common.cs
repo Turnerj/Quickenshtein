@@ -14,7 +14,7 @@ namespace Quickenshtein
 		/// <param name="sourceEnd"></param>
 		/// <param name="targetEnd"></param>
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private static unsafe void TrimInput(ReadOnlySpan<char> source, ReadOnlySpan<char> target, ref int startIndex, ref int sourceEnd, ref int targetEnd)
+		internal static unsafe void TrimInput(ReadOnlySpan<char> source, ReadOnlySpan<char> target, ref int startIndex, ref int sourceEnd, ref int targetEnd)
 		{
 			startIndex = 0;
 
@@ -39,7 +39,7 @@ namespace Quickenshtein
 		/// </summary>
 		/// <param name="previousRow"></param>
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private static unsafe void FillRow(Span<int> previousRow)
+		internal static unsafe void FillRow(Span<int> previousRow)
 		{
 			var columnIndex = 0;
 			var columnsRemaining = previousRow.Length;
@@ -83,7 +83,7 @@ namespace Quickenshtein
 		/// <param name="lastInsertionCost"></param>
 		/// <param name="lastSubstitutionCost"></param>
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private static unsafe void CalculateRow(int* previousRowPtr, char* targetPtr, int targetLength, char sourcePrevChar, int lastInsertionCost, int lastSubstitutionCost)
+		internal static unsafe void CalculateRow(int* previousRowPtr, char* targetPtr, int targetLength, char sourcePrevChar, int lastInsertionCost, int lastSubstitutionCost)
 		{
 			var columnIndex = 0;
 			int lastDeletionCost;

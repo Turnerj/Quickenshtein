@@ -9,72 +9,60 @@ namespace Quickenshtein.Benchmarks
 {
 	class Program
 	{
-		class RatioReport
+		class SpeedupReport
 		{
 			public string Workload;
-			public decimal Ratio;
+			public decimal Speedup;
 		}
 
 		static void Main(string[] args)
 		{
-			//var benchmark = new QuickenshteinBenchmark();
-			//benchmark.Setup();
-			//benchmark.Quickenshtein();
-			//return;
-
 			var summaries = BenchmarkSwitcher.FromAssembly(typeof(Program).Assembly).Run(args);
 
-			//Generate an average speed up report
+			//Generate an average speedup report
 			foreach (var summary in summaries)
 			{
 				if (summary.HasCriticalValidationErrors)
 				{
-					Console.WriteLine("Average Speed Up is unavailable");
+					Console.WriteLine("Average Speedup is unavailable");
 					Console.WriteLine();
 					continue;
 				}
 
-				SummaryTableColumn ratioColumn = null;
+				SummaryTableColumn speedUpColumn = null;
 				for (var i = 0; i < summary.Table.ColumnCount; i++)
 				{
 					var column = summary.Table.Columns[i];
-					if (column.Header == "Ratio")
+					if (column.Header == "Speedup")
 					{
-						ratioColumn = column;
+						speedUpColumn = column;
 						break;
 					}
 				}
 
-				if (ratioColumn != null)
+				if (speedUpColumn != null)
 				{
-					var ratioColumnContent = ratioColumn.Content;
-					var workloadRatios = new List<RatioReport>();
+					var speedupColumnContent = speedUpColumn.Content;
+					var workloadRatios = new List<SpeedupReport>();
 					for (var i = 0; i < summary.Reports.Length; i++)
 					{
 						var report = summary.Reports[i];
-						if (decimal.TryParse(ratioColumnContent[i], out var ratio))
+						if (decimal.TryParse(speedupColumnContent[i], out var speedup))
 						{
-							workloadRatios.Add(new RatioReport
+							workloadRatios.Add(new SpeedupReport
 							{
-								Ratio = ratio,
+								Speedup = speedup,
 								Workload = report.BenchmarkCase.Descriptor.WorkloadMethodDisplayInfo
 							});
 						}
 					}
 
-					Console.WriteLine("Average Speed Up");
+					Console.WriteLine("Average Speedup");
 					foreach (var group in workloadRatios.GroupBy(r => r.Workload))
 					{
-						var averageRatio = group.Sum(r => r.Ratio) / group.Count();
-						if (Math.Round(averageRatio, 3) == 0)
-						{
-							Console.WriteLine($"{group.Key}: > 1000.000");
-						}
-						else
-						{
-							var averageSpeedUp = 1 / averageRatio;
-							Console.WriteLine($"{group.Key}: {averageSpeedUp:0.000}");
-						}
+						var averageSpeedup = group.Average(r => r.Speedup);
+						Console.Write($"{group.Key}: ".PadRight(16));
+						Console.WriteLine(averageSpeedup.ToString("0.00").PadLeft(7));
 					}
 
 					Console.WriteLine();

@@ -1,19 +1,14 @@
 ﻿using BenchmarkDotNet.Attributes;
-using BenchmarkDotNet.Jobs;
-using System;
-using System.Collections.Generic;
-using System.Text;
+using Quickenshtein.Benchmarks.Config;
 
-namespace Quickenshtein.Benchmarks.Isolated
+namespace Quickenshtein.Benchmarks.StringScenarios
 {
 	/// <summary>
 	/// This benchmark eliminates bonuses for trimming equal characters at the start and end.
 	/// The strings the same length and, besides the edges, are only filled with matching characters.
 	/// This then forces the fastest path internally (least operations) for calculating distance.
     /// </summary>
-	[MemoryDiagnoser]
-	[SimpleJob(RuntimeMoniker.NetCoreApp30)]
-	[SimpleJob(RuntimeMoniker.Net472)]
+	[Config(typeof(BaseRuntimeConfig))]
 	public class EdgeDifferenceBenchmark
 	{
 		public string StringA;

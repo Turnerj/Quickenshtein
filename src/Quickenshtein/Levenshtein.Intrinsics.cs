@@ -27,7 +27,7 @@ namespace Quickenshtein
 		/// <param name="sourceEnd"></param>
 		/// <param name="targetEnd"></param>
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private static unsafe void TrimInput_Avx2(ReadOnlySpan<char> source, ReadOnlySpan<char> target, ref int startIndex, ref int sourceEnd, ref int targetEnd)
+		internal static unsafe void TrimInput_Avx2(ReadOnlySpan<char> source, ReadOnlySpan<char> target, ref int startIndex, ref int sourceEnd, ref int targetEnd)
 		{
 			var charactersAvailableToTrim = Math.Min(sourceEnd, targetEnd);
 			if (charactersAvailableToTrim >= VECTOR256_NUMBER_OF_CHARACTERS)
@@ -97,7 +97,7 @@ namespace Quickenshtein
 		/// </summary>
 		/// <param name="previousRow"></param>
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private static unsafe void FillRow_Avx2(Span<int> previousRow)
+		internal static unsafe void FillRow_Avx2(Span<int> previousRow)
 		{
 			var columnIndex = 0;
 			var columnsRemaining = previousRow.Length;
@@ -138,7 +138,7 @@ namespace Quickenshtein
 		/// </summary>
 		/// <param name="previousRow"></param>
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private static unsafe void FillRow_Sse2(Span<int> previousRow)
+		internal static unsafe void FillRow_Sse2(Span<int> previousRow)
 		{
 			var columnIndex = 0;
 			var columnsRemaining = previousRow.Length;
@@ -174,7 +174,7 @@ namespace Quickenshtein
 		/// <param name="lastInsertionCost"></param>
 		/// <param name="lastSubstitutionCost"></param>
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private static unsafe void CalculateRow_Sse41(int* previousRowPtr, char* targetPtr, int targetLength, char sourcePrevChar, int lastInsertionCost, int lastSubstitutionCost)
+		internal static unsafe void CalculateRow_Sse41(int* previousRowPtr, char* targetPtr, int targetLength, char sourcePrevChar, int lastInsertionCost, int lastSubstitutionCost)
 		{
 			var columnIndex = 0;
 			var rowColumnsRemaining = targetLength;
