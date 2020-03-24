@@ -5,6 +5,8 @@ using System.Runtime.CompilerServices;
 using System.Runtime.Intrinsics.X86;
 #endif
 
+[assembly: InternalsVisibleTo("Quickenshtein.Benchmarks")]
+
 namespace Quickenshtein
 {
 	/// <summary>

@@ -28,5 +28,6 @@ Most of these benchmarks...
 - Compare against [Fastenshtein](https://github.com/DanHarltey/Fastenshtein/), one of the other fast .NET Levenshtein Distance implementations
 
 You can view results to these benchmarks at the links below:
-- [Benchmarking against Fastenshtein](/docs/OverallBenchmarks.md)
-- [Isolated Benchmarks](/docs/IsolatedBenchmarks.md)
+- [Benchmarking against Fastenshtein](/docs/OverallComparison.md)
+- [Isolated Benchmarks](/docs/StringScenarios.md)
+- [Intrinsics Performance](/docs/IntrinsicsPerformance.md)

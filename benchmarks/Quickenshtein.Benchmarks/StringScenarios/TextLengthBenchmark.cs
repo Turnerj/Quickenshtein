@@ -1,22 +1,16 @@
 ﻿using BenchmarkDotNet.Attributes;
-using BenchmarkDotNet.Jobs;
-using System;
-using System.Collections.Generic;
-using System.Text;
+using Quickenshtein.Benchmarks.Config;
 
-namespace Quickenshtein.Benchmarks
+namespace Quickenshtein.Benchmarks.StringScenarios
 {
 	/// <summary>
-	/// This benchmark shows the impact of extremely long string lengths.
+	/// This benchmark shows the impact of various, though relatively short, string lengths.
 	/// The calculation is forced to compute the worst possible case due to no matching characters.
-	/// The baseline calculator however can't perform calculations this large so it is omitted.
 	/// </summary>
-	[MemoryDiagnoser]
-	[SimpleJob(RuntimeMoniker.NetCoreApp30)]
-	[SimpleJob(RuntimeMoniker.Net472)]
-	public class HugeTextBenchmark
+	[Config(typeof(BaseRuntimeConfig))]
+	public class TextLengthBenchmark
 	{
-		[Params(8192, 32768)]
+		[Params(5, 20, 40)]
 		public int NumberOfCharacters;
 
 		public string StringA;
@@ -28,6 +22,12 @@ namespace Quickenshtein.Benchmarks
 		{
 			StringA = Utilities.BuildString("abcdef", NumberOfCharacters);
 			StringB = Utilities.BuildString("zyxwvu", NumberOfCharacters);
+		}
+
+		[Benchmark(Baseline = true)]
+		public int Baseline()
+		{
+			return LevenshteinBaseline.GetDistance(StringA, StringB);
 		}
 
 		[Benchmark]
