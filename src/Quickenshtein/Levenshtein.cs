@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Buffers;
 using System.Runtime.CompilerServices;
-#if NETCOREAPP3_0
+#if NETCOREAPP
 using System.Runtime.Intrinsics.X86;
 #endif
 
@@ -32,7 +32,7 @@ namespace Quickenshtein
 			//Identify and trim any common prefix or suffix between the strings
 			var startIndex = 0;
 
-#if NETCOREAPP3_0
+#if NETCOREAPP
 			if (Avx2.IsSupported)
 			{
 				TrimInput_Avx2(source, target, ref startIndex, ref sourceEnd, ref targetEnd);
@@ -86,7 +86,7 @@ namespace Quickenshtein
 			//ArrayPool values are sometimes bigger than allocated, let's trim our span to exactly what we use
 			previousRow = previousRow.Slice(0, targetLength);
 
-#if NETCOREAPP3_0
+#if NETCOREAPP
 			if (Avx2.IsSupported)
 			{
 				FillRow_Avx2(previousRow);
@@ -110,7 +110,7 @@ namespace Quickenshtein
 
 				//Levenshtein Distance outer loop unrolling inspired by Gustaf Andersson's JS implementation
 				//https://github.com/gustf/js-levenshtein/blob/55ca1bf22bd55aa81cb5836c63582da6e9fb5fb0/index.js#L71-L90
-#if NETCOREAPP3_0
+#if NETCOREAPP
 				if (Sse41.IsSupported)
 				{
 					if (sourceLength > 7)
@@ -138,7 +138,7 @@ namespace Quickenshtein
 
 					var sourcePrevChar = source[rowIndex];
 
-#if NETCOREAPP3_0
+#if NETCOREAPP
 					if (Sse41.IsSupported)
 					{
 						CalculateRow_Sse41(previousRowPtr, targetPtr, targetLength, sourcePrevChar, lastInsertionCost, lastSubstitutionCost);

@@ -1,4 +1,4 @@
-﻿#if NETCOREAPP3_0
+﻿#if NETCOREAPP
 using System;
 using System.Runtime.CompilerServices;
 using System.Runtime.Intrinsics;
