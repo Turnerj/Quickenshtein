@@ -1,7 +1,6 @@
 ﻿#if NETCOREAPP
 using BenchmarkDotNet.Attributes;
 using Quickenshtein.Benchmarks.Config;
-using System.Collections.Generic;
 
 namespace Quickenshtein.Benchmarks.Profiling
 {
@@ -29,21 +28,30 @@ namespace Quickenshtein.Benchmarks.Profiling
 		}
 
 		[Benchmark]
-		public void FillRow()
+		public unsafe void FillRow()
 		{
-			Levenshtein.FillRow(Data);
+			fixed (int* data = Data)
+			{
+				Levenshtein.FillRow(data, RowSize);
+			}
 		}
 
 		[Benchmark]
-		public void FillRow_Sse2()
+		public unsafe void FillRow_Sse2()
 		{
-			Levenshtein.FillRow_Sse2(Data);
+			fixed (int* data = Data)
+			{
+				Levenshtein.FillRow_Sse2(data, RowSize);
+			}
 		}
 
 		[Benchmark]
-		public void FillRow_Avx2()
+		public unsafe void FillRow_Avx2()
 		{
-			Levenshtein.FillRow_Avx2(Data);
+			fixed (int* data = Data)
+			{
+				Levenshtein.FillRow_Avx2(data, RowSize);
+			}
 		}
 	}
 }

@@ -81,31 +81,27 @@ namespace Quickenshtein
 
 			var arrayPool = ArrayPool<int>.Shared;
 			var pooledArray = arrayPool.Rent(targetLength);
-			Span<int> previousRow = pooledArray;
-
-			//ArrayPool values are sometimes bigger than allocated, let's trim our span to exactly what we use
-			previousRow = previousRow.Slice(0, targetLength);
-
-#if NETCOREAPP
-			if (Avx2.IsSupported)
-			{
-				FillRow_Avx2(previousRow);
-			}
-			else if (Sse2.IsSupported)
-			{
-				FillRow_Sse2(previousRow);
-			}
-			else
-			{
-				FillRow(previousRow);
-			}
-#else
-			FillRow(previousRow);
-#endif
 
 			fixed (char* targetPtr = target)
-			fixed (int* previousRowPtr = previousRow)
+			fixed (int* previousRowPtr = pooledArray)
 			{
+#if NETCOREAPP
+				if (Avx2.IsSupported)
+				{
+					FillRow_Avx2(previousRowPtr, targetLength);
+				}
+				else if (Sse2.IsSupported)
+				{
+					FillRow_Sse2(previousRowPtr, targetLength);
+				}
+				else
+				{
+					FillRow(previousRowPtr, targetLength);
+				}
+#else
+				FillRow(previousRowPtr, targetLength);
+#endif
+
 				var rowIndex = 0;
 
 				//Levenshtein Distance outer loop unrolling inspired by Gustaf Andersson's JS implementation
@@ -151,11 +147,11 @@ namespace Quickenshtein
 					CalculateRow(previousRowPtr, targetPtr, targetLength, sourcePrevChar, lastInsertionCost, lastSubstitutionCost);
 #endif
 				}
-			}
 
-			var result = previousRow[targetLength - 1];
-			arrayPool.Return(pooledArray);
-			return result;
+				var result = previousRowPtr[targetLength - 1];
+				arrayPool.Return(pooledArray);
+				return result;
+			}
 		}
 	}
 }

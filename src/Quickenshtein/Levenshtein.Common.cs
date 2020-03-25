@@ -35,41 +35,42 @@ namespace Quickenshtein
 		}
 
 		/// <summary>
-		/// Fills <paramref name="previousRow"/> with a number sequence from 1 to the length of the row.
+		/// Fills <paramref name="previousRowPtr"/> with a number sequence from 1 to the length of the row.
 		/// </summary>
-		/// <param name="previousRow"></param>
+		/// <param name="previousRowPtr"></param>
+		/// <param name="targetLength"></param>
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		internal static unsafe void FillRow(Span<int> previousRow)
+		internal static unsafe void FillRow(int* previousRowPtr, int targetLength)
 		{
 			var columnIndex = 0;
-			var columnsRemaining = previousRow.Length;
+			var columnsRemaining = targetLength;
 
 			while (columnsRemaining >= 8)
 			{
 				columnsRemaining -= 8;
-				previousRow[columnIndex] = ++columnIndex;
-				previousRow[columnIndex] = ++columnIndex;
-				previousRow[columnIndex] = ++columnIndex;
-				previousRow[columnIndex] = ++columnIndex;
-				previousRow[columnIndex] = ++columnIndex;
-				previousRow[columnIndex] = ++columnIndex;
-				previousRow[columnIndex] = ++columnIndex;
-				previousRow[columnIndex] = ++columnIndex;
+				previousRowPtr[columnIndex] = ++columnIndex;
+				previousRowPtr[columnIndex] = ++columnIndex;
+				previousRowPtr[columnIndex] = ++columnIndex;
+				previousRowPtr[columnIndex] = ++columnIndex;
+				previousRowPtr[columnIndex] = ++columnIndex;
+				previousRowPtr[columnIndex] = ++columnIndex;
+				previousRowPtr[columnIndex] = ++columnIndex;
+				previousRowPtr[columnIndex] = ++columnIndex;
 			}
 
 			if (columnsRemaining > 4)
 			{
 				columnsRemaining -= 4;
-				previousRow[columnIndex] = ++columnIndex;
-				previousRow[columnIndex] = ++columnIndex;
-				previousRow[columnIndex] = ++columnIndex;
-				previousRow[columnIndex] = ++columnIndex;
+				previousRowPtr[columnIndex] = ++columnIndex;
+				previousRowPtr[columnIndex] = ++columnIndex;
+				previousRowPtr[columnIndex] = ++columnIndex;
+				previousRowPtr[columnIndex] = ++columnIndex;
 			}
 
 			while (columnsRemaining > 0)
 			{
 				columnsRemaining--;
-				previousRow[columnIndex] = ++columnIndex;
+				previousRowPtr[columnIndex] = ++columnIndex;
 			}
 		}
 
