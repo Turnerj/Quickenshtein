@@ -76,6 +76,8 @@ namespace Quickenshtein
 
 		private static unsafe int CalculateDistance(ReadOnlySpan<char> source, ReadOnlySpan<char> target)
 		{
+			return CalculateDistance2(source, target);
+
 			var sourceLength = source.Length;
 			var targetLength = target.Length;
 
