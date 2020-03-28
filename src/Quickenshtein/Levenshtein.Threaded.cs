@@ -27,6 +27,11 @@ namespace Quickenshtein
 		private static unsafe int CalculateInParallel(char* sourcePtr, int sourceLength, char* targetPtr, int targetLength)
 		{
 			var numberOfWorkers = 2;
+			if (numberOfWorkers > targetLength)
+			{
+				numberOfWorkers = targetLength;
+			}
+
 			var numberOfColumnsPerWorker = targetLength / numberOfWorkers;
 			var remainderColumns = targetLength % numberOfWorkers;
 
@@ -40,7 +45,9 @@ namespace Quickenshtein
 			for (var i = 0; i < numberOfWorkers + 1; i++)
 			{
 				columnBoundariesPool[i] = ArrayPool<int>.Shared.Rent(sourceLength + 1);
+				columnBoundariesPool[i][0] = i * numberOfColumnsPerWorker;
 			}
+			columnBoundariesPool[numberOfWorkers][0] += remainderColumns;
 
 			//Fill first column boundary (ColumnIndex = 0) with incrementing numbers
 			fixed (int* startBoundaryPtr = columnBoundariesPool[0])
@@ -57,7 +64,7 @@ namespace Quickenshtein
 					var forwardColumnBoundary = columnBoundariesPool[workerIndex + 1];
 					var targetWorkerLength = numberOfColumnsPerWorker;
 
-					if (i + 1 == numberOfWorkers)
+					if (workerIndex + 1 == numberOfWorkers)
 					{
 						targetWorkerLength += remainderColumns;
 					}
@@ -127,8 +134,8 @@ namespace Quickenshtein
 					CalculateRow(previousRowPtr, targetPtr + targetWorkerIndex, targetWorkerLength, sourcePrevChar, lastInsertionCost, lastSubstitutionCost);
 #endif
 
-					forwardColumnBoundary[rowIndex] = previousRowPtr[targetWorkerLength - 1];
-					workerRowCount[workerIndex] = ++rowIndex;
+					forwardColumnBoundary[++rowIndex] = previousRowPtr[targetWorkerLength - 1];
+					workerRowCount[workerIndex] = rowIndex;
 				}
 
 				arrayPool.Return(pooledArray);
