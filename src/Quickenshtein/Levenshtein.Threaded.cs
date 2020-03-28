@@ -27,7 +27,7 @@ namespace Quickenshtein
 
 		private static unsafe int CalculateInParallel(char* sourcePtr, int sourceLength, char* targetPtr, int targetLength)
 		{
-			var numberOfWorkers = 2;
+			var numberOfWorkers = Environment.ProcessorCount;
 			if (numberOfWorkers > targetLength)
 			{
 				numberOfWorkers = targetLength;
