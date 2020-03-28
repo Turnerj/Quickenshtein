@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Threading;
 #if NETCOREAPP
 using System.Runtime.Intrinsics.X86;
 #endif
@@ -110,7 +111,7 @@ namespace Quickenshtein
 					if (workerIndex > 0)
 					{
 						var previousWorkerIndex = workerIndex - 1;
-						while (workerRowCount[previousWorkerIndex] == rowIndex)
+						while (Interlocked.CompareExchange(ref workerRowCount[previousWorkerIndex], 0, 0) == rowIndex)
 						{
 							//No-op :(
 						}
@@ -135,7 +136,7 @@ namespace Quickenshtein
 #endif
 
 					forwardColumnBoundary[++rowIndex] = previousRowPtr[targetWorkerLength - 1];
-					workerRowCount[workerIndex] = rowIndex;
+					Interlocked.Increment(ref workerRowCount[workerIndex]);
 				}
 
 				arrayPool.Return(pooledArray);
