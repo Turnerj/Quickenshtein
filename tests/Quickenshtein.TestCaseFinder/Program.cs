@@ -5,7 +5,7 @@ namespace Quickenshtein.TestCaseFinder
 {
 	class Program
 	{
-		private const int NUMBER_OF_CHECKS = 1024;
+		private const int NUMBER_OF_CHECKS = 2000;
 		private const int WORD_LENGTH = 20;
 
 		private const string CHARACTERS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -15,6 +15,10 @@ namespace Quickenshtein.TestCaseFinder
 		static void Main(string[] args)
 		{
 			var numberOfFailures = 0;
+			Console.WriteLine("=== Test Case Finder ===");
+			Console.WriteLine($"Number of Checks: {NUMBER_OF_CHECKS}");
+			Console.WriteLine($"World Length: {WORD_LENGTH}");
+			Console.WriteLine("========================");
 
 			for (var i = 0; i < NUMBER_OF_CHECKS; i++)
 			{
@@ -30,6 +34,10 @@ namespace Quickenshtein.TestCaseFinder
 					Console.WriteLine($"Source: {source}");
 					Console.WriteLine($"Target: {target}");
 					numberOfFailures++;
+				}
+				else
+				{
+					Console.WriteLine($"PASSED ({i + 1})");
 				}
 			}
 
