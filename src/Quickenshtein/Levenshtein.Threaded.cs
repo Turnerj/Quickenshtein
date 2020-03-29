@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Buffers;
-using System.Collections.Generic;
 using System.Runtime.CompilerServices;
-using System.Text;
 using System.Threading.Tasks;
 using System.Threading;
 #if NETCOREAPP
@@ -13,26 +11,27 @@ namespace Quickenshtein
 {
 	public static partial class Levenshtein
 	{
-		private static unsafe int CalculateDistance2(ReadOnlySpan<char> source, ReadOnlySpan<char> target)
+		private static unsafe int CalculateDistance_MultiThreaded(ReadOnlySpan<char> source, ReadOnlySpan<char> target, CalculationOptions options)
 		{
 			var sourceLength = source.Length;
 			var targetLength = target.Length;
 
+			var maximumNumberOfWorkers = Environment.ProcessorCount;
+			var numberOfWorkers = targetLength / options.MinimumCharactersPerThread;
+			if (numberOfWorkers == 0)
+			{
+				numberOfWorkers = 1;
+			}
+
 			fixed (char* sourcePtr = source)
 			fixed (char* targetPtr = target)
 			{
-				return CalculateInParallel(sourcePtr, sourceLength, targetPtr, targetLength);
+				return CalculateDistanceWithWorkers(numberOfWorkers, sourcePtr, sourceLength, targetPtr, targetLength);
 			}
 		}
 
-		private static unsafe int CalculateInParallel(char* sourcePtr, int sourceLength, char* targetPtr, int targetLength)
+		private static unsafe int CalculateDistanceWithWorkers(int numberOfWorkers, char* sourcePtr, int sourceLength, char* targetPtr, int targetLength)
 		{
-			var numberOfWorkers = Environment.ProcessorCount;
-			if (numberOfWorkers > targetLength)
-			{
-				numberOfWorkers = targetLength;
-			}
-
 			var numberOfColumnsPerWorker = targetLength / numberOfWorkers;
 			var remainderColumns = targetLength % numberOfWorkers;
 
@@ -72,7 +71,7 @@ namespace Quickenshtein
 						targetSegmentLength += remainderColumns;
 					}
 
-					CalculateSegment(workerRowCountPool, workerIndex, columnIndex, sourcePtr, sourceLength, targetSegmentPtr, targetSegmentLength, backColumnBoundary, forwardColumnBoundary);
+					DoCalculateSegment(workerRowCountPool, workerIndex, columnIndex, sourcePtr, sourceLength, targetSegmentPtr, targetSegmentLength, backColumnBoundary, forwardColumnBoundary);
 				});
 			}
 			var finalWorker = workerPool[numberOfWorkers - 1];
@@ -95,7 +94,7 @@ namespace Quickenshtein
 			return result;
 		}
 
-		private static unsafe Task CalculateSegment(int[] workerRowCount, int workerIndex, int columnIndex, char* sourcePtr, int sourceLength, char* targetSegmentPtr, int targetSegmentLength, int[] backColumnBoundary, int[] forwardColumnBoundary)
+		private static unsafe Task DoCalculateSegment(int[] workerRowCount, int workerIndex, int columnIndex, char* sourcePtr, int sourceLength, char* targetSegmentPtr, int targetSegmentLength, int[] backColumnBoundary, int[] forwardColumnBoundary)
 		{
 			var arrayPool = ArrayPool<int>.Shared;
 			var pooledArray = arrayPool.Rent(targetSegmentLength);
