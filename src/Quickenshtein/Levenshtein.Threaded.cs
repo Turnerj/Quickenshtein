@@ -42,7 +42,7 @@ namespace Quickenshtein
 			var workerPool = ArrayPool<Task>.Shared.Rent(numberOfWorkers);
 			var columnBoundariesPool = ArrayPool<int[]>.Shared.Rent(numberOfWorkers + 1);
 
-			//Initialise column boundaries
+			//Initialise shared task boundaries
 			for (var i = 0; i < numberOfWorkers + 1; i++)
 			{
 				columnBoundariesPool[i] = ArrayPool<int>.Shared.Rent(sourceLength + 1);
@@ -63,17 +63,18 @@ namespace Quickenshtein
 				{
 					var backColumnBoundary = columnBoundariesPool[workerIndex];
 					var forwardColumnBoundary = columnBoundariesPool[workerIndex + 1];
-					var targetWorkerLength = numberOfColumnsPerWorker;
+					var columnIndex = workerIndex * numberOfColumnsPerWorker;
+					var targetSegmentPtr = targetPtr + columnIndex;
+					var targetSegmentLength = numberOfColumnsPerWorker;
 
 					if (workerIndex + 1 == numberOfWorkers)
 					{
-						targetWorkerLength += remainderColumns;
+						targetSegmentLength += remainderColumns;
 					}
 
-					DoWork(workerRowCountPool, workerIndex, sourcePtr, sourceLength, targetPtr, workerIndex * numberOfColumnsPerWorker, targetWorkerLength, backColumnBoundary, forwardColumnBoundary);
+					CalculateSegment(workerRowCountPool, workerIndex, columnIndex, sourcePtr, sourceLength, targetSegmentPtr, targetSegmentLength, backColumnBoundary, forwardColumnBoundary);
 				});
 			}
-
 			var finalWorker = workerPool[numberOfWorkers - 1];
 			finalWorker.Wait();
 
@@ -94,24 +95,24 @@ namespace Quickenshtein
 			return result;
 		}
 
-		private static unsafe Task DoWork(int[] workerRowCount, int workerIndex, char* sourcePtr, int sourceLength, char* targetPtr, int targetWorkerIndex, int targetWorkerLength, int[] backColumnBoundary, int[] forwardColumnBoundary)
+		private static unsafe Task CalculateSegment(int[] workerRowCount, int workerIndex, int columnIndex, char* sourcePtr, int sourceLength, char* targetSegmentPtr, int targetSegmentLength, int[] backColumnBoundary, int[] forwardColumnBoundary)
 		{
-			var rowIndex = 0;
-
 			var arrayPool = ArrayPool<int>.Shared;
-			var pooledArray = arrayPool.Rent(targetWorkerLength);
+			var pooledArray = arrayPool.Rent(targetSegmentLength);
 
 			fixed (int* previousRowPtr = pooledArray)
 			{
 				//TODO: Support intrinsics for FillRow_Custom
-				Fill_Custom(previousRowPtr, targetWorkerIndex, targetWorkerLength);
+				Fill_Custom(previousRowPtr, columnIndex, targetSegmentLength);
 
-				for (; rowIndex < sourceLength;)
+				ref var selfWorkerRowCount = ref workerRowCount[workerIndex];
+
+				for (var rowIndex = 0; rowIndex < sourceLength;)
 				{
 					if (workerIndex > 0)
 					{
-						var previousWorkerIndex = workerIndex - 1;
-						while (Interlocked.CompareExchange(ref workerRowCount[previousWorkerIndex], 0, 0) == rowIndex)
+						ref var previousWorkerRowCount = ref workerRowCount[workerIndex - 1];
+						while (Interlocked.CompareExchange(ref previousWorkerRowCount, 0, 0) == rowIndex)
 						{
 							//No-op :(
 						}
@@ -125,18 +126,18 @@ namespace Quickenshtein
 #if NETCOREAPP
 					if (Sse41.IsSupported)
 					{
-						CalculateRow_Sse41(previousRowPtr, targetPtr + targetWorkerIndex, targetWorkerLength, sourcePrevChar, lastInsertionCost, lastSubstitutionCost);
+						CalculateRow_Sse41(previousRowPtr, targetSegmentPtr, targetSegmentLength, sourcePrevChar, lastInsertionCost, lastSubstitutionCost);
 					}
 					else
 					{
-						CalculateRow(previousRowPtr, targetPtr + targetWorkerIndex, targetWorkerLength, sourcePrevChar, lastInsertionCost, lastSubstitutionCost);
+						CalculateRow(previousRowPtr, targetSegmentPtr, targetSegmentLength, sourcePrevChar, lastInsertionCost, lastSubstitutionCost);
 					}
 #else
-					CalculateRow(previousRowPtr, targetPtr + targetWorkerIndex, targetWorkerLength, sourcePrevChar, lastInsertionCost, lastSubstitutionCost);
+					CalculateRow(previousRowPtr, targetSegmentPtr, targetSegmentLength, sourcePrevChar, lastInsertionCost, lastSubstitutionCost);
 #endif
 
-					forwardColumnBoundary[++rowIndex] = previousRowPtr[targetWorkerLength - 1];
-					Interlocked.Increment(ref workerRowCount[workerIndex]);
+					forwardColumnBoundary[++rowIndex] = previousRowPtr[targetSegmentLength - 1];
+					Interlocked.Increment(ref selfWorkerRowCount);
 				}
 
 				arrayPool.Return(pooledArray);
@@ -145,10 +146,10 @@ namespace Quickenshtein
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		internal static unsafe void Fill_Custom(int* arrayPtr, int initialValue, int columns)
+		internal static unsafe void Fill_Custom(int* arrayPtr, int startAfterValue, int columns)
 		{
 			var index = 0;
-			var value = initialValue;
+			var value = startAfterValue;
 
 			while (columns >= 8)
 			{
