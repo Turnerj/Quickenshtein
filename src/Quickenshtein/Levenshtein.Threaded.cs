@@ -39,8 +39,7 @@ namespace Quickenshtein
 			var numberOfColumnsPerWorker = targetLength / numberOfWorkers;
 			var remainderColumns = targetLength % numberOfWorkers;
 
-			var workerRowCountPool = ArrayPool<int>.Shared.Rent(numberOfWorkers);
-			((Span<int>)workerRowCountPool).Fill(0);
+			var workerRowCounter = stackalloc int[Environment.ProcessorCount];
 
 			var workerPool = ArrayPool<Task>.Shared.Rent(numberOfWorkers);
 			var columnBoundariesPool = ArrayPool<int[]>.Shared.Rent(numberOfWorkers + 1);
@@ -75,7 +74,7 @@ namespace Quickenshtein
 						targetSegmentLength += remainderColumns;
 					}
 
-					DoCalculateSegment(workerRowCountPool, workerIndex, columnIndex, sourcePtr, sourceLength, targetSegmentPtr, targetSegmentLength, backColumnBoundary, forwardColumnBoundary);
+					DoCalculateSegment(workerRowCounter, workerIndex, columnIndex, sourcePtr, sourceLength, targetSegmentPtr, targetSegmentLength, backColumnBoundary, forwardColumnBoundary);
 				});
 			}
 			var finalWorker = workerPool[numberOfWorkers - 1];
@@ -93,12 +92,11 @@ namespace Quickenshtein
 			ArrayPool<int[]>.Shared.Return(columnBoundariesPool);
 
 			ArrayPool<Task>.Shared.Return(workerPool);
-			ArrayPool<int>.Shared.Return(workerRowCountPool);
 
 			return result;
 		}
 
-		private static unsafe Task DoCalculateSegment(int[] workerRowCount, int workerIndex, int columnIndex, char* sourcePtr, int sourceLength, char* targetSegmentPtr, int targetSegmentLength, int[] backColumnBoundary, int[] forwardColumnBoundary)
+		private static unsafe Task DoCalculateSegment(int* workerRowCounter, int workerIndex, int columnIndex, char* sourcePtr, int sourceLength, char* targetSegmentPtr, int targetSegmentLength, int[] backColumnBoundary, int[] forwardColumnBoundary)
 		{
 			var arrayPool = ArrayPool<int>.Shared;
 			var pooledArray = arrayPool.Rent(targetSegmentLength);
@@ -108,13 +106,13 @@ namespace Quickenshtein
 				//TODO: Support intrinsics for FillRow_Custom
 				Fill_Custom(previousRowPtr, columnIndex, targetSegmentLength);
 
-				ref var selfWorkerRowCount = ref workerRowCount[workerIndex];
+				ref var selfWorkerRowCount = ref workerRowCounter[workerIndex];
 
 				for (var rowIndex = 0; rowIndex < sourceLength;)
 				{
 					if (workerIndex > 0)
 					{
-						ref var previousWorkerRowCount = ref workerRowCount[workerIndex - 1];
+						ref var previousWorkerRowCount = ref workerRowCounter[workerIndex - 1];
 						while (Interlocked.CompareExchange(ref previousWorkerRowCount, 0, 0) == rowIndex)
 						{
 							//No-op :(
