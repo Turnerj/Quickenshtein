@@ -8,6 +8,11 @@ namespace Quickenshtein
 	{
 		public static int GetDistance(string source, string target)
 		{
+			return GetDistance(source, target, CalculationOptions.Default);
+		}
+
+		public static int GetDistance(string source, string target, CalculationOptions calculationOptions)
+		{
 			//Shortcut any processing if either string is empty
 			if (source == null || source.Length == 0)
 			{
@@ -51,7 +56,8 @@ namespace Quickenshtein
 
 			return CalculateDistance(
 				sourceSpan.Slice(startIndex, sourceLength),
-				targetSpan.Slice(startIndex, targetLength)
+				targetSpan.Slice(startIndex, targetLength),
+				calculationOptions
 			);
 		}
 

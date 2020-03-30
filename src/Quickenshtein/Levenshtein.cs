@@ -16,6 +16,11 @@ namespace Quickenshtein
 	{
 		public static unsafe int GetDistance(ReadOnlySpan<char> source, ReadOnlySpan<char> target)
 		{
+			return GetDistance(source, target, CalculationOptions.Default);
+		}
+
+		public static unsafe int GetDistance(ReadOnlySpan<char> source, ReadOnlySpan<char> target, CalculationOptions calculationOptions)
+		{
 			var sourceEnd = source.Length;
 			var targetEnd = target.Length;
 
@@ -70,13 +75,14 @@ namespace Quickenshtein
 
 			return CalculateDistance(
 				source.Slice(startIndex, sourceLength),
-				target.Slice(startIndex, targetLength)
+				target.Slice(startIndex, targetLength),
+				calculationOptions
 			);
 		}
 
-		private static unsafe int CalculateDistance(ReadOnlySpan<char> source, ReadOnlySpan<char> target)
+		private static unsafe int CalculateDistance(ReadOnlySpan<char> source, ReadOnlySpan<char> target, CalculationOptions calculationOptions)
 		{
-			return CalculateDistance_MultiThreaded(source, target, CalculationOptions.Default);
+			return CalculateDistance_MultiThreaded(source, target, calculationOptions);
 
 			var sourceLength = source.Length;
 			var targetLength = target.Length;
