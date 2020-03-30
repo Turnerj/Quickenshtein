@@ -22,6 +22,10 @@ namespace Quickenshtein
 			{
 				numberOfWorkers = 1;
 			}
+			else if (numberOfWorkers > maximumNumberOfWorkers)
+			{
+				numberOfWorkers = maximumNumberOfWorkers;
+			}
 
 			fixed (char* sourcePtr = source)
 			fixed (char* targetPtr = target)
