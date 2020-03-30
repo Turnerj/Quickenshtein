@@ -82,10 +82,14 @@ namespace Quickenshtein
 
 		private static unsafe int CalculateDistance(ReadOnlySpan<char> source, ReadOnlySpan<char> target, CalculationOptions calculationOptions)
 		{
-			return CalculateDistance_MultiThreaded(source, target, calculationOptions);
+			var targetLength = target.Length;
+
+			if (targetLength >= calculationOptions.EnableThreadingAfterXCharacters)
+			{
+				return CalculateDistance_MultiThreaded(source, target, calculationOptions);
+			}
 
 			var sourceLength = source.Length;
-			var targetLength = target.Length;
 
 			var arrayPool = ArrayPool<int>.Shared;
 			var pooledArray = arrayPool.Rent(targetLength);

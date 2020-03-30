@@ -6,18 +6,22 @@ namespace Quickenshtein
 {
 	public struct CalculationOptions
 	{
-		public bool EnableMultiThreading { get; set; }
+		public int EnableThreadingAfterXCharacters { get; set; }
 		public int MinimumCharactersPerThread { get; set; }
 
 		public readonly static CalculationOptions Default = new CalculationOptions
 		{
-			EnableMultiThreading = true,
+			EnableThreadingAfterXCharacters = int.MaxValue
+		};
 
-			//TODO: Find appropriate default values
+		public readonly static CalculationOptions DefaultWithThreading = new CalculationOptions
+		{
 #if NETCOREAPP
-			MinimumCharactersPerThread = 8000
-#else
+			EnableThreadingAfterXCharacters = 16000,
 			MinimumCharactersPerThread = 4000
+#else
+			EnableThreadingAfterXCharacters = 4000,
+			MinimumCharactersPerThread = 1000
 #endif
 		};
 	}
