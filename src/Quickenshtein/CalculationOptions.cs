@@ -6,12 +6,12 @@ namespace Quickenshtein
 {
 	public struct CalculationOptions
 	{
-		public bool UseMultiThreading { get; set; }
+		public bool EnableMultiThreading { get; set; }
 		public int MinimumCharactersPerThread { get; set; }
 
 		public readonly static CalculationOptions Default = new CalculationOptions
 		{
-			UseMultiThreading = true,
+			EnableMultiThreading = true,
 
 			//TODO: Find appropriate default values
 #if NETCOREAPP
