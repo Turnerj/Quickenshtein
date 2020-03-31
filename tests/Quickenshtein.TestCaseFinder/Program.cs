@@ -13,7 +13,11 @@ namespace Quickenshtein.TestCaseFinder
 		private static readonly CalculationOptions[] OptionsToTest = new[]
 		{
 			CalculationOptions.Default,
-			CalculationOptions.DefaultWithThreading
+			new CalculationOptions
+			{
+				EnableThreadingAfterXCharacters = 0,
+				MinimumCharactersPerThread = 16
+			}
 		};
 
 		private static readonly Random Random = new Random();

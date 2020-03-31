@@ -12,7 +12,11 @@ namespace Quickenshtein.Tests
 	{
 		public ThreadedLevenshteinTests()
 		{
-			CalculationOptions = CalculationOptions.DefaultWithThreading;
+			CalculationOptions = new CalculationOptions
+			{
+				EnableThreadingAfterXCharacters = 0,
+				MinimumCharactersPerThread = 16
+			};
 		}
 	}
 }
