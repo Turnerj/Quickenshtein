@@ -10,15 +10,43 @@ namespace Quickenshtein.TestCaseFinder
 
 		private const string CHARACTERS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
+		private static readonly CalculationOptions[] OptionsToTest = new[]
+		{
+			CalculationOptions.Default,
+			CalculationOptions.DefaultWithThreading
+		};
+
 		private static readonly Random Random = new Random();
 
 		static void Main(string[] args)
 		{
 			var numberOfFailures = 0;
 			Console.WriteLine("=== Test Case Finder ===");
-			Console.WriteLine($"Number of Checks: {NUMBER_OF_CHECKS}");
+			Console.WriteLine($"Number of Options to Test: {OptionsToTest.Length}");
+			Console.WriteLine($"Number of Checks per Test: {NUMBER_OF_CHECKS}");
 			Console.WriteLine($"World Length: {WORD_LENGTH}");
 			Console.WriteLine("========================");
+
+			for (var i = 0; i < OptionsToTest.Length; i++)
+			{
+				Console.WriteLine();
+				Console.WriteLine("========================");
+				Console.WriteLine($"======= Option {i + 1} =======");
+				numberOfFailures += RunWithOptions(OptionsToTest[i]);
+			}
+
+			Console.WriteLine("=== Test Case Finder Complete ===");
+			Console.WriteLine($"Total Number of Failures: {numberOfFailures}");
+		}
+
+		static int RunWithOptions(CalculationOptions calculationOptions)
+		{
+			Console.WriteLine("========================");
+			Console.WriteLine($"EnableThreadingAfterXCharacters: {calculationOptions.EnableThreadingAfterXCharacters}");
+			Console.WriteLine($"MinimumCharactersPerThread: {calculationOptions.MinimumCharactersPerThread}");
+			Console.WriteLine("========================");
+
+			var numberOfFailures = 0;
 
 			for (var i = 0; i < NUMBER_OF_CHECKS; i++)
 			{
@@ -35,14 +63,14 @@ namespace Quickenshtein.TestCaseFinder
 					Console.WriteLine($"Target: {target}");
 					numberOfFailures++;
 				}
-				else
-				{
-					Console.WriteLine($"PASSED ({i + 1})");
-				}
 			}
 
-			Console.WriteLine("=== Test Case Finder Complete ===");
+			Console.WriteLine("========================");
 			Console.WriteLine($"Number of Failures: {numberOfFailures}");
+			Console.WriteLine("========================");
+			Console.WriteLine();
+
+			return numberOfFailures;
 		}
 
 		static unsafe string GetRandomWord()
