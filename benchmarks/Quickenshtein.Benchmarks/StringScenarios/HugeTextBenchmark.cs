@@ -26,9 +26,19 @@ namespace Quickenshtein.Benchmarks.StringScenarios
 		}
 
 		[Benchmark]
-		public int Quickenshtein()
+		public int Quickenshtein_NoThreading()
 		{
 			return global::Quickenshtein.Levenshtein.GetDistance(StringA, StringB);
+		}
+
+		[Benchmark]
+		public int Quickenshtein_WithThreading()
+		{
+			return global::Quickenshtein.Levenshtein.GetDistance(StringA, StringB, new CalculationOptions 
+			{
+				EnableThreadingAfterXCharacters = 0,
+				MinimumCharactersPerThread = 16
+			});
 		}
 
 		[Benchmark]
