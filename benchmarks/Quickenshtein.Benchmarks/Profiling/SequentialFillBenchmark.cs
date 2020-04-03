@@ -1,11 +1,12 @@
 ﻿#if NETCOREAPP
 using BenchmarkDotNet.Attributes;
 using Quickenshtein.Benchmarks.Config;
+using Quickenshtein.Internal;
 
 namespace Quickenshtein.Benchmarks.Profiling
 {
 	[Config(typeof(CoreOnlyRuntimeConfig))]
-	public class FillRowBenchmark
+	public class SequentialFillBenchmark
 	{
 		[Params(10, 400, 8000)]
 		public int RowSize;
@@ -28,29 +29,29 @@ namespace Quickenshtein.Benchmarks.Profiling
 		}
 
 		[Benchmark]
-		public unsafe void FillRow()
+		public unsafe void Fill()
 		{
 			fixed (int* data = Data)
 			{
-				Levenshtein.FillRow(data, RowSize);
+				SequentialFillHelper.Fill(data, RowSize);
 			}
 		}
 
 		[Benchmark]
-		public unsafe void FillRow_Sse2()
+		public unsafe void Fill_Sse2()
 		{
 			fixed (int* data = Data)
 			{
-				Levenshtein.FillRow_Sse2(data, RowSize);
+				SequentialFillHelper.Fill_Sse2(data, RowSize);
 			}
 		}
 
 		[Benchmark]
-		public unsafe void FillRow_Avx2()
+		public unsafe void Fill_Avx2()
 		{
 			fixed (int* data = Data)
 			{
-				Levenshtein.FillRow_Avx2(data, RowSize);
+				SequentialFillHelper.Fill_Avx2(data, RowSize);
 			}
 		}
 	}

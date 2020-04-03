@@ -4,6 +4,7 @@ using System.Runtime.CompilerServices;
 #if NETCOREAPP
 using System.Runtime.Intrinsics.X86;
 #endif
+using Quickenshtein.Internal;
 
 [assembly: InternalsVisibleTo("Quickenshtein.Benchmarks")]
 
@@ -100,18 +101,18 @@ namespace Quickenshtein
 #if NETCOREAPP
 				if (Avx2.IsSupported)
 				{
-					FillRow_Avx2(previousRowPtr, targetLength);
+					SequentialFillHelper.Fill_Avx2(previousRowPtr, targetLength);
 				}
 				else if (Sse2.IsSupported)
 				{
-					FillRow_Sse2(previousRowPtr, targetLength);
+					SequentialFillHelper.Fill_Sse2(previousRowPtr, targetLength);
 				}
 				else
 				{
-					FillRow(previousRowPtr, targetLength);
+					SequentialFillHelper.Fill(previousRowPtr, targetLength);
 				}
 #else
-				FillRow(previousRowPtr, targetLength);
+				SequentialFillHelper.Fill(previousRowPtr, targetLength);
 #endif
 
 				var rowIndex = 0;

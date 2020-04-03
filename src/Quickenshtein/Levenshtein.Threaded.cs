@@ -3,6 +3,7 @@ using System.Buffers;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Threading;
+using Quickenshtein.Internal;
 #if NETCOREAPP
 using System.Runtime.Intrinsics.X86;
 #endif
@@ -55,7 +56,22 @@ namespace Quickenshtein
 			//Fill first column boundary (ColumnIndex = 0) with incrementing numbers
 			fixed (int* startBoundaryPtr = columnBoundariesPool[0])
 			{
-				Fill_Custom(startBoundaryPtr, -1, sourceLength + 1);
+#if NETCOREAPP
+				if (Avx2.IsSupported)
+				{
+					SequentialFillHelper.Fill_Avx2(startBoundaryPtr, 0, sourceLength + 1);
+				}
+				else if (Sse2.IsSupported)
+				{
+					SequentialFillHelper.Fill_Sse2(startBoundaryPtr, 0, sourceLength + 1);
+				}
+				else
+				{
+					SequentialFillHelper.Fill(startBoundaryPtr, 0, sourceLength + 1);
+				}
+#else
+				SequentialFillHelper.Fill(startBoundaryPtr, 0, sourceLength + 1);
+#endif
 			}
 
 			for (var workerIndex = 0; workerIndex < numberOfWorkers - 1; workerIndex++)
@@ -124,8 +140,22 @@ namespace Quickenshtein
 
 			fixed (int* previousRowPtr = pooledArray)
 			{
-				//TODO: Support intrinsics for FillRow_Custom
-				Fill_Custom(previousRowPtr, columnIndex, targetSegmentLength);
+#if NETCOREAPP
+				if (Avx2.IsSupported)
+				{
+					SequentialFillHelper.Fill_Avx2(previousRowPtr, columnIndex + 1, targetSegmentLength);
+				}
+				else if (Sse2.IsSupported)
+				{
+					SequentialFillHelper.Fill_Sse2(previousRowPtr, columnIndex + 1, targetSegmentLength);
+				}
+				else
+				{
+					SequentialFillHelper.Fill(previousRowPtr, columnIndex + 1, targetSegmentLength);
+				}
+#else
+				SequentialFillHelper.Fill(previousRowPtr, columnIndex + 1, targetSegmentLength);
+#endif
 
 				ref var selfWorkerRowCount = ref rowCountPtr[workerIndex];
 
@@ -160,41 +190,6 @@ namespace Quickenshtein
 				}
 
 				arrayPool.Return(pooledArray);
-			}
-		}
-
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		internal static unsafe void Fill_Custom(int* arrayPtr, int startAfterValue, int columns)
-		{
-			var index = 0;
-			var value = startAfterValue;
-
-			while (columns >= 8)
-			{
-				columns -= 8;
-				arrayPtr[index++] = ++value;
-				arrayPtr[index++] = ++value;
-				arrayPtr[index++] = ++value;
-				arrayPtr[index++] = ++value;
-				arrayPtr[index++] = ++value;
-				arrayPtr[index++] = ++value;
-				arrayPtr[index++] = ++value;
-				arrayPtr[index++] = ++value;
-			}
-
-			if (columns > 4)
-			{
-				columns -= 4;
-				arrayPtr[index++] = ++value;
-				arrayPtr[index++] = ++value;
-				arrayPtr[index++] = ++value;
-				arrayPtr[index++] = ++value;
-			}
-
-			while (columns > 0)
-			{
-				columns--;
-				arrayPtr[index++] = ++value;
 			}
 		}
 	}
