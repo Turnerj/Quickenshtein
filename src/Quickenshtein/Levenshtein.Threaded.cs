@@ -11,7 +11,7 @@ namespace Quickenshtein
 {
 	public static partial class Levenshtein
 	{
-		private static WaitCallback WorkerTask = new WaitCallback(WorkerTask_CalculateSegment);
+		private static readonly WaitCallback WorkerTask = new WaitCallback(WorkerTask_CalculateSegment);
 
 		private static unsafe int CalculateDistance_MultiThreaded(ReadOnlySpan<char> source, ReadOnlySpan<char> target, CalculationOptions options)
 		{
