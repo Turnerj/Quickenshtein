@@ -8,83 +8,6 @@ namespace Quickenshtein
 {
 	public static partial class Levenshtein
 	{
-		private const byte VECTOR256_NUMBER_OF_CHARACTERS = 16;
-		private const sbyte VECTOR256_COMPARISON_ALL_EQUAL = -1;
-
-		/// <summary>
-		/// Using AVX2, calculates the trim offsets at the start and end of the source and target spans where characters are equal.
-		/// AVX2 instructions allow for a maximum comparison rate of 16 characters.
-		/// </summary>
-		/// <param name="source"></param>
-		/// <param name="target"></param>
-		/// <param name="startIndex"></param>
-		/// <param name="sourceEnd"></param>
-		/// <param name="targetEnd"></param>
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		internal static unsafe void TrimInput_Avx2(ReadOnlySpan<char> source, ReadOnlySpan<char> target, ref int startIndex, ref int sourceEnd, ref int targetEnd)
-		{
-			var charactersAvailableToTrim = Math.Min(sourceEnd, targetEnd);
-			if (charactersAvailableToTrim >= VECTOR256_NUMBER_OF_CHARACTERS)
-			{
-				fixed (char* sourcePtr = source)
-				fixed (char* targetPtr = target)
-				{
-					var sourceUShortPtr = (ushort*)sourcePtr;
-					var targetUShortPtr = (ushort*)targetPtr;
-
-					while (charactersAvailableToTrim >= VECTOR256_NUMBER_OF_CHARACTERS)
-					{
-						var sectionEquality = Avx2.MoveMask(
-							Avx2.CompareEqual(
-								Avx.LoadDquVector256(sourceUShortPtr + startIndex),
-								Avx.LoadDquVector256(targetUShortPtr + startIndex)
-							).AsByte()
-						);
-
-						if (sectionEquality != VECTOR256_COMPARISON_ALL_EQUAL)
-						{
-							break;
-						}
-
-						startIndex += VECTOR256_NUMBER_OF_CHARACTERS;
-						charactersAvailableToTrim -= VECTOR256_NUMBER_OF_CHARACTERS;
-					}
-
-					while (charactersAvailableToTrim >= VECTOR256_NUMBER_OF_CHARACTERS)
-					{
-						var sectionEquality = Avx2.MoveMask(
-							Avx2.CompareEqual(
-								Avx.LoadDquVector256(sourceUShortPtr + (sourceEnd - VECTOR256_NUMBER_OF_CHARACTERS + 1)),
-								Avx.LoadDquVector256(targetUShortPtr + (targetEnd - VECTOR256_NUMBER_OF_CHARACTERS + 1))
-							).AsByte()
-						);
-
-						if (sectionEquality != VECTOR256_COMPARISON_ALL_EQUAL)
-						{
-							break;
-						}
-
-						sourceEnd -= VECTOR256_NUMBER_OF_CHARACTERS;
-						targetEnd -= VECTOR256_NUMBER_OF_CHARACTERS;
-						charactersAvailableToTrim -= VECTOR256_NUMBER_OF_CHARACTERS;
-					}
-				}
-			}
-
-			while (charactersAvailableToTrim > 0 && source[startIndex] == target[startIndex])
-			{
-				charactersAvailableToTrim--;
-				startIndex++;
-			}
-
-			while (charactersAvailableToTrim > 0 && source[sourceEnd - 1] == target[targetEnd - 1])
-			{
-				charactersAvailableToTrim--;
-				sourceEnd--;
-				targetEnd--;
-			}
-		}
-
 		/// <summary>
 		/// Using SSE4.1, calculates the costs for an entire row of the virtual matrix.
 		/// </summary>
@@ -185,13 +108,13 @@ namespace Quickenshtein
 		/// This performs a 4x outer loop unrolling allowing fewer lookups of target character and deletion cost data across the rows.
 		/// </summary>
 		/// <param name="previousRowPtr"></param>
-		/// <param name="source"></param>
+		/// <param name="sourcePtr"></param>
 		/// <param name="rowIndex"></param>
 		/// <param name="targetPtr"></param>
 		/// <param name="targetLength"></param>
-		private static unsafe void CalculateRows_4Rows_Sse41(int* previousRowPtr, ReadOnlySpan<char> source, ref int rowIndex, char* targetPtr, int targetLength)
+		private static unsafe void CalculateRows_4Rows_Sse41(int* previousRowPtr, char* sourcePtr, int sourceLength, ref int rowIndex, char* targetPtr, int targetLength)
 		{
-			var acceptableRowCount = source.Length - 3;
+			var acceptableRowCount = sourceLength - 3;
 
 			Vector128<int> row1Costs, row2Costs, row3Costs, row4Costs, row5Costs;
 			char sourceChar1, sourceChar2, sourceChar3, sourceChar4;
@@ -199,10 +122,10 @@ namespace Quickenshtein
 
 			for (; rowIndex < acceptableRowCount; rowIndex += 4)
 			{
-				sourceChar1 = source[rowIndex];
-				sourceChar2 = source[rowIndex + 1];
-				sourceChar3 = source[rowIndex + 2];
-				sourceChar4 = source[rowIndex + 3];
+				sourceChar1 = sourcePtr[rowIndex];
+				sourceChar2 = sourcePtr[rowIndex + 1];
+				sourceChar3 = sourcePtr[rowIndex + 2];
+				sourceChar4 = sourcePtr[rowIndex + 3];
 				row1Costs = Vector128.Create(rowIndex); //Sub
 				row2Costs = Sse2.Add(row1Costs, allOnesVector); //Insert, Sub
 				row3Costs = Sse2.Add(row2Costs, allOnesVector); //Insert, Sub
@@ -352,13 +275,13 @@ namespace Quickenshtein
 		/// This performs a 8x outer loop unrolling allowing fewer lookups of target character and deletion cost data across the rows.
 		/// </summary>
 		/// <param name="previousRowPtr"></param>
-		/// <param name="source"></param>
+		/// <param name="sourcePtr"></param>
 		/// <param name="rowIndex"></param>
 		/// <param name="targetPtr"></param>
 		/// <param name="targetLength"></param>
-		private static unsafe void CalculateRows_8Rows_Sse41(int* previousRowPtr, ReadOnlySpan<char> source, ref int rowIndex, char* targetPtr, int targetLength)
+		private static unsafe void CalculateRows_8Rows_Sse41(int* previousRowPtr, char* sourcePtr, int sourceLength, ref int rowIndex, char* targetPtr, int targetLength)
 		{
-			var acceptableRowCount = source.Length - 7;
+			var acceptableRowCount = sourceLength - 7;
 
 			Vector128<int> row1Costs, row2Costs, row3Costs, row4Costs, row5Costs, row6Costs, row7Costs, row8Costs, row9Costs;
 			char sourceChar1, sourceChar2, sourceChar3, sourceChar4, sourceChar5, sourceChar6, sourceChar7, sourceChar8;
@@ -366,14 +289,14 @@ namespace Quickenshtein
 
 			for (; rowIndex < acceptableRowCount; rowIndex += 8)
 			{
-				sourceChar1 = source[rowIndex];
-				sourceChar2 = source[rowIndex + 1];
-				sourceChar3 = source[rowIndex + 2];
-				sourceChar4 = source[rowIndex + 3];
-				sourceChar5 = source[rowIndex + 4];
-				sourceChar6 = source[rowIndex + 5];
-				sourceChar7 = source[rowIndex + 6];
-				sourceChar8 = source[rowIndex + 7];
+				sourceChar1 = sourcePtr[rowIndex];
+				sourceChar2 = sourcePtr[rowIndex + 1];
+				sourceChar3 = sourcePtr[rowIndex + 2];
+				sourceChar4 = sourcePtr[rowIndex + 3];
+				sourceChar5 = sourcePtr[rowIndex + 4];
+				sourceChar6 = sourcePtr[rowIndex + 5];
+				sourceChar7 = sourcePtr[rowIndex + 6];
+				sourceChar8 = sourcePtr[rowIndex + 7];
 				row1Costs = Vector128.Create(rowIndex); //Sub
 				row2Costs = Sse2.Add(row1Costs, allOnesVector); //Insert, Sub
 				row3Costs = Sse2.Add(row2Costs, allOnesVector); //Insert, Sub

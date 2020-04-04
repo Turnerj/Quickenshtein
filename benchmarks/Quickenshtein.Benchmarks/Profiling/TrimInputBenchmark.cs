@@ -1,13 +1,25 @@
-﻿#if NETCOREAPP
-using BenchmarkDotNet.Attributes;
+﻿using BenchmarkDotNet.Attributes;
 using Quickenshtein.Benchmarks.Config;
+using Quickenshtein.Internal;
+using System;
 using System.Collections.Generic;
 
 namespace Quickenshtein.Benchmarks.Profiling
 {
-	[Config(typeof(CoreOnlyRuntimeConfig))]
+	[Config(typeof(CustomConfig))]
 	public class TrimInputBenchmark
 	{
+		class CustomConfig : CustomIntrinsicConfig
+		{
+			public CustomConfig()
+			{
+				AddFramework(true);
+				AddCoreWithoutIntrinsics();
+				AddCoreWithoutAVX2();
+				AddCore();
+			}
+		}
+
 		[ParamsSource(nameof(GetComparisonStrings))]
 		public string TestString;
 
@@ -20,18 +32,23 @@ namespace Quickenshtein.Benchmarks.Profiling
 		}
 
 		[Benchmark]
-		public void TrimInput()
+		public unsafe void ForwardsTrim()
 		{
-			int startIndex = 0, sourceEnd = TestString.Length, targetEnd = sourceEnd;
-			Levenshtein.TrimInput(TestString, TestString, ref startIndex, ref sourceEnd, ref targetEnd);
+			fixed (char* testStringPtr = TestString)
+			{
+				var testStringLength = TestString.Length;
+				DataHelper.GetIndexOfFirstNonMatchingCharacter(testStringPtr, testStringPtr, testStringLength, testStringLength);
+			}
 		}
 
 		[Benchmark]
-		public void TrimInput_Avx2()
+		public unsafe void BackwardsTrim()
 		{
-			int startIndex = 0, sourceEnd = TestString.Length, targetEnd = sourceEnd;
-			Levenshtein.TrimInput_Avx2(TestString, TestString, ref startIndex, ref sourceEnd, ref targetEnd);
+			fixed (char* testStringPtr = TestString)
+			{
+				var testStringLength = TestString.Length;
+				DataHelper.TrimLengthOfMatchingCharacters(testStringPtr, testStringPtr, ref testStringLength, ref testStringLength);
+			}
 		}
 	}
 }
-#endif

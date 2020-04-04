@@ -6,8 +6,6 @@ using System.Runtime.Intrinsics.X86;
 #endif
 using Quickenshtein.Internal;
 
-[assembly: InternalsVisibleTo("Quickenshtein.Benchmarks")]
-
 namespace Quickenshtein
 {
 	/// <summary>
@@ -15,44 +13,70 @@ namespace Quickenshtein
 	/// </summary>
 	public static partial class Levenshtein
 	{
+#if NETSTANDARD
+		public static int GetDistance(string source, string target)
+		{
+			return GetDistance(source, target, CalculationOptions.Default);
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static unsafe int GetDistance(string source, string target, CalculationOptions calculationOptions)
+		{
+			//Shortcut any processing if either string is empty
+			if (source == null || source.Length == 0)
+			{
+				return target?.Length ?? 0;
+			}
+			if (target == null || target.Length == 0)
+			{
+				return source.Length;
+			}
+
+			fixed (char* sourcePtr = source)
+			fixed (char* targetPtr = target)
+			{
+				return CalculateDistance(sourcePtr, targetPtr, source.Length, target.Length, calculationOptions);
+			}
+		}
+#endif
+
 		public static unsafe int GetDistance(ReadOnlySpan<char> source, ReadOnlySpan<char> target)
 		{
 			return GetDistance(source, target, CalculationOptions.Default);
 		}
 
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static unsafe int GetDistance(ReadOnlySpan<char> source, ReadOnlySpan<char> target, CalculationOptions calculationOptions)
 		{
-			var sourceEnd = source.Length;
-			var targetEnd = target.Length;
+			var sourceLength = source.Length;
+			var targetLength = target.Length;
 
 			//Shortcut any processing if either string is empty
-			if (sourceEnd == 0)
+			if (sourceLength == 0)
 			{
-				return targetEnd;
+				return targetLength;
 			}
-			if (targetEnd == 0)
+			if (targetLength == 0)
 			{
-				return sourceEnd;
+				return sourceLength;
 			}
 
+			fixed (char* sourcePtr = source)
+			fixed (char* targetPtr = target)
+			{
+				return CalculateDistance(sourcePtr, targetPtr, sourceLength, targetLength, calculationOptions);
+			}
+		}
+
+		private static unsafe int CalculateDistance(char* sourcePtr, char* targetPtr, int sourceLength, int targetLength, CalculationOptions calculationOptions)
+		{
 			//Identify and trim any common prefix or suffix between the strings
-			var startIndex = 0;
-
-#if NETCOREAPP
-			if (Avx2.IsSupported)
-			{
-				TrimInput_Avx2(source, target, ref startIndex, ref sourceEnd, ref targetEnd);
-			}
-			else
-			{
-				TrimInput(source, target, ref startIndex, ref sourceEnd, ref targetEnd);
-			}
-#else
-			TrimInput(source, target, ref startIndex, ref sourceEnd, ref targetEnd);
-#endif
-
-			var sourceLength = sourceEnd - startIndex;
-			var targetLength = targetEnd - startIndex;
+			var offset = DataHelper.GetIndexOfFirstNonMatchingCharacter(sourcePtr, targetPtr, sourceLength, targetLength);
+			sourcePtr += offset;
+			targetPtr += offset;
+			sourceLength -= offset;
+			targetLength -= offset;
+			DataHelper.TrimLengthOfMatchingCharacters(sourcePtr, targetPtr, ref sourceLength, ref targetLength);
 
 			//Check the trimmed values are not empty
 			if (sourceLength == 0)
@@ -67,53 +91,23 @@ namespace Quickenshtein
 			//Switch around variables so outer loop has fewer iterations
 			if (targetLength < sourceLength)
 			{
-				var tempSource = source;
-				source = target;
-				target = tempSource;
+				var tempSourcePtr = sourcePtr;
+				sourcePtr = targetPtr;
+				targetPtr = tempSourcePtr;
 
 				(sourceLength, targetLength) = (targetLength, sourceLength);
 			}
 
-			return CalculateDistance(
-				source.Slice(startIndex, sourceLength),
-				target.Slice(startIndex, targetLength),
-				calculationOptions
-			);
-		}
-
-		private static unsafe int CalculateDistance(ReadOnlySpan<char> source, ReadOnlySpan<char> target, CalculationOptions calculationOptions)
-		{
-			var targetLength = target.Length;
-
 			if (targetLength >= calculationOptions.EnableThreadingAfterXCharacters)
 			{
-				return CalculateDistance_MultiThreaded(source, target, calculationOptions);
+				return CalculateDistance_MultiThreaded(sourcePtr, targetPtr, sourceLength, targetLength, calculationOptions);
 			}
 
-			var sourceLength = source.Length;
+			var pooledArray = ArrayPool<int>.Shared.Rent(targetLength);
 
-			var arrayPool = ArrayPool<int>.Shared;
-			var pooledArray = arrayPool.Rent(targetLength);
-
-			fixed (char* targetPtr = target)
 			fixed (int* previousRowPtr = pooledArray)
 			{
-#if NETCOREAPP
-				if (Avx2.IsSupported)
-				{
-					SequentialFillHelper.Fill_Avx2(previousRowPtr, targetLength);
-				}
-				else if (Sse2.IsSupported)
-				{
-					SequentialFillHelper.Fill_Sse2(previousRowPtr, targetLength);
-				}
-				else
-				{
-					SequentialFillHelper.Fill(previousRowPtr, targetLength);
-				}
-#else
-				SequentialFillHelper.Fill(previousRowPtr, targetLength);
-#endif
+				DataHelper.SequentialFill(previousRowPtr, targetLength);
 
 				var rowIndex = 0;
 
@@ -124,19 +118,19 @@ namespace Quickenshtein
 				{
 					if (sourceLength > 7)
 					{
-						CalculateRows_8Rows_Sse41(previousRowPtr, source, ref rowIndex, targetPtr, targetLength);
+						CalculateRows_8Rows_Sse41(previousRowPtr, sourcePtr, sourceLength, ref rowIndex, targetPtr, targetLength);
 					}
 					else
 					{
-						CalculateRows_4Rows_Sse41(previousRowPtr, source, ref rowIndex, targetPtr, targetLength);
+						CalculateRows_4Rows_Sse41(previousRowPtr, sourcePtr, sourceLength, ref rowIndex, targetPtr, targetLength);
 					}
 				}
 				else
 				{
-					CalculateRows_4Rows(previousRowPtr, source, ref rowIndex, targetPtr, targetLength);
+					CalculateRows_4Rows(previousRowPtr, sourcePtr, sourceLength, ref rowIndex, targetPtr, targetLength);
 				}
 #else
-				CalculateRows_4Rows(previousRowPtr, source, ref rowIndex, targetPtr, targetLength);
+				CalculateRows_4Rows(previousRowPtr, sourcePtr, sourceLength, ref rowIndex, targetPtr, targetLength);
 #endif
 
 				//Calculate Single Rows
@@ -145,7 +139,7 @@ namespace Quickenshtein
 					var lastSubstitutionCost = rowIndex;
 					var lastInsertionCost = rowIndex + 1;
 
-					var sourcePrevChar = source[rowIndex];
+					var sourcePrevChar = sourcePtr[rowIndex];
 
 #if NETCOREAPP
 					if (Sse41.IsSupported)
@@ -162,7 +156,7 @@ namespace Quickenshtein
 				}
 
 				var result = previousRowPtr[targetLength - 1];
-				arrayPool.Return(pooledArray);
+				ArrayPool<int>.Shared.Return(pooledArray);
 				return result;
 			}
 		}

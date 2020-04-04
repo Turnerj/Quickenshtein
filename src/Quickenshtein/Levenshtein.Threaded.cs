@@ -14,11 +14,8 @@ namespace Quickenshtein
 	{
 		private static readonly WaitCallback WorkerTask = new WaitCallback(WorkerTask_CalculateSegment);
 
-		private static unsafe int CalculateDistance_MultiThreaded(ReadOnlySpan<char> source, ReadOnlySpan<char> target, CalculationOptions options)
+		private static unsafe int CalculateDistance_MultiThreaded(char* sourcePtr, char* targetPtr, int sourceLength, int targetLength, CalculationOptions options)
 		{
-			var sourceLength = source.Length;
-			var targetLength = target.Length;
-
 			var maximumNumberOfWorkers = Environment.ProcessorCount;
 			var numberOfWorkers = targetLength / options.MinimumCharactersPerThread;
 			if (numberOfWorkers == 0)
@@ -30,15 +27,6 @@ namespace Quickenshtein
 				numberOfWorkers = maximumNumberOfWorkers;
 			}
 
-			fixed (char* sourcePtr = source)
-			fixed (char* targetPtr = target)
-			{
-				return CalculateDistanceWithWorkers(numberOfWorkers, sourcePtr, sourceLength, targetPtr, targetLength);
-			}
-		}
-
-		private static unsafe int CalculateDistanceWithWorkers(int numberOfWorkers, char* sourcePtr, int sourceLength, char* targetPtr, int targetLength)
-		{
 			var numberOfColumnsPerWorker = targetLength / numberOfWorkers;
 			var remainderColumns = targetLength % numberOfWorkers;
 
@@ -56,22 +44,7 @@ namespace Quickenshtein
 			//Fill first column boundary (ColumnIndex = 0) with incrementing numbers
 			fixed (int* startBoundaryPtr = columnBoundariesPool[0])
 			{
-#if NETCOREAPP
-				if (Avx2.IsSupported)
-				{
-					SequentialFillHelper.Fill_Avx2(startBoundaryPtr, 0, sourceLength + 1);
-				}
-				else if (Sse2.IsSupported)
-				{
-					SequentialFillHelper.Fill_Sse2(startBoundaryPtr, 0, sourceLength + 1);
-				}
-				else
-				{
-					SequentialFillHelper.Fill(startBoundaryPtr, 0, sourceLength + 1);
-				}
-#else
-				SequentialFillHelper.Fill(startBoundaryPtr, 0, sourceLength + 1);
-#endif
+				DataHelper.SequentialFill(startBoundaryPtr, 0, sourceLength + 1);
 			}
 
 			for (var workerIndex = 0; workerIndex < numberOfWorkers - 1; workerIndex++)
@@ -135,27 +108,11 @@ namespace Quickenshtein
 			var backColumnBoundary = workerState.BackColumnBoundary;
 			var forwardColumnBoundary = workerState.ForwardColumnBoundary;
 
-			var arrayPool = ArrayPool<int>.Shared;
-			var pooledArray = arrayPool.Rent(targetSegmentLength);
+			var pooledArray = ArrayPool<int>.Shared.Rent(targetSegmentLength);
 
 			fixed (int* previousRowPtr = pooledArray)
 			{
-#if NETCOREAPP
-				if (Avx2.IsSupported)
-				{
-					SequentialFillHelper.Fill_Avx2(previousRowPtr, columnIndex + 1, targetSegmentLength);
-				}
-				else if (Sse2.IsSupported)
-				{
-					SequentialFillHelper.Fill_Sse2(previousRowPtr, columnIndex + 1, targetSegmentLength);
-				}
-				else
-				{
-					SequentialFillHelper.Fill(previousRowPtr, columnIndex + 1, targetSegmentLength);
-				}
-#else
-				SequentialFillHelper.Fill(previousRowPtr, columnIndex + 1, targetSegmentLength);
-#endif
+				DataHelper.SequentialFill(previousRowPtr, columnIndex + 1, targetSegmentLength);
 
 				ref var selfWorkerRowCount = ref rowCountPtr[workerIndex];
 
@@ -189,7 +146,7 @@ namespace Quickenshtein
 					Interlocked.Increment(ref selfWorkerRowCount);
 				}
 
-				arrayPool.Return(pooledArray);
+				ArrayPool<int>.Shared.Return(pooledArray);
 			}
 		}
 	}
