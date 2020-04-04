@@ -7,27 +7,6 @@ namespace Quickenshtein
 	public static partial class Levenshtein
 	{
 		/// <summary>
-		/// Calculates the trim offsets at the start and end of the source and target spans where characters are equal.
-		/// </summary>
-		/// <param name="source"></param>
-		/// <param name="target"></param>
-		/// <param name="startIndex"></param>
-		/// <param name="sourceEnd"></param>
-		/// <param name="targetEnd"></param>
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		internal static unsafe void TrimInput(ReadOnlySpan<char> source, ReadOnlySpan<char> target, ref int startIndex, ref int sourceEnd, ref int targetEnd)
-		{
-			var searchLength = Math.Min(sourceEnd, targetEnd);
-
-			fixed (char* sourcePtr = source)
-			fixed (char* targetPtr = target)
-			{
-				startIndex = DataHelper.GetIndexOfFirstNonMatchingCharacter(sourcePtr, targetPtr, sourceEnd, targetEnd);
-				DataHelper.GetIndexesOfLastNonMatchingCharacters(sourcePtr, targetPtr, startIndex, sourceEnd, targetEnd, out sourceEnd, out targetEnd);
-			}
-		}
-
-		/// <summary>
 		/// Calculates the costs for an entire row of the virtual matrix.
 		/// </summary>
 		/// <param name="previousRowPtr"></param>
@@ -226,23 +205,23 @@ namespace Quickenshtein
 		/// This performs a 4x outer loop unrolling allowing fewer lookups of target character and deletion cost data across the rows.
 		/// </summary>
 		/// <param name="previousRowPtr"></param>
-		/// <param name="source"></param>
+		/// <param name="sourcePtr"></param>
 		/// <param name="rowIndex"></param>
 		/// <param name="targetPtr"></param>
 		/// <param name="targetLength"></param>
-		private static unsafe void CalculateRows_4Rows(int* previousRowPtr, ReadOnlySpan<char> source, ref int rowIndex, char* targetPtr, int targetLength)
+		private static unsafe void CalculateRows_4Rows(int* previousRowPtr, char* sourcePtr, int sourceLength, ref int rowIndex, char* targetPtr, int targetLength)
 		{
-			var acceptableRowCount = source.Length - 3;
+			var acceptableRowCount = sourceLength - 3;
 
 			int row1Costs, row2Costs, row3Costs, row4Costs, row5Costs;
 			char sourceChar1, sourceChar2, sourceChar3, sourceChar4;
 
 			for (; rowIndex < acceptableRowCount;)
 			{
-				sourceChar1 = source[row1Costs = rowIndex]; //Sub
-				sourceChar2 = source[row2Costs = rowIndex + 1]; //Insert, Sub
-				sourceChar3 = source[row3Costs = rowIndex + 2]; //Insert, Sub
-				sourceChar4 = source[row4Costs = rowIndex + 3]; //Insert, Sub
+				sourceChar1 = sourcePtr[row1Costs = rowIndex]; //Sub
+				sourceChar2 = sourcePtr[row2Costs = rowIndex + 1]; //Insert, Sub
+				sourceChar3 = sourcePtr[row3Costs = rowIndex + 2]; //Insert, Sub
+				sourceChar4 = sourcePtr[row4Costs = rowIndex + 3]; //Insert, Sub
 				row5Costs = rowIndex += 4; //Insert
 				
 				var columnIndex = 0;

@@ -231,11 +231,9 @@ namespace Quickenshtein.Internal
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static unsafe void GetIndexesOfLastNonMatchingCharacters(char* sourcePtr, char* targetPtr, int startIndex, int sourceLength, int targetLength, out int sourceEnd, out int targetEnd)
+		public static unsafe void TrimLengthOfMatchingCharacters(char* sourcePtr, char* targetPtr, ref int sourceLength, ref int targetLength)
 		{
-			var searchLength = Math.Min(sourceLength, targetLength) - startIndex;
-			sourceEnd = sourceLength;
-			targetEnd = targetLength;
+			var searchLength = Math.Min(sourceLength, targetLength);
 
 #if NETCOREAPP
 			var sourceUShortPtr = (ushort*)sourcePtr;
@@ -247,8 +245,8 @@ namespace Quickenshtein.Internal
 				{
 					while (searchLength >= Vector256<ushort>.Count)
 					{
-						var sourceVector = Avx.LoadDquVector256(sourceUShortPtr + sourceEnd - Vector256<ushort>.Count);
-						var targetVector = Avx.LoadDquVector256(targetUShortPtr + targetEnd - Vector256<ushort>.Count);
+						var sourceVector = Avx.LoadDquVector256(sourceUShortPtr + sourceLength - Vector256<ushort>.Count);
+						var targetVector = Avx.LoadDquVector256(targetUShortPtr + targetLength - Vector256<ushort>.Count);
 						var match = (uint)Avx2.MoveMask(
 							Avx2.CompareEqual(
 								sourceVector,
@@ -258,23 +256,23 @@ namespace Quickenshtein.Internal
 
 						if (match == uint.MaxValue)
 						{
-							sourceEnd -= Vector256<ushort>.Count;
-							targetEnd -= Vector256<ushort>.Count;
+							sourceLength -= Vector256<ushort>.Count;
+							targetLength -= Vector256<ushort>.Count;
 							searchLength -= Vector256<ushort>.Count;
 							continue;
 						}
 
 						var lastMatch = LastMaskMatchIndex(match);
-						sourceEnd -= lastMatch;
-						targetEnd -= lastMatch;
+						sourceLength -= lastMatch;
+						targetLength -= lastMatch;
 						return;
 					}
 				}
 
 				while (searchLength >= Vector128<ushort>.Count)
 				{
-					var sourceVector = Sse2.LoadVector128(sourceUShortPtr + sourceEnd - Vector128<ushort>.Count);
-					var targetVector = Sse2.LoadVector128(targetUShortPtr + targetEnd - Vector128<ushort>.Count);
+					var sourceVector = Sse2.LoadVector128(sourceUShortPtr + sourceLength - Vector128<ushort>.Count);
+					var targetVector = Sse2.LoadVector128(targetUShortPtr + targetLength - Vector128<ushort>.Count);
 					var match = (uint)Sse2.MoveMask(
 						Sse2.CompareEqual(
 							sourceVector,
@@ -284,24 +282,24 @@ namespace Quickenshtein.Internal
 
 					if (match == uint.MaxValue)
 					{
-						sourceEnd -= Vector128<ushort>.Count;
-						targetEnd -= Vector128<ushort>.Count;
+						sourceLength -= Vector128<ushort>.Count;
+						targetLength -= Vector128<ushort>.Count;
 						searchLength -= Vector128<ushort>.Count;
 						continue;
 					}
 
 					var lastMatch = LastMaskMatchIndex(match);
-					sourceEnd -= lastMatch;
-					targetEnd -= lastMatch;
+					sourceLength -= lastMatch;
+					targetLength -= lastMatch;
 					return;
 				}
 			}
 #endif
 
-			while (searchLength > 0 && sourcePtr[sourceEnd - 1] == targetPtr[targetEnd - 1])
+			while (searchLength > 0 && sourcePtr[sourceLength - 1] == targetPtr[targetLength - 1])
 			{
-				sourceEnd--;
-				targetEnd--;
+				sourceLength--;
+				targetLength--;
 				searchLength--;
 			}
 		}

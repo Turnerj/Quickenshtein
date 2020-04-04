@@ -1,5 +1,6 @@
 ﻿using BenchmarkDotNet.Attributes;
 using Quickenshtein.Benchmarks.Config;
+using Quickenshtein.Internal;
 using System;
 using System.Collections.Generic;
 
@@ -31,10 +32,23 @@ namespace Quickenshtein.Benchmarks.Profiling
 		}
 
 		[Benchmark]
-		public void TrimInput()
+		public unsafe void ForwardsTrim()
 		{
-			int startIndex = 0, sourceEnd = TestString.Length, targetEnd = sourceEnd;
-			Levenshtein.TrimInput(TestString.AsSpan(), TestString.AsSpan(), ref startIndex, ref sourceEnd, ref targetEnd);
+			fixed (char* testStringPtr = TestString)
+			{
+				var testStringLength = TestString.Length;
+				DataHelper.GetIndexOfFirstNonMatchingCharacter(testStringPtr, testStringPtr, testStringLength, testStringLength);
+			}
+		}
+
+		[Benchmark]
+		public unsafe void BackwardsTrim()
+		{
+			fixed (char* testStringPtr = TestString)
+			{
+				var testStringLength = TestString.Length;
+				DataHelper.TrimLengthOfMatchingCharacters(testStringPtr, testStringPtr, ref testStringLength, ref testStringLength);
+			}
 		}
 	}
 }

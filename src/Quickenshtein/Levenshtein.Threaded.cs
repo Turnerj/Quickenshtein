@@ -14,11 +14,8 @@ namespace Quickenshtein
 	{
 		private static readonly WaitCallback WorkerTask = new WaitCallback(WorkerTask_CalculateSegment);
 
-		private static unsafe int CalculateDistance_MultiThreaded(ReadOnlySpan<char> source, ReadOnlySpan<char> target, CalculationOptions options)
+		private static unsafe int CalculateDistance_MultiThreaded(char* sourcePtr, char* targetPtr, int sourceLength, int targetLength, CalculationOptions options)
 		{
-			var sourceLength = source.Length;
-			var targetLength = target.Length;
-
 			var maximumNumberOfWorkers = Environment.ProcessorCount;
 			var numberOfWorkers = targetLength / options.MinimumCharactersPerThread;
 			if (numberOfWorkers == 0)
@@ -30,15 +27,6 @@ namespace Quickenshtein
 				numberOfWorkers = maximumNumberOfWorkers;
 			}
 
-			fixed (char* sourcePtr = source)
-			fixed (char* targetPtr = target)
-			{
-				return CalculateDistanceWithWorkers(numberOfWorkers, sourcePtr, sourceLength, targetPtr, targetLength);
-			}
-		}
-
-		private static unsafe int CalculateDistanceWithWorkers(int numberOfWorkers, char* sourcePtr, int sourceLength, char* targetPtr, int targetLength)
-		{
 			var numberOfColumnsPerWorker = targetLength / numberOfWorkers;
 			var remainderColumns = targetLength % numberOfWorkers;
 

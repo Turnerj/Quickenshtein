@@ -108,13 +108,13 @@ namespace Quickenshtein
 		/// This performs a 4x outer loop unrolling allowing fewer lookups of target character and deletion cost data across the rows.
 		/// </summary>
 		/// <param name="previousRowPtr"></param>
-		/// <param name="source"></param>
+		/// <param name="sourcePtr"></param>
 		/// <param name="rowIndex"></param>
 		/// <param name="targetPtr"></param>
 		/// <param name="targetLength"></param>
-		private static unsafe void CalculateRows_4Rows_Sse41(int* previousRowPtr, ReadOnlySpan<char> source, ref int rowIndex, char* targetPtr, int targetLength)
+		private static unsafe void CalculateRows_4Rows_Sse41(int* previousRowPtr, char* sourcePtr, int sourceLength, ref int rowIndex, char* targetPtr, int targetLength)
 		{
-			var acceptableRowCount = source.Length - 3;
+			var acceptableRowCount = sourceLength - 3;
 
 			Vector128<int> row1Costs, row2Costs, row3Costs, row4Costs, row5Costs;
 			char sourceChar1, sourceChar2, sourceChar3, sourceChar4;
@@ -122,10 +122,10 @@ namespace Quickenshtein
 
 			for (; rowIndex < acceptableRowCount; rowIndex += 4)
 			{
-				sourceChar1 = source[rowIndex];
-				sourceChar2 = source[rowIndex + 1];
-				sourceChar3 = source[rowIndex + 2];
-				sourceChar4 = source[rowIndex + 3];
+				sourceChar1 = sourcePtr[rowIndex];
+				sourceChar2 = sourcePtr[rowIndex + 1];
+				sourceChar3 = sourcePtr[rowIndex + 2];
+				sourceChar4 = sourcePtr[rowIndex + 3];
 				row1Costs = Vector128.Create(rowIndex); //Sub
 				row2Costs = Sse2.Add(row1Costs, allOnesVector); //Insert, Sub
 				row3Costs = Sse2.Add(row2Costs, allOnesVector); //Insert, Sub
@@ -275,13 +275,13 @@ namespace Quickenshtein
 		/// This performs a 8x outer loop unrolling allowing fewer lookups of target character and deletion cost data across the rows.
 		/// </summary>
 		/// <param name="previousRowPtr"></param>
-		/// <param name="source"></param>
+		/// <param name="sourcePtr"></param>
 		/// <param name="rowIndex"></param>
 		/// <param name="targetPtr"></param>
 		/// <param name="targetLength"></param>
-		private static unsafe void CalculateRows_8Rows_Sse41(int* previousRowPtr, ReadOnlySpan<char> source, ref int rowIndex, char* targetPtr, int targetLength)
+		private static unsafe void CalculateRows_8Rows_Sse41(int* previousRowPtr, char* sourcePtr, int sourceLength, ref int rowIndex, char* targetPtr, int targetLength)
 		{
-			var acceptableRowCount = source.Length - 7;
+			var acceptableRowCount = sourceLength - 7;
 
 			Vector128<int> row1Costs, row2Costs, row3Costs, row4Costs, row5Costs, row6Costs, row7Costs, row8Costs, row9Costs;
 			char sourceChar1, sourceChar2, sourceChar3, sourceChar4, sourceChar5, sourceChar6, sourceChar7, sourceChar8;
@@ -289,14 +289,14 @@ namespace Quickenshtein
 
 			for (; rowIndex < acceptableRowCount; rowIndex += 8)
 			{
-				sourceChar1 = source[rowIndex];
-				sourceChar2 = source[rowIndex + 1];
-				sourceChar3 = source[rowIndex + 2];
-				sourceChar4 = source[rowIndex + 3];
-				sourceChar5 = source[rowIndex + 4];
-				sourceChar6 = source[rowIndex + 5];
-				sourceChar7 = source[rowIndex + 6];
-				sourceChar8 = source[rowIndex + 7];
+				sourceChar1 = sourcePtr[rowIndex];
+				sourceChar2 = sourcePtr[rowIndex + 1];
+				sourceChar3 = sourcePtr[rowIndex + 2];
+				sourceChar4 = sourcePtr[rowIndex + 3];
+				sourceChar5 = sourcePtr[rowIndex + 4];
+				sourceChar6 = sourcePtr[rowIndex + 5];
+				sourceChar7 = sourcePtr[rowIndex + 6];
+				sourceChar8 = sourcePtr[rowIndex + 7];
 				row1Costs = Vector128.Create(rowIndex); //Sub
 				row2Costs = Sse2.Add(row1Costs, allOnesVector); //Insert, Sub
 				row3Costs = Sse2.Add(row2Costs, allOnesVector); //Insert, Sub

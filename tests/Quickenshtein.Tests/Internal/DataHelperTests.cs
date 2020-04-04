@@ -55,14 +55,16 @@ namespace Quickenshtein.Tests.Internal
 		[DataRow("aaaaaaaaaaaaaaaaaaab", "aaaaaaaaaaaaaaaab", 3, 0)]
 		[DataRow("baaaaaaaaaaaaaaaaaaa", "aaaaaaaaaaaaaaaa", 4, 0)]
 		[DataRow("aaaaaaaaaaaaaaaaaaaab", "aaaaaaaaaaaa", 21, 12)]
-		public unsafe void GetIndexesOfLastNonMatchingCharacters(string source, string target, int expectedSourceEnd, int expectedTargetEnd)
+		public unsafe void GetIndexesOfLastNonMatchingCharacters(string source, string target, int expectedSourceLength, int expectedTargetLength)
 		{
 			fixed (char* sourcePtr = source)
 			fixed (char* targetPtr = target)
 			{
-				DataHelper.GetIndexesOfLastNonMatchingCharacters(sourcePtr, targetPtr, 0, source.Length, target.Length, out var sourceEnd, out var targetEnd);
-				Assert.AreEqual(expectedSourceEnd, sourceEnd);
-				Assert.AreEqual(expectedTargetEnd, targetEnd);
+				var sourceLength = source.Length;
+				var targetLength = target.Length;
+				DataHelper.TrimLengthOfMatchingCharacters(sourcePtr, targetPtr, ref sourceLength, ref targetLength);
+				Assert.AreEqual(expectedSourceLength, sourceLength);
+				Assert.AreEqual(expectedTargetLength, targetLength);
 			}
 		}
 	}
