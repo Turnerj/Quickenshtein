@@ -1,13 +1,24 @@
-﻿#if NETCOREAPP
-using BenchmarkDotNet.Attributes;
+﻿using BenchmarkDotNet.Attributes;
 using Quickenshtein.Benchmarks.Config;
+using System;
 using System.Collections.Generic;
 
 namespace Quickenshtein.Benchmarks.Profiling
 {
-	[Config(typeof(CoreOnlyRuntimeConfig))]
+	[Config(typeof(CustomConfig))]
 	public class TrimInputBenchmark
 	{
+		class CustomConfig : CustomIntrinsicConfig
+		{
+			public CustomConfig()
+			{
+				AddFramework(true);
+				AddCoreWithoutIntrinsics();
+				AddCoreWithoutAVX2();
+				AddCore();
+			}
+		}
+
 		[ParamsSource(nameof(GetComparisonStrings))]
 		public string TestString;
 
@@ -23,15 +34,7 @@ namespace Quickenshtein.Benchmarks.Profiling
 		public void TrimInput()
 		{
 			int startIndex = 0, sourceEnd = TestString.Length, targetEnd = sourceEnd;
-			Levenshtein.TrimInput(TestString, TestString, ref startIndex, ref sourceEnd, ref targetEnd);
-		}
-
-		[Benchmark]
-		public void TrimInput_Avx2()
-		{
-			int startIndex = 0, sourceEnd = TestString.Length, targetEnd = sourceEnd;
-			Levenshtein.TrimInput_Avx2(TestString, TestString, ref startIndex, ref sourceEnd, ref targetEnd);
+			Levenshtein.TrimInput(TestString.AsSpan(), TestString.AsSpan(), ref startIndex, ref sourceEnd, ref targetEnd);
 		}
 	}
 }
-#endif

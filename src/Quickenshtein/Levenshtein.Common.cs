@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Runtime.CompilerServices;
+using Quickenshtein.Internal;
 
 namespace Quickenshtein
 {
@@ -16,21 +17,13 @@ namespace Quickenshtein
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		internal static unsafe void TrimInput(ReadOnlySpan<char> source, ReadOnlySpan<char> target, ref int startIndex, ref int sourceEnd, ref int targetEnd)
 		{
-			startIndex = 0;
+			var searchLength = Math.Min(sourceEnd, targetEnd);
 
-			var charactersAvailableToTrim = Math.Min(sourceEnd, targetEnd);
-
-			while (charactersAvailableToTrim > 0 && source[startIndex] == target[startIndex])
+			fixed (char* sourcePtr = source)
+			fixed (char* targetPtr = target)
 			{
-				charactersAvailableToTrim--;
-				startIndex++;
-			}
-
-			while (charactersAvailableToTrim > 0 && source[sourceEnd - 1] == target[targetEnd - 1])
-			{
-				charactersAvailableToTrim--;
-				sourceEnd--;
-				targetEnd--;
+				startIndex = DataHelper.GetIndexOfFirstNonMatchingCharacter(sourcePtr, targetPtr, sourceEnd, targetEnd);
+				DataHelper.GetIndexesOfLastNonMatchingCharacters(sourcePtr, targetPtr, startIndex, sourceEnd, targetEnd, out sourceEnd, out targetEnd);
 			}
 		}
 

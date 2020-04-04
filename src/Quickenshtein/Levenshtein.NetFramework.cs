@@ -1,6 +1,7 @@
 ﻿#if NETSTANDARD2_0
 using System;
 using System.Runtime.CompilerServices;
+using Quickenshtein.Internal;
 
 namespace Quickenshtein
 {
@@ -74,21 +75,12 @@ namespace Quickenshtein
 		{
 			sourceEnd = source.Length;
 			targetEnd = target.Length;
-			startIndex = 0;
 
-			var charactersAvailableToTrim = Math.Min(sourceEnd, targetEnd);
-
-			while (charactersAvailableToTrim > 0 && source[startIndex] == target[startIndex])
+			fixed (char* sourcePtr = source)
+			fixed (char* targetPtr = target)
 			{
-				charactersAvailableToTrim--;
-				startIndex++;
-			}
-
-			while (charactersAvailableToTrim > 0 && source[sourceEnd - 1] == target[targetEnd - 1])
-			{
-				charactersAvailableToTrim--;
-				sourceEnd--;
-				targetEnd--;
+				startIndex = DataHelper.GetIndexOfFirstNonMatchingCharacter(sourcePtr, targetPtr, sourceEnd, targetEnd);
+				DataHelper.GetIndexesOfLastNonMatchingCharacters(sourcePtr, targetPtr, startIndex, sourceEnd, targetEnd, out sourceEnd, out targetEnd);
 			}
 		}
 	}

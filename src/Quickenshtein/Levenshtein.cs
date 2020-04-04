@@ -6,8 +6,6 @@ using System.Runtime.Intrinsics.X86;
 #endif
 using Quickenshtein.Internal;
 
-[assembly: InternalsVisibleTo("Quickenshtein.Benchmarks")]
-
 namespace Quickenshtein
 {
 	/// <summary>
@@ -38,18 +36,7 @@ namespace Quickenshtein
 			//Identify and trim any common prefix or suffix between the strings
 			var startIndex = 0;
 
-#if NETCOREAPP
-			if (Avx2.IsSupported)
-			{
-				TrimInput_Avx2(source, target, ref startIndex, ref sourceEnd, ref targetEnd);
-			}
-			else
-			{
-				TrimInput(source, target, ref startIndex, ref sourceEnd, ref targetEnd);
-			}
-#else
 			TrimInput(source, target, ref startIndex, ref sourceEnd, ref targetEnd);
-#endif
 
 			var sourceLength = sourceEnd - startIndex;
 			var targetLength = targetEnd - startIndex;
@@ -98,22 +85,7 @@ namespace Quickenshtein
 			fixed (char* targetPtr = target)
 			fixed (int* previousRowPtr = pooledArray)
 			{
-#if NETCOREAPP
-				if (Avx2.IsSupported)
-				{
-					SequentialFillHelper.Fill_Avx2(previousRowPtr, targetLength);
-				}
-				else if (Sse2.IsSupported)
-				{
-					SequentialFillHelper.Fill_Sse2(previousRowPtr, targetLength);
-				}
-				else
-				{
-					SequentialFillHelper.Fill(previousRowPtr, targetLength);
-				}
-#else
-				SequentialFillHelper.Fill(previousRowPtr, targetLength);
-#endif
+				DataHelper.SequentialFill(previousRowPtr, targetLength);
 
 				var rowIndex = 0;
 

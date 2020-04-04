@@ -56,22 +56,7 @@ namespace Quickenshtein
 			//Fill first column boundary (ColumnIndex = 0) with incrementing numbers
 			fixed (int* startBoundaryPtr = columnBoundariesPool[0])
 			{
-#if NETCOREAPP
-				if (Avx2.IsSupported)
-				{
-					SequentialFillHelper.Fill_Avx2(startBoundaryPtr, 0, sourceLength + 1);
-				}
-				else if (Sse2.IsSupported)
-				{
-					SequentialFillHelper.Fill_Sse2(startBoundaryPtr, 0, sourceLength + 1);
-				}
-				else
-				{
-					SequentialFillHelper.Fill(startBoundaryPtr, 0, sourceLength + 1);
-				}
-#else
-				SequentialFillHelper.Fill(startBoundaryPtr, 0, sourceLength + 1);
-#endif
+				DataHelper.SequentialFill(startBoundaryPtr, 0, sourceLength + 1);
 			}
 
 			for (var workerIndex = 0; workerIndex < numberOfWorkers - 1; workerIndex++)
@@ -140,22 +125,7 @@ namespace Quickenshtein
 
 			fixed (int* previousRowPtr = pooledArray)
 			{
-#if NETCOREAPP
-				if (Avx2.IsSupported)
-				{
-					SequentialFillHelper.Fill_Avx2(previousRowPtr, columnIndex + 1, targetSegmentLength);
-				}
-				else if (Sse2.IsSupported)
-				{
-					SequentialFillHelper.Fill_Sse2(previousRowPtr, columnIndex + 1, targetSegmentLength);
-				}
-				else
-				{
-					SequentialFillHelper.Fill(previousRowPtr, columnIndex + 1, targetSegmentLength);
-				}
-#else
-				SequentialFillHelper.Fill(previousRowPtr, columnIndex + 1, targetSegmentLength);
-#endif
+				DataHelper.SequentialFill(previousRowPtr, columnIndex + 1, targetSegmentLength);
 
 				ref var selfWorkerRowCount = ref rowCountPtr[workerIndex];
 
