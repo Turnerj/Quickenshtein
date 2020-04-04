@@ -35,46 +35,6 @@ namespace Quickenshtein
 		}
 
 		/// <summary>
-		/// Fills <paramref name="previousRowPtr"/> with a number sequence from 1 to the length of the row.
-		/// </summary>
-		/// <param name="previousRowPtr"></param>
-		/// <param name="targetLength"></param>
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		internal static unsafe void FillRow(int* previousRowPtr, int targetLength)
-		{
-			var columnIndex = 0;
-			var columnsRemaining = targetLength;
-
-			while (columnsRemaining >= 8)
-			{
-				columnsRemaining -= 8;
-				previousRowPtr[columnIndex] = ++columnIndex;
-				previousRowPtr[columnIndex] = ++columnIndex;
-				previousRowPtr[columnIndex] = ++columnIndex;
-				previousRowPtr[columnIndex] = ++columnIndex;
-				previousRowPtr[columnIndex] = ++columnIndex;
-				previousRowPtr[columnIndex] = ++columnIndex;
-				previousRowPtr[columnIndex] = ++columnIndex;
-				previousRowPtr[columnIndex] = ++columnIndex;
-			}
-
-			if (columnsRemaining > 4)
-			{
-				columnsRemaining -= 4;
-				previousRowPtr[columnIndex] = ++columnIndex;
-				previousRowPtr[columnIndex] = ++columnIndex;
-				previousRowPtr[columnIndex] = ++columnIndex;
-				previousRowPtr[columnIndex] = ++columnIndex;
-			}
-
-			while (columnsRemaining > 0)
-			{
-				columnsRemaining--;
-				previousRowPtr[columnIndex] = ++columnIndex;
-			}
-		}
-
-		/// <summary>
 		/// Calculates the costs for an entire row of the virtual matrix.
 		/// </summary>
 		/// <param name="previousRowPtr"></param>

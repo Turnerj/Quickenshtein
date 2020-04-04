@@ -4,6 +4,7 @@ using System.Runtime.CompilerServices;
 #if NETCOREAPP
 using System.Runtime.Intrinsics.X86;
 #endif
+using Quickenshtein.Internal;
 
 [assembly: InternalsVisibleTo("Quickenshtein.Benchmarks")]
 
@@ -15,6 +16,11 @@ namespace Quickenshtein
 	public static partial class Levenshtein
 	{
 		public static unsafe int GetDistance(ReadOnlySpan<char> source, ReadOnlySpan<char> target)
+		{
+			return GetDistance(source, target, CalculationOptions.Default);
+		}
+
+		public static unsafe int GetDistance(ReadOnlySpan<char> source, ReadOnlySpan<char> target, CalculationOptions calculationOptions)
 		{
 			var sourceEnd = source.Length;
 			var targetEnd = target.Length;
@@ -70,14 +76,21 @@ namespace Quickenshtein
 
 			return CalculateDistance(
 				source.Slice(startIndex, sourceLength),
-				target.Slice(startIndex, targetLength)
+				target.Slice(startIndex, targetLength),
+				calculationOptions
 			);
 		}
 
-		private static unsafe int CalculateDistance(ReadOnlySpan<char> source, ReadOnlySpan<char> target)
+		private static unsafe int CalculateDistance(ReadOnlySpan<char> source, ReadOnlySpan<char> target, CalculationOptions calculationOptions)
 		{
-			var sourceLength = source.Length;
 			var targetLength = target.Length;
+
+			if (targetLength >= calculationOptions.EnableThreadingAfterXCharacters)
+			{
+				return CalculateDistance_MultiThreaded(source, target, calculationOptions);
+			}
+
+			var sourceLength = source.Length;
 
 			var arrayPool = ArrayPool<int>.Shared;
 			var pooledArray = arrayPool.Rent(targetLength);
@@ -88,18 +101,18 @@ namespace Quickenshtein
 #if NETCOREAPP
 				if (Avx2.IsSupported)
 				{
-					FillRow_Avx2(previousRowPtr, targetLength);
+					SequentialFillHelper.Fill_Avx2(previousRowPtr, targetLength);
 				}
 				else if (Sse2.IsSupported)
 				{
-					FillRow_Sse2(previousRowPtr, targetLength);
+					SequentialFillHelper.Fill_Sse2(previousRowPtr, targetLength);
 				}
 				else
 				{
-					FillRow(previousRowPtr, targetLength);
+					SequentialFillHelper.Fill(previousRowPtr, targetLength);
 				}
 #else
-				FillRow(previousRowPtr, targetLength);
+				SequentialFillHelper.Fill(previousRowPtr, targetLength);
 #endif
 
 				var rowIndex = 0;

@@ -11,12 +11,6 @@ namespace Quickenshtein
 		private const byte VECTOR256_NUMBER_OF_CHARACTERS = 16;
 		private const sbyte VECTOR256_COMPARISON_ALL_EQUAL = -1;
 
-		private const int VECTOR256_FILL_SIZE = 8;
-		private static readonly Vector256<int> VECTOR256_SEQUENCE = Vector256.Create(1, 2, 3, 4, 5, 6, 7, 8);
-
-		private const int VECTOR128_FILL_SIZE = 4;
-		private static readonly Vector128<int> VECTOR128_SEQUENCE = Vector128.Create(1, 2, 3, 4);
-
 		/// <summary>
 		/// Using AVX2, calculates the trim offsets at the start and end of the source and target spans where characters are equal.
 		/// AVX2 instructions allow for a maximum comparison rate of 16 characters.
@@ -88,75 +82,6 @@ namespace Quickenshtein
 				charactersAvailableToTrim--;
 				sourceEnd--;
 				targetEnd--;
-			}
-		}
-
-		/// <summary>
-		/// Using AVX2, fills <paramref name="previousRowPtr"/> with a number sequence from 1 to the length of the row.
-		/// AVX2 instructions allow for a maximum fill rate of 8 values at once.
-		/// </summary>
-		/// <param name="previousRowPtr"></param>
-		/// <param name="targetLength"></param>
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		internal static unsafe void FillRow_Avx2(int* previousRowPtr, int targetLength)
-		{
-			var columnIndex = 0;
-			var columnsRemaining = targetLength;
-
-			var lastVector256 = VECTOR256_SEQUENCE;
-			var shiftVector256 = Vector256.Create(VECTOR256_FILL_SIZE);
-
-			while (columnsRemaining >= VECTOR256_FILL_SIZE)
-			{
-				columnsRemaining -= VECTOR256_FILL_SIZE;
-				Avx.Store(previousRowPtr + columnIndex, lastVector256);
-				lastVector256 = Avx2.Add(lastVector256, shiftVector256);
-				columnIndex += VECTOR256_FILL_SIZE;
-			}
-
-			if (columnsRemaining > 4)
-			{
-				columnsRemaining -= 4;
-				previousRowPtr[columnIndex] = ++columnIndex;
-				previousRowPtr[columnIndex] = ++columnIndex;
-				previousRowPtr[columnIndex] = ++columnIndex;
-				previousRowPtr[columnIndex] = ++columnIndex;
-			}
-
-			while (columnsRemaining > 0)
-			{
-				columnsRemaining--;
-				previousRowPtr[columnIndex] = ++columnIndex;
-			}
-		}
-
-		/// <summary>
-		/// Using SSE2, fills <paramref name="previousRowPtr"/> with a number sequence from 1 to the length of the row.
-		/// SSE2 instructions provide a maximum fill rate of 4 values at once.
-		/// </summary>
-		/// <param name="previousRowPtr"></param>
-		/// <param name="targetLength"></param>
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		internal static unsafe void FillRow_Sse2(int* previousRowPtr, int targetLength)
-		{
-			var columnIndex = 0;
-			var columnsRemaining = targetLength;
-
-			var lastVector128 = VECTOR128_SEQUENCE;
-			var shiftVector128 = Vector128.Create(VECTOR128_FILL_SIZE);
-
-			while (columnsRemaining >= VECTOR128_FILL_SIZE)
-			{
-				columnsRemaining -= VECTOR128_FILL_SIZE;
-				Sse2.Store(previousRowPtr + columnIndex, lastVector128);
-				lastVector128 = Sse2.Add(lastVector128, shiftVector128);
-				columnIndex += VECTOR128_FILL_SIZE;
-			}
-
-			while (columnsRemaining > 0)
-			{
-				columnsRemaining--;
-				previousRowPtr[columnIndex] = ++columnIndex;
 			}
 		}
 
