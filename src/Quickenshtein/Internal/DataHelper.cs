@@ -16,6 +16,11 @@ namespace Quickenshtein.Internal
 {
 	internal static class DataHelper
 	{
+#if NETCOREAPP
+		private static readonly Vector128<int> VECTOR128_INT_ZERO_TO_SEVEN = Vector128.Create(0, 1, 2, 3);
+		private static readonly Vector256<int> VECTOR256_INT_ZERO_TO_SEVEN = Vector256.Create(0, 1, 2, 3, 4, 5, 6, 7);
+#endif
+
 		/// <summary>
 		/// Fills <paramref name="targetPtr"/> with a number sequence from 1 to the length specified.
 		/// </summary>
@@ -59,6 +64,7 @@ namespace Quickenshtein.Internal
 #endif
 		}
 
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static unsafe void SequentialFill(int* targetPtr, int startValue, int length)
 		{
 			var index = 0;
@@ -107,16 +113,7 @@ namespace Quickenshtein.Internal
 				if (Avx2.IsSupported)
 				{
 					var shiftVector256 = Vector256.Create(8);
-					var lastVector256 = Vector256.Create(
-						value,
-						value + 1,
-						value + 2,
-						value + 3,
-						value + 4,
-						value + 5,
-						value + 6,
-						value + 7
-					);
+					var lastVector256 = Avx2.Add(Vector256.Create(value), VECTOR256_INT_ZERO_TO_SEVEN);
 
 					while (lengthToProcess >= Vector256<int>.Count)
 					{
@@ -141,12 +138,7 @@ namespace Quickenshtein.Internal
 				else if (Sse2.IsSupported)
 				{
 					var shiftVector128 = Vector128.Create(8);
-					var lastVector128 = Vector128.Create(
-						value,
-						value + 1,
-						value + 2,
-						value + 3
-					);
+					var lastVector128 = Sse2.Add(Vector128.Create(value), VECTOR128_INT_ZERO_TO_SEVEN);
 
 					while (lengthToProcess >= Vector128<int>.Count)
 					{
@@ -168,6 +160,7 @@ namespace Quickenshtein.Internal
 #endif
 		}
 
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static unsafe int GetIndexOfFirstNonMatchingCharacter(char* sourcePtr, char* targetPtr, int sourceLength, int targetLength)
 		{
 			var searchLength = Math.Min(sourceLength, targetLength);
@@ -237,6 +230,7 @@ namespace Quickenshtein.Internal
 			return index;
 		}
 
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static unsafe void GetIndexesOfLastNonMatchingCharacters(char* sourcePtr, char* targetPtr, int startIndex, int sourceLength, int targetLength, out int sourceEnd, out int targetEnd)
 		{
 			var searchLength = Math.Min(sourceLength, targetLength) - startIndex;
