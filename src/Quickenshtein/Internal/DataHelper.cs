@@ -17,7 +17,7 @@ namespace Quickenshtein.Internal
 	internal static class DataHelper
 	{
 #if NETCOREAPP
-		private static readonly Vector128<int> VECTOR128_INT_ZERO_TO_SEVEN = Vector128.Create(0, 1, 2, 3);
+		private static readonly Vector128<int> VECTOR128_INT_ZERO_TO_THREE = Vector128.Create(0, 1, 2, 3);
 		private static readonly Vector256<int> VECTOR256_INT_ZERO_TO_SEVEN = Vector256.Create(0, 1, 2, 3, 4, 5, 6, 7);
 #endif
 
@@ -112,7 +112,7 @@ namespace Quickenshtein.Internal
 			{
 				if (Avx2.IsSupported)
 				{
-					var shiftVector256 = Vector256.Create(8);
+					var shiftVector256 = Vector256.Create(Vector256<int>.Count);
 					var lastVector256 = Avx2.Add(Vector256.Create(value), VECTOR256_INT_ZERO_TO_SEVEN);
 
 					while (lengthToProcess >= Vector256<int>.Count)
@@ -128,7 +128,7 @@ namespace Quickenshtein.Internal
 						Sse2.Store(targetPtr + index, lastVector256.GetLower());
 						index += Vector128<int>.Count;
 						lengthToProcess -= Vector128<int>.Count;
-						value = lastVector256.GetElement(4);
+						value = lastVector256.GetElement(Vector128<int>.Count);
 					}
 					else
 					{
@@ -137,8 +137,8 @@ namespace Quickenshtein.Internal
 				}
 				else if (Sse2.IsSupported)
 				{
-					var shiftVector128 = Vector128.Create(8);
-					var lastVector128 = Sse2.Add(Vector128.Create(value), VECTOR128_INT_ZERO_TO_SEVEN);
+					var shiftVector128 = Vector128.Create(Vector128<int>.Count);
+					var lastVector128 = Sse2.Add(Vector128.Create(value), VECTOR128_INT_ZERO_TO_THREE);
 
 					while (lengthToProcess >= Vector128<int>.Count)
 					{
