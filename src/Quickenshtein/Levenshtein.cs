@@ -103,8 +103,7 @@ namespace Quickenshtein
 				return CalculateDistance_MultiThreaded(sourcePtr, targetPtr, sourceLength, targetLength, calculationOptions);
 			}
 
-			var arrayPool = ArrayPool<int>.Shared;
-			var pooledArray = arrayPool.Rent(targetLength);
+			var pooledArray = ArrayPool<int>.Shared.Rent(targetLength);
 
 			fixed (int* previousRowPtr = pooledArray)
 			{
@@ -157,7 +156,7 @@ namespace Quickenshtein
 				}
 
 				var result = previousRowPtr[targetLength - 1];
-				arrayPool.Return(pooledArray);
+				ArrayPool<int>.Shared.Return(pooledArray);
 				return result;
 			}
 		}

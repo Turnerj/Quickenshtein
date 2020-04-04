@@ -108,8 +108,7 @@ namespace Quickenshtein
 			var backColumnBoundary = workerState.BackColumnBoundary;
 			var forwardColumnBoundary = workerState.ForwardColumnBoundary;
 
-			var arrayPool = ArrayPool<int>.Shared;
-			var pooledArray = arrayPool.Rent(targetSegmentLength);
+			var pooledArray = ArrayPool<int>.Shared.Rent(targetSegmentLength);
 
 			fixed (int* previousRowPtr = pooledArray)
 			{
@@ -147,7 +146,7 @@ namespace Quickenshtein
 					Interlocked.Increment(ref selfWorkerRowCount);
 				}
 
-				arrayPool.Return(pooledArray);
+				ArrayPool<int>.Shared.Return(pooledArray);
 			}
 		}
 	}
