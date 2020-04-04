@@ -107,7 +107,7 @@ namespace Quickenshtein.Internal
 			}
 
 #if NETCOREAPP
-			lengthToProcess = length - lengthToProcess;
+			lengthToProcess = length - index;
 			if (lengthToProcess > 0)
 			{
 				if (Avx2.IsSupported)
@@ -192,7 +192,7 @@ namespace Quickenshtein.Internal
 							continue;
 						}
 
-						index += FirstMaskMatchIndex(match);
+						index += BitOperations.TrailingZeroCount(match ^ uint.MaxValue) / sizeof(ushort);
 						return index;
 					}
 				}
@@ -208,14 +208,14 @@ namespace Quickenshtein.Internal
 						).AsByte()
 					);
 
-					if (match == uint.MaxValue)
+					if (match == ushort.MaxValue)
 					{
 						index += Vector128<ushort>.Count;
 						searchLength -= Vector128<ushort>.Count;
 						continue;
 					}
 
-					index += FirstMaskMatchIndex(match);
+					index += BitOperations.TrailingZeroCount(match ^ ushort.MaxValue) / sizeof(ushort);
 					return index;
 				}
 			}
@@ -262,7 +262,7 @@ namespace Quickenshtein.Internal
 							continue;
 						}
 
-						var lastMatch = LastMaskMatchIndex(match);
+						var lastMatch = BitOperations.LeadingZeroCount(match ^ uint.MaxValue) / sizeof(ushort);
 						sourceLength -= lastMatch;
 						targetLength -= lastMatch;
 						return;
@@ -280,7 +280,7 @@ namespace Quickenshtein.Internal
 						).AsByte()
 					);
 
-					if (match == uint.MaxValue)
+					if (match == ushort.MaxValue)
 					{
 						sourceLength -= Vector128<ushort>.Count;
 						targetLength -= Vector128<ushort>.Count;
@@ -288,7 +288,7 @@ namespace Quickenshtein.Internal
 						continue;
 					}
 
-					var lastMatch = LastMaskMatchIndex(match);
+					var lastMatch = BitOperations.LeadingZeroCount(match ^ ushort.MaxValue) / sizeof(ushort) - Vector128<ushort>.Count;
 					sourceLength -= lastMatch;
 					targetLength -= lastMatch;
 					return;
@@ -305,18 +305,6 @@ namespace Quickenshtein.Internal
 		}
 
 #if NETCOREAPP
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private static int FirstMaskMatchIndex(uint match)
-		{
-			return BitOperations.TrailingZeroCount(match ^ uint.MaxValue) / sizeof(ushort);
-		}
-
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private static int LastMaskMatchIndex(uint match)
-		{
-			return BitOperations.LeadingZeroCount(match ^ uint.MaxValue) / sizeof(ushort);
-		}
-
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		private static unsafe nint UnalignedCountVector128(int* targetPtr)
 		{
