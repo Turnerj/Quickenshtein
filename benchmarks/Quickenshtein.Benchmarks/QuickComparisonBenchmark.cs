@@ -32,6 +32,12 @@ namespace Quickenshtein.Benchmarks
 		}
 
 		[Benchmark]
+		public int Quickenshtein_Threaded()
+		{
+			return global::Quickenshtein.Levenshtein.GetDistance(StringA, StringB, CalculationOptions.DefaultWithThreading);
+		}
+
+		[Benchmark]
 		public int Fastenshtein()
 		{
 			return global::Fastenshtein.Levenshtein.Distance(StringA, StringB);

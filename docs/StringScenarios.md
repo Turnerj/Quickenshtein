@@ -61,19 +61,25 @@ The calculation is forced to compute the worst possible case due to no matching 
 This benchmark really pushes the calculator to the limit with extremely long string lengths.
 This is combined with the fact that this is a worst case run with no matching characters.
 
-|        Method |       Runtime | NumberOfCharacters |        Mean |     Error |    StdDev | Ratio | Speedup | RatioSD | Gen 0 | Gen 1 | Gen 2 | Allocated |
-|-------------- |-------------- |------------------- |------------:|----------:|----------:|------:|--------:|--------:|------:|------:|------:|----------:|
-| Quickenshtein |    .NET 4.7.2 |               8192 |    98.85 ms |  0.455 ms |  0.425 ms |  1.00 |    1.00 |    0.00 |     - |     - |     - |         - |
-| Quickenshtein | .NET Core 3.0 |               8192 |    49.71 ms |  0.275 ms |  0.243 ms |  0.50 |    1.99 |    0.00 |     - |     - |     - |     926 B |
-|               |               |                    |             |           |           |       |         |         |       |       |       |           |
-|  Fastenshtein |    .NET 4.7.2 |               8192 |   146.70 ms |  1.845 ms |  1.726 ms |  1.00 |    1.00 |    0.00 |     - |     - |     - |   32816 B |
-|  Fastenshtein | .NET Core 3.0 |               8192 |   143.27 ms |  2.781 ms |  2.601 ms |  0.98 |    1.02 |    0.02 |     - |     - |     - |   34000 B |
-|               |               |                    |             |           |           |       |         |         |       |       |       |           |
-| Quickenshtein |    .NET 4.7.2 |              32768 | 1,576.80 ms |  7.629 ms |  6.763 ms |  1.00 |    1.00 |    0.00 |     - |     - |     - |         - |
-| Quickenshtein | .NET Core 3.0 |              32768 |   795.30 ms |  2.839 ms |  2.517 ms |  0.50 |    1.98 |    0.00 |     - |     - |     - |    1360 B |
-|               |               |                    |             |           |           |       |         |         |       |       |       |           |
-|  Fastenshtein |    .NET 4.7.2 |              32768 | 2,334.98 ms | 35.709 ms | 33.402 ms |  1.00 |    1.00 |    0.00 |     - |     - |     - |  131096 B |
-|  Fastenshtein | .NET Core 3.0 |              32768 | 2,431.11 ms | 11.064 ms | 10.349 ms |  1.04 |    0.96 |    0.01 |     - |     - |     - |  131096 B |
+|                      Method |       Runtime | NumberOfCharacters |        Mean |     Error |    StdDev | Ratio | Speedup | RatioSD | Gen 0 | Gen 1 | Gen 2 | Allocated |
+|---------------------------- |-------------- |------------------- |------------:|----------:|----------:|------:|--------:|--------:|------:|------:|------:|----------:|
+|   Quickenshtein_NoThreading |    .NET 4.7.2 |               8192 |    90.79 ms |  0.626 ms |  0.555 ms |  1.00 |    1.00 |    0.00 |     - |     - |     - |         - |
+|   Quickenshtein_NoThreading | .NET Core 3.0 |               8192 |    47.29 ms |  0.339 ms |  0.317 ms |  0.52 |    1.92 |    0.01 |     - |     - |     - |         - |
+|                             |               |                    |             |           |           |       |         |         |       |       |       |           |
+| Quickenshtein_WithThreading |    .NET 4.7.2 |               8192 |    33.44 ms |  0.666 ms |  0.865 ms |  1.00 |    1.00 |    0.00 |     - |     - |     - |    1024 B |
+| Quickenshtein_WithThreading | .NET Core 3.0 |               8192 |    24.92 ms |  0.329 ms |  0.292 ms |  0.75 |    1.33 |    0.02 |     - |     - |     - |     800 B |
+|                             |               |                    |             |           |           |       |         |         |       |       |       |           |
+|                Fastenshtein |    .NET 4.7.2 |               8192 |   140.59 ms |  2.275 ms |  2.128 ms |  1.00 |    1.00 |    0.00 |     - |     - |     - |   32816 B |
+|                Fastenshtein | .NET Core 3.0 |               8192 |   143.57 ms |  0.955 ms |  0.893 ms |  1.02 |    0.98 |    0.01 |     - |     - |     - |   32792 B |
+|                             |               |                    |             |           |           |       |         |         |       |       |       |           |
+|   Quickenshtein_NoThreading |    .NET 4.7.2 |              32768 | 1,448.65 ms |  7.158 ms |  6.695 ms |  1.00 |    1.00 |    0.00 |     - |     - |     - |         - |
+|   Quickenshtein_NoThreading | .NET Core 3.0 |              32768 |   755.54 ms |  3.855 ms |  3.418 ms |  0.52 |    1.92 |    0.00 |     - |     - |     - |         - |
+|                             |               |                    |             |           |           |       |         |         |       |       |       |           |
+| Quickenshtein_WithThreading |    .NET 4.7.2 |              32768 |   501.19 ms |  4.422 ms |  3.693 ms |  1.00 |    1.00 |    0.00 |     - |     - |     - |    8192 B |
+| Quickenshtein_WithThreading | .NET Core 3.0 |              32768 |   387.47 ms |  6.540 ms |  5.798 ms |  0.77 |    1.29 |    0.01 |     - |     - |     - |     800 B |
+|                             |               |                    |             |           |           |       |         |         |       |       |       |           |
+|                Fastenshtein |    .NET 4.7.2 |              32768 | 2,185.64 ms | 53.292 ms | 61.372 ms |  1.00 |    1.00 |    0.00 |     - |     - |     - |  131096 B |
+|                Fastenshtein | .NET Core 3.0 |              32768 | 2,286.02 ms |  8.631 ms |  7.651 ms |  1.05 |    0.95 |    0.02 |     - |     - |     - |  131096 B |
 
 ## Edge Match Benchmark
 
