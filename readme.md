@@ -18,6 +18,23 @@ Quickenshtein takes advantage of the following hardware intrinsics. On any recen
 
 If your computer doesn't have one of the hardware intrinsics available, Quickenshtein will still work - just slower than optimal.
 
+## Multi-Threading
+
+By default, Quickenshtein performs in single-threaded mode as this mode performs best for small to medium size strings while having no memory allocations.
+When dealing with huge strings of 8000 characters or more, it may be useful to switch to multi-threaded mode.
+In this mode, the calculation is broken up and shared between multiple cores in a system.
+
+Multi-threading is especially useful for systems without hardware intrinsics or for .NET Framework as shown in the table below where it provided a 3x performance improvement.
+
+|                 Method |       Runtime | NumberOfCharacters |               Mean |              Error |            StdDev |      Gen 0 |      Gen 1 |     Gen 2 |   Allocated |
+|----------------------- |-------------- |------------------- |-------------------:|-------------------:|------------------:|-----------:|-----------:|----------:|------------:|
+|          Quickenshtein |    .NET 4.7.2 |               8000 | 110,685,573.333 ns | 10,111,751.3824 ns |   554,259.2138 ns |          - |          - |         - |           - |
+| Quickenshtein_Threaded |    .NET 4.7.2 |               8000 |  36,600,807.692 ns | 16,120,782.0907 ns |   883,634.4635 ns |          - |          - |         - |      1260 B |
+
+To enable threading, you can pass in `CalculationOptions.DefaultWithThreading` to `Levenshtein.GetDistance()` or configure your own `CalculationOptions` with settings that work best for you.
+
+_Note: Multi-threading is not allocation free (unlike single-threading mode) and will allocate a small amount depending on the number of threads used._
+
 ## Benchmarking
 
 There are a number of benchmarks in the repository that you can run on your system to see how well Quickenshtein performs.
