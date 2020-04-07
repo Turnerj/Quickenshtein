@@ -4,12 +4,10 @@ using System.Text;
 
 namespace Quickenshtein.TestUtility
 {
-	public class TestCaseFinder
+	public class TestCaseFinder : IUtility
 	{
 		private const int NUMBER_OF_CHECKS = 2000;
 		private const int WORD_LENGTH = 20;
-
-		private const string CHARACTERS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
 		private static readonly CalculationOptions[] OptionsToTest = new[]
 		{
@@ -20,8 +18,6 @@ namespace Quickenshtein.TestUtility
 				MinimumCharactersPerThread = 16
 			}
 		};
-
-		private static readonly Random Random = new Random();
 
 		public void Run()
 		{
@@ -54,8 +50,8 @@ namespace Quickenshtein.TestUtility
 
 			for (var i = 0; i < NUMBER_OF_CHECKS; i++)
 			{
-				var source = GetRandomWord();
-				var target = GetRandomWord();
+				var source = WordGenerator.GenerateWord(WORD_LENGTH);
+				var target = WordGenerator.GenerateWord(WORD_LENGTH);
 
 				var baseline = Benchmarks.LevenshteinBaseline.GetDistance(source, target);
 				var quickenshtein = Levenshtein.GetDistance(source, target);
@@ -75,17 +71,6 @@ namespace Quickenshtein.TestUtility
 			Console.WriteLine();
 
 			return numberOfFailures;
-		}
-
-		static unsafe string GetRandomWord()
-		{
-			var builder = new StringBuilder(WORD_LENGTH);
-			for (var i = 0; i < WORD_LENGTH; i++)
-			{
-				var characterIndex = Random.Next(0, CHARACTERS.Length);
-				builder.Append(CHARACTERS[characterIndex]);
-			}
-			return builder.ToString();
 		}
 	}
 }
