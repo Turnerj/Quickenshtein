@@ -1,9 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Text;
 
-namespace Quickenshtein.TestCaseFinder
+namespace Quickenshtein.TestUtility
 {
-	class Program
+	public class TestCaseFinder
 	{
 		private const int NUMBER_OF_CHECKS = 2000;
 		private const int WORD_LENGTH = 20;
@@ -22,7 +23,7 @@ namespace Quickenshtein.TestCaseFinder
 
 		private static readonly Random Random = new Random();
 
-		static void Main(string[] args)
+		public void Run()
 		{
 			var numberOfFailures = 0;
 			Console.WriteLine("=== Test Case Finder ===");
@@ -42,7 +43,6 @@ namespace Quickenshtein.TestCaseFinder
 			Console.WriteLine("=== Test Case Finder Complete ===");
 			Console.WriteLine($"Total Number of Failures: {numberOfFailures}");
 		}
-
 		static int RunWithOptions(CalculationOptions calculationOptions)
 		{
 			Console.WriteLine("========================");

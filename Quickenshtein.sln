@@ -31,7 +31,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "global", "global", "{3A1516
 		readme.md = readme.md
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Quickenshtein.TestCaseFinder", "tests\Quickenshtein.TestCaseFinder\Quickenshtein.TestCaseFinder.csproj", "{C0F1E826-F17B-439F-9BBC-43F2FBFEBA28}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Quickenshtein.TestUtility", "tests\Quickenshtein.TestUtility\Quickenshtein.TestUtility.csproj", "{C0F1E826-F17B-439F-9BBC-43F2FBFEBA28}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
