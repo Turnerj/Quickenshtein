@@ -10,20 +10,18 @@ namespace Quickenshtein.Benchmarks.Config
 	{
 		public BaseRuntimeQuickConfig()
 		{
-			Add(MemoryDiagnoser.Default);
-			
-			Add(Job.ShortRun
-				.With(ClrRuntime.Net472)
+			AddDiagnoser(MemoryDiagnoser.Default);
+
+			AddJob(Job.ShortRun
+				.WithRuntime(ClrRuntime.Net472)
 				.AsBaseline());
 
-			Add(Job.ShortRun
-				.With(CoreRuntime.Core30));
+			AddJob(Job.ShortRun
+				.WithRuntime(CoreRuntime.Core30));
 
-			Add(SpeedupRatioColumn.SpeedupOfMean);
-
-			//Requires version of BDN > 0.12.0
-			//Add(WorthinessRatioColumn.WorthinessOfMean);
-			//Add(DisassemblyDiagnoser.Create(new DisassemblyDiagnoserConfig()));
+			AddColumn(SpeedupRatioColumn.SpeedupOfMean);
+			AddColumn(WorthinessRatioColumn.WorthinessOfMean);
+			AddDiagnoser(new DisassemblyDiagnoser(new DisassemblyDiagnoserConfig()));
 		}
 	}
 }

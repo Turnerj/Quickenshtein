@@ -48,7 +48,7 @@ namespace Quickenshtein.Benchmarks.Columns
 			}
 		}
 
-		internal override string GetValue(Summary summary, BenchmarkCase benchmarkCase, Statistics baseline,
+		public override string GetValue(Summary summary, BenchmarkCase benchmarkCase, Statistics baseline,
 			IReadOnlyDictionary<string, Metric> baselineMetric, Statistics current,
 			IReadOnlyDictionary<string, Metric> currentMetric, bool isBaseline)
 		{

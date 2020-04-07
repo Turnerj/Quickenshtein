@@ -15,28 +15,26 @@ namespace Quickenshtein.Benchmarks.Config
 
 		public CustomIntrinsicConfig() : base()
 		{
-			Add(MemoryDiagnoser.Default);
+			AddDiagnoser(MemoryDiagnoser.Default);
 
 			Orderer = new DefaultOrderer(SummaryOrderPolicy.SlowestToFastest);
 
-			Add(SpeedupRatioColumn.SpeedupOfMean);
-
-			//Requires version of BDN > 0.12.0
-			//Add(WorthinessRatioColumn.WorthinessOfMean);
-			//Add(DisassemblyDiagnoser.Create(new DisassemblyDiagnoserConfig()));
+			AddColumn(SpeedupRatioColumn.SpeedupOfMean);
+			AddColumn(WorthinessRatioColumn.WorthinessOfMean);
+			AddDiagnoser(new DisassemblyDiagnoser(new DisassemblyDiagnoserConfig()));
 		}
 
 		protected void AddFramework(bool asBaseline = false)
 		{
 			AddJob(Job.Default
-				.With(ClrRuntime.Net472)
+				.WithRuntime(ClrRuntime.Net472)
 				.WithId("Framework"), asBaseline);
 		}
 
 		protected void AddCoreWithoutIntrinsics(bool asBaseline = false)
 		{
 			AddJob(Job.Default
-				.With(CoreRuntime.Core30)
+				.WithRuntime(CoreRuntime.Core30)
 				.WithEnvironmentVariable(ENV_ENABLE_HWINTRINSICS, "0")
 				.WithId("Core (No Intrinsics)"), asBaseline);
 		}
@@ -44,7 +42,7 @@ namespace Quickenshtein.Benchmarks.Config
 		protected void AddCoreWithoutSSE41(bool asBaseline = false)
 		{
 			AddJob(Job.Default
-				.With(CoreRuntime.Core30)
+				.WithRuntime(CoreRuntime.Core30)
 				.WithEnvironmentVariable(ENV_ENABLE_SSE41, "0")
 				.WithId("Core (w/o SSE41)"), asBaseline);
 		}
@@ -52,7 +50,7 @@ namespace Quickenshtein.Benchmarks.Config
 		protected void AddCoreWithoutAVX2(bool asBaseline = false)
 		{
 			AddJob(Job.Default
-				.With(CoreRuntime.Core30)
+				.WithRuntime(CoreRuntime.Core30)
 				.WithEnvironmentVariable(ENV_ENABLE_AVX2, "0")
 				.WithId("Core (w/o AVX2)"), asBaseline);
 		}
@@ -60,7 +58,7 @@ namespace Quickenshtein.Benchmarks.Config
 		protected void AddCore(bool asBaseline = false)
 		{
 			AddJob(Job.Default
-				.With(CoreRuntime.Core30)
+				.WithRuntime(CoreRuntime.Core30)
 				.WithId("Core (All Intrinsics)"), asBaseline);
 		}
 
@@ -71,7 +69,7 @@ namespace Quickenshtein.Benchmarks.Config
 				job.AsBaseline();
 			}
 
-			Add(job);
+			AddJob(job);
 		}
 	}
 }
