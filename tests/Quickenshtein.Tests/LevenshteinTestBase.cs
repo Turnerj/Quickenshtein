@@ -37,17 +37,13 @@ namespace Quickenshtein.Tests
 		}
 #endif
 
-		[TestMethod]
-		public void ZeroDistance_EmptyString()
+		[DataTestMethod]
+		[DataRow("", "", DisplayName = "Empty")]
+		[DataRow("test", "test", DisplayName = "String with 4 characters")]
+		[DataRow("abcdefghijklmnopqrstuvwxyz", "abcdefghijklmnopqrstuvwxyz", DisplayName = "Full Alphabet")]
+		public void ZeroDistance(string source, string target)
 		{
-			var distance = Levenshtein.GetDistance(string.Empty, string.Empty, CalculationOptions);
-			Assert.AreEqual(0, distance);
-		}
-
-		[TestMethod]
-		public void ZeroDistance_NonEmptyString()
-		{
-			var distance = Levenshtein.GetDistance("test", "test", CalculationOptions);
+			var distance = Levenshtein.GetDistance(source, target, CalculationOptions);
 			Assert.AreEqual(0, distance);
 		}
 
@@ -67,67 +63,25 @@ namespace Quickenshtein.Tests
 			Assert.AreEqual(0, distance);
 		}
 
-		[TestMethod]
-		public void OneDistance()
+		[DataTestMethod]
+		[DataRow("He1lo Wor1d", "Hello World", 2)]
+		[DataRow("Hello World", "He1lo Wor1d", 2)]
+		[DataRow("He1lo Wor1d", "Hell0 World", 3)]
+		[DataRow("Hell0 World", "He1lo Wor1d", 3)]
+		public void SplitDifference(string source, string target, int expectedDistance)
 		{
-			var distance = Levenshtein.GetDistance("te-st", "test", CalculationOptions);
-			Assert.AreEqual(1, distance);
+			var distance = Levenshtein.GetDistance(source, target, CalculationOptions);
+			Assert.AreEqual(expectedDistance, distance);
 		}
 
-		[TestMethod]
-		public void OneDistance_Reversed()
+		[DataTestMethod]
+		[DataRow("", "abcdef", 6)]
+		[DataRow("abcdef", "", 6)]
+		[DataRow("abcdef", "zyxwvu", 6)]
+		public void CompletelyDifferent(string source, string target, int expectedDistance)
 		{
-			var distance = Levenshtein.GetDistance("test", "te-st", CalculationOptions);
-			Assert.AreEqual(1, distance);
-		}
-
-		[TestMethod]
-		public void TwoDistance()
-		{
-			var distance = Levenshtein.GetDistance("Hello World", "He11o World", CalculationOptions);
-			Assert.AreEqual(2, distance);
-		}
-
-		[TestMethod]
-		public void TwoDistance_Reversed()
-		{
-			var distance = Levenshtein.GetDistance("He11o World", "Hello World", CalculationOptions);
-			Assert.AreEqual(2, distance);
-		}
-
-		[TestMethod]
-		public void TwoDistance_Split()
-		{
-			var distance = Levenshtein.GetDistance("Hello World", "He1lo Wor1d", CalculationOptions);
-			Assert.AreEqual(2, distance);
-		}
-
-		[TestMethod]
-		public void TwoDistance_Split_Reversed()
-		{
-			var distance = Levenshtein.GetDistance("He1lo Wor1d", "Hello World", CalculationOptions);
-			Assert.AreEqual(2, distance);
-		}
-
-		[TestMethod]
-		public void CompletelyDifferent_OneEmpty()
-		{
-			var distance = Levenshtein.GetDistance(string.Empty, "abcdef", CalculationOptions);
-			Assert.AreEqual(6, distance);
-		}
-
-		[TestMethod]
-		public void CompletelyDifferent_OneEmpty_Reversed()
-		{
-			var distance = Levenshtein.GetDistance("abcdef", string.Empty, CalculationOptions);
-			Assert.AreEqual(6, distance);
-		}
-
-		[TestMethod]
-		public void CompletelyDifferent_NonEmpty()
-		{
-			var distance = Levenshtein.GetDistance("abcdef", "zyxwvu", CalculationOptions);
-			Assert.AreEqual(6, distance);
+			var distance = Levenshtein.GetDistance(source, target, CalculationOptions);
+			Assert.AreEqual(expectedDistance, distance);
 		}
 
 		[TestMethod]
@@ -149,31 +103,34 @@ namespace Quickenshtein.Tests
 		}
 
 		[TestMethod]
-		public void Deletion_Start()
-		{
-			var distance = Levenshtein.GetDistance("Hello World", "ello World", CalculationOptions);
-			Assert.AreEqual(1, distance);
-		}
-
-		[TestMethod]
-		public void Deletion_End()
-		{
-			var distance = Levenshtein.GetDistance("Hello World", "Hello Worl", CalculationOptions);
-			Assert.AreEqual(1, distance);
-		}
-
-		[TestMethod]
 		public void IsCaseSensitive()
 		{
 			var distance = Levenshtein.GetDistance("Hello World", "hello world", CalculationOptions);
 			Assert.AreEqual(2, distance);
 		}
 
-		[TestMethod]
-		public void Shorter_Target()
+		[DataTestMethod]
+		[DataRow("Hello World", "Hello World!", 1)]
+		[DataRow("Hello World, this is a string.", "Hello World.", 18)]
+		[DataRow("Hello World!", "Hello World", 1)]
+		[DataRow("Hello World.", "Hello World, this is a string.", 18)]
+		public void Addition(string source, string target, int expectedDistance)
 		{
-			var distance = Levenshtein.GetDistance("This is a longer sentence.", "This is shorter.", CalculationOptions);
-			Assert.AreEqual(13, distance);
+			var distance = Levenshtein.GetDistance(source, target, CalculationOptions);
+			Assert.AreEqual(expectedDistance, distance);
+		}
+
+		[DataTestMethod]
+		[DataRow("ello World", "Hello World", 1, DisplayName = "Deletion Start (Source)")]
+		[DataRow("Hello Worl", "Hello World", 1, DisplayName = "Deletion End (Source)")]
+		[DataRow("Hello World", "ello World", 1, DisplayName = "Deletion Start (Target)")]
+		[DataRow("Hello World", "Hello Worl", 1, DisplayName = "Deletion End (Target)")]
+		[DataRow("Hell World", "Hello World", 1, DisplayName = "Deletion Middle (Source)")]
+		[DataRow("Hello World", "Hell World", 1, DisplayName = "Deletion Middle (Target)")]
+		public void Deletion(string source, string target, int expectedDistance)
+		{
+			var distance = Levenshtein.GetDistance(source, target, CalculationOptions);
+			Assert.AreEqual(expectedDistance, distance);
 		}
 
 		[TestMethod]
@@ -188,136 +145,37 @@ namespace Quickenshtein.Tests
 		}
 
 		[TestMethod]
-		public void TranspositionHandling_EqualLength_1()
+		[DataRow("bbbbbbbbbbbbbbbbbbbbbbbba", "bbbbbbbbbbbbbbbbbbbbbbbbz", DisplayName = "Trim Start")]
+		[DataRow("abbbbbbbbbbbbbbbbbbbbbbbb", "zbbbbbbbbbbbbbbbbbbbbbbbb", DisplayName = "Trim End")]
+		public void Trim(string source, string target)
 		{
-			var distance = Levenshtein.GetDistance("yorwyeawgn", "xcodeuwtnx", CalculationOptions);
-			Assert.AreEqual(8, distance);
-		}
-
-		[TestMethod]
-		public void TranspositionHandling_EqualLength_2()
-		{
-			var distance = Levenshtein.GetDistance("yorwyeagwn", "xcodeuwtnx", CalculationOptions);
-			Assert.AreEqual(9, distance);
-		}
-
-		[TestMethod]
-		public void TranspositionHandling_EqualLength_3()
-		{
-			var distance = Levenshtein.GetDistance("yorwyeagnw", "xcodeuwtnx", CalculationOptions);
-			Assert.AreEqual(9, distance);
-		}
-
-		[TestMethod]
-		public void TranspositionHandling_EqualLength_4()
-		{
-			var distance = Levenshtein.GetDistance("yorwyaegnw", "xcodeuwtnx", CalculationOptions);
-			Assert.AreEqual(9, distance);
-		}
-
-		[TestMethod]
-		public void TranspositionHandling_UnEqualLength_1a()
-		{
-			var distance = Levenshtein.GetDistance("yorwyeawgnb", "xcodeuwtnx", CalculationOptions);
-			Assert.AreEqual(8, distance);
-		}
-
-		[TestMethod]
-		public void TranspositionHandling_UnEqualLength_1b()
-		{
-			var distance = Levenshtein.GetDistance("byorwyeawgn", "xcodeuwtnx", CalculationOptions);
-			Assert.AreEqual(8, distance);
-		}
-
-		[TestMethod]
-		public void TranspositionHandling_UnEqualLength_1c()
-		{
-			var distance = Levenshtein.GetDistance("yorwyeawgn", "xcodeuwtnxb", CalculationOptions);
-			Assert.AreEqual(9, distance);
-		}
-
-		[TestMethod]
-		public void TranspositionHandling_UnEqualLength_1d()
-		{
-			var distance = Levenshtein.GetDistance("yorwyeawgn", "bxcodeuwtnx", CalculationOptions);
-			Assert.AreEqual(8, distance);
-		}
-
-		[TestMethod]
-		public void TranspositionHandling_UnEqualLength_2()
-		{
-			var distance = Levenshtein.GetDistance("yorwyeagwnb", "xcodeuwtnx", CalculationOptions);
-			Assert.AreEqual(9, distance);
-		}
-
-		[TestMethod]
-		public void TranspositionHandling_UnEqualLength_3()
-		{
-			var distance = Levenshtein.GetDistance("yorwyeagnwb", "xcodeuwtnx", CalculationOptions);
-			Assert.AreEqual(10, distance);
-		}
-
-		[TestMethod]
-		public void TranspositionHandling_UnEqualLength_4()
-		{
-			var distance = Levenshtein.GetDistance("yorwyaegnwb", "xcodeuwtnx", CalculationOptions);
-			Assert.AreEqual(10, distance);
-		}
-
-		[TestMethod]
-		public void AdditionalTest_EqualLength_1()
-		{
-			var distance = Levenshtein.GetDistance("abdegjklsjgofmdlacmpdv", "adbegjlkjsogmdaalcmpvd", CalculationOptions);
-			Assert.AreEqual(10, distance);
-		}
-
-		[TestMethod]
-		public void AdditionalTest_EqualLength_2()
-		{
-			var distance = Levenshtein.GetDistance("aaaabbbbccccddddeeee", "aaababbcbccdcddedeee", CalculationOptions);
-			Assert.AreEqual(5, distance);
-		}
-
-		[TestMethod]
-		public void AdditionalTest_EqualLength_3()
-		{
-			var distance = Levenshtein.GetDistance("xkzQJEnvucuhXyKYGqtY", "YTZkcmyTyrvuhDLmswfM", CalculationOptions);
-			Assert.AreEqual(19, distance);
-		}
-
-		[TestMethod]
-		public void AdditionalTest_EqualLength_4()
-		{
-			var distance = Levenshtein.GetDistance("BDLZfcIOFxTwWBdGzZxp", "kDiHMMYqOMHkMTByTuGu", CalculationOptions);
-			Assert.AreEqual(18, distance);
-		}
-
-		[TestMethod]
-		public void AdditionalTest_EqualLength_5()
-		{
-			var distance = Levenshtein.GetDistance("cBFZNfiKhzCtgbyoxqMP", "wwyUZFQsRbyUcozbPrtR", CalculationOptions);
-			Assert.AreEqual(20, distance);
-		}
-
-		[TestMethod]
-		public void AdditionalTest_UnEqualLength_1()
-		{
-			var distance = Levenshtein.GetDistance("aaaabbbbccffccddddeeee", "aaababbcbcfcdcddedeee", CalculationOptions);
-			Assert.AreEqual(7, distance);
-		}
-
-		[TestMethod]
-		public void AdditionalTest_UnEqualLength_2()
-		{
-			var distance = Levenshtein.GetDistance("aaaabbbbccfccddddeeee", "aaababbcbcffcdcddedeee", CalculationOptions);
-			Assert.AreEqual(6, distance);
-		}
-
-		[TestMethod]
-		public void TrimEnd()
-		{
-			var distance = Levenshtein.GetDistance("abbbbbbbbbbbbbbbbbbbbbbbb", "zbbbbbbbbbbbbbbbbbbbbbbbb", CalculationOptions);
+			var distance = Levenshtein.GetDistance(source, target, CalculationOptions);
 			Assert.AreEqual(1, distance);
+		}
+
+		[DataTestMethod]
+		[DataRow("yorwyeawgn", "xcodeuwtnx", 8)]
+		[DataRow("yorwyeagwn", "xcodeuwtnx", 9)]
+		[DataRow("yorwyeagnw", "xcodeuwtnx", 9)]
+		[DataRow("yorwyaegnw", "xcodeuwtnx", 9)]
+		[DataRow("yorwyeawgnb", "xcodeuwtnx", 8)]
+		[DataRow("byorwyeawgn", "xcodeuwtnx", 8)]
+		[DataRow("yorwyeawgn", "xcodeuwtnxb", 9)]
+		[DataRow("yorwyeawgn", "bxcodeuwtnx", 8)]
+		[DataRow("yorwyeagwnb", "xcodeuwtnx", 9)]
+		[DataRow("yorwyeagnwb", "xcodeuwtnx", 10)]
+		[DataRow("yorwyaegnwb", "xcodeuwtnx", 10)]
+		[DataRow("abdegjklsjgofmdlacmpdv", "adbegjlkjsogmdaalcmpvd", 10)]
+		[DataRow("aaaabbbbccccddddeeee", "aaababbcbccdcddedeee", 5)]
+		[DataRow("xkzQJEnvucuhXyKYGqtY", "YTZkcmyTyrvuhDLmswfM", 19)]
+		[DataRow("BDLZfcIOFxTwWBdGzZxp", "kDiHMMYqOMHkMTByTuGu", 18)]
+		[DataRow("cBFZNfiKhzCtgbyoxqMP", "wwyUZFQsRbyUcozbPrtR", 20)]
+		[DataRow("aaaabbbbccffccddddeeee", "aaababbcbcfcdcddedeee", 7)]
+		[DataRow("aaaabbbbccfccddddeeee", "aaababbcbcffcdcddedeee", 6)]
+		public void MiscDistances(string source, string target, int expectedDistance)
+		{
+			var distance = Levenshtein.GetDistance(source, target, CalculationOptions);
+			Assert.AreEqual(expectedDistance, distance);
 		}
 	}
 }
