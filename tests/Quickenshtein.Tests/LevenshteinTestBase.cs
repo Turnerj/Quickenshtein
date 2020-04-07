@@ -172,6 +172,7 @@ namespace Quickenshtein.Tests
 		[DataRow("cBFZNfiKhzCtgbyoxqMP", "wwyUZFQsRbyUcozbPrtR", 20)]
 		[DataRow("aaaabbbbccffccddddeeee", "aaababbcbcfcdcddedeee", 7)]
 		[DataRow("aaaabbbbccfccddddeeee", "aaababbcbcffcdcddedeee", 6)]
+		[DataRow("Seven", " of Nine", 7)]
 		public void MiscDistances(string source, string target, int expectedDistance)
 		{
 			var distance = Levenshtein.GetDistance(source, target, CalculationOptions);
