@@ -26,10 +26,10 @@ In this mode, the calculation is broken up and shared between multiple cores in 
 
 Multi-threading is especially useful for systems without hardware intrinsics or for .NET Framework as shown in the table below where it provided a 3x performance improvement.
 
-|                 Method |       Runtime | NumberOfCharacters |               Mean |              Error |            StdDev |      Gen 0 |      Gen 1 |     Gen 2 |   Allocated |
-|----------------------- |-------------- |------------------- |-------------------:|-------------------:|------------------:|-----------:|-----------:|----------:|------------:|
-|          Quickenshtein |    .NET 4.7.2 |               8000 | 110,685,573.333 ns | 10,111,751.3824 ns |   554,259.2138 ns |          - |          - |         - |           - |
-| Quickenshtein_Threaded |    .NET 4.7.2 |               8000 |  36,600,807.692 ns | 16,120,782.0907 ns |   883,634.4635 ns |          - |          - |         - |      1260 B |
+|                 Method |       Runtime | NumberOfCharacters |       Mean |     Error |     StdDev |      Gen 0 |      Gen 1 |     Gen 2 |   Allocated |
+|----------------------- |-------------- |------------------- |-----------:|----------:|-----------:|-----------:|-----------:|----------:|------------:|
+|          Quickenshtein |    .NET 4.7.2 |               8000 | 110.686 ms | 10.118 ms |   0.554 ms |          - |          - |         - |           - |
+| Quickenshtein_Threaded |    .NET 4.7.2 |               8000 |  36.601 ms | 16.121 ms |   0.883 ms |          - |          - |         - |      1260 B |
 
 To enable threading, you can pass in `CalculationOptions.DefaultWithThreading` to `Levenshtein.GetDistance()` or configure your own `CalculationOptions` with settings that work best for you.
 
