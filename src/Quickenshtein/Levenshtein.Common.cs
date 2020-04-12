@@ -18,7 +18,6 @@ namespace Quickenshtein
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		internal static unsafe void CalculateRow(int* previousRowPtr, char* targetPtr, int targetLength, char sourcePrevChar, int lastInsertionCost, int lastSubstitutionCost)
 		{
-			var columnIndex = 0;
 			int lastDeletionCost;
 			int localCost;
 
@@ -33,108 +32,116 @@ namespace Quickenshtein
 				//Note: Code is inlined manually due to performance degradation on .NET Framework
 
 				localCost = lastSubstitutionCost;
-				lastDeletionCost = previousRowPtr[columnIndex];
-				if (sourcePrevChar != targetPtr[columnIndex])
+				lastDeletionCost = previousRowPtr[0];
+				if (sourcePrevChar != targetPtr[0])
 				{
 					localCost = Math.Min(lastInsertionCost, localCost);
 					localCost = Math.Min(lastDeletionCost, localCost);
 					localCost++;
 				}
 				lastInsertionCost = localCost;
-				previousRowPtr[columnIndex] = localCost;
+				previousRowPtr[0] = localCost;
 				lastSubstitutionCost = lastDeletionCost;
-				columnIndex++;
+				previousRowPtr++;
+				targetPtr++;
 
 				localCost = lastSubstitutionCost;
-				lastDeletionCost = previousRowPtr[columnIndex];
-				if (sourcePrevChar != targetPtr[columnIndex])
+				lastDeletionCost = previousRowPtr[0];
+				if (sourcePrevChar != targetPtr[0])
 				{
 					localCost = Math.Min(lastInsertionCost, localCost);
 					localCost = Math.Min(lastDeletionCost, localCost);
 					localCost++;
 				}
 				lastInsertionCost = localCost;
-				previousRowPtr[columnIndex] = localCost;
+				previousRowPtr[0] = localCost;
 				lastSubstitutionCost = lastDeletionCost;
-				columnIndex++;
+				previousRowPtr++;
+				targetPtr++;
 
 				localCost = lastSubstitutionCost;
-				lastDeletionCost = previousRowPtr[columnIndex];
-				if (sourcePrevChar != targetPtr[columnIndex])
+				lastDeletionCost = previousRowPtr[0];
+				if (sourcePrevChar != targetPtr[0])
 				{
 					localCost = Math.Min(lastInsertionCost, localCost);
 					localCost = Math.Min(lastDeletionCost, localCost);
 					localCost++;
 				}
 				lastInsertionCost = localCost;
-				previousRowPtr[columnIndex] = localCost;
+				previousRowPtr[0] = localCost;
 				lastSubstitutionCost = lastDeletionCost;
-				columnIndex++;
+				previousRowPtr++;
+				targetPtr++;
 
 				localCost = lastSubstitutionCost;
-				lastDeletionCost = previousRowPtr[columnIndex];
-				if (sourcePrevChar != targetPtr[columnIndex])
+				lastDeletionCost = previousRowPtr[0];
+				if (sourcePrevChar != targetPtr[0])
 				{
 					localCost = Math.Min(lastInsertionCost, localCost);
 					localCost = Math.Min(lastDeletionCost, localCost);
 					localCost++;
 				}
 				lastInsertionCost = localCost;
-				previousRowPtr[columnIndex] = localCost;
+				previousRowPtr[0] = localCost;
 				lastSubstitutionCost = lastDeletionCost;
-				columnIndex++;
+				previousRowPtr++;
+				targetPtr++;
 
 				localCost = lastSubstitutionCost;
-				lastDeletionCost = previousRowPtr[columnIndex];
-				if (sourcePrevChar != targetPtr[columnIndex])
+				lastDeletionCost = previousRowPtr[0];
+				if (sourcePrevChar != targetPtr[0])
 				{
 					localCost = Math.Min(lastInsertionCost, localCost);
 					localCost = Math.Min(lastDeletionCost, localCost);
 					localCost++;
 				}
 				lastInsertionCost = localCost;
-				previousRowPtr[columnIndex] = localCost;
+				previousRowPtr[0] = localCost;
 				lastSubstitutionCost = lastDeletionCost;
-				columnIndex++;
+				previousRowPtr++;
+				targetPtr++;
 
 				localCost = lastSubstitutionCost;
-				lastDeletionCost = previousRowPtr[columnIndex];
-				if (sourcePrevChar != targetPtr[columnIndex])
+				lastDeletionCost = previousRowPtr[0];
+				if (sourcePrevChar != targetPtr[0])
 				{
 					localCost = Math.Min(lastInsertionCost, localCost);
 					localCost = Math.Min(lastDeletionCost, localCost);
 					localCost++;
 				}
 				lastInsertionCost = localCost;
-				previousRowPtr[columnIndex] = localCost;
+				previousRowPtr[0] = localCost;
 				lastSubstitutionCost = lastDeletionCost;
-				columnIndex++;
+				previousRowPtr++;
+				targetPtr++;
 
 				localCost = lastSubstitutionCost;
-				lastDeletionCost = previousRowPtr[columnIndex];
-				if (sourcePrevChar != targetPtr[columnIndex])
+				lastDeletionCost = previousRowPtr[0];
+				if (sourcePrevChar != targetPtr[0])
 				{
 					localCost = Math.Min(lastInsertionCost, localCost);
 					localCost = Math.Min(lastDeletionCost, localCost);
 					localCost++;
 				}
 				lastInsertionCost = localCost;
-				previousRowPtr[columnIndex] = localCost;
+				previousRowPtr[0] = localCost;
 				lastSubstitutionCost = lastDeletionCost;
-				columnIndex++;
+				previousRowPtr++;
+				targetPtr++;
 
 				localCost = lastSubstitutionCost;
-				lastDeletionCost = previousRowPtr[columnIndex];
-				if (sourcePrevChar != targetPtr[columnIndex])
+				lastDeletionCost = previousRowPtr[0];
+				if (sourcePrevChar != targetPtr[0])
 				{
 					localCost = Math.Min(lastInsertionCost, localCost);
 					localCost = Math.Min(lastDeletionCost, localCost);
 					localCost++;
 				}
 				lastInsertionCost = localCost;
-				previousRowPtr[columnIndex] = localCost;
+				previousRowPtr[0] = localCost;
 				lastSubstitutionCost = lastDeletionCost;
-				columnIndex++;
+				previousRowPtr++;
+				targetPtr++;
 			}
 
 			if (rowColumnsRemaining > 4)
@@ -142,56 +149,60 @@ namespace Quickenshtein
 				rowColumnsRemaining -= 4;
 
 				localCost = lastSubstitutionCost;
-				lastDeletionCost = previousRowPtr[columnIndex];
-				if (sourcePrevChar != targetPtr[columnIndex])
+				lastDeletionCost = previousRowPtr[0];
+				if (sourcePrevChar != targetPtr[0])
 				{
 					localCost = Math.Min(lastInsertionCost, localCost);
 					localCost = Math.Min(lastDeletionCost, localCost);
 					localCost++;
 				}
 				lastInsertionCost = localCost;
-				previousRowPtr[columnIndex] = localCost;
+				previousRowPtr[0] = localCost;
 				lastSubstitutionCost = lastDeletionCost;
-				columnIndex++;
+				previousRowPtr++;
+				targetPtr++;
 
 				localCost = lastSubstitutionCost;
-				lastDeletionCost = previousRowPtr[columnIndex];
-				if (sourcePrevChar != targetPtr[columnIndex])
+				lastDeletionCost = previousRowPtr[0];
+				if (sourcePrevChar != targetPtr[0])
 				{
 					localCost = Math.Min(lastInsertionCost, localCost);
 					localCost = Math.Min(lastDeletionCost, localCost);
 					localCost++;
 				}
 				lastInsertionCost = localCost;
-				previousRowPtr[columnIndex] = localCost;
+				previousRowPtr[0] = localCost;
 				lastSubstitutionCost = lastDeletionCost;
-				columnIndex++;
+				previousRowPtr++;
+				targetPtr++;
 
 				localCost = lastSubstitutionCost;
-				lastDeletionCost = previousRowPtr[columnIndex];
-				if (sourcePrevChar != targetPtr[columnIndex])
+				lastDeletionCost = previousRowPtr[0];
+				if (sourcePrevChar != targetPtr[0])
 				{
 					localCost = Math.Min(lastInsertionCost, localCost);
 					localCost = Math.Min(lastDeletionCost, localCost);
 					localCost++;
 				}
 				lastInsertionCost = localCost;
-				previousRowPtr[columnIndex] = localCost;
+				previousRowPtr[0] = localCost;
 				lastSubstitutionCost = lastDeletionCost;
-				columnIndex++;
+				previousRowPtr++;
+				targetPtr++;
 
 				localCost = lastSubstitutionCost;
-				lastDeletionCost = previousRowPtr[columnIndex];
-				if (sourcePrevChar != targetPtr[columnIndex])
+				lastDeletionCost = previousRowPtr[0];
+				if (sourcePrevChar != targetPtr[0])
 				{
 					localCost = Math.Min(lastInsertionCost, localCost);
 					localCost = Math.Min(lastDeletionCost, localCost);
 					localCost++;
 				}
 				lastInsertionCost = localCost;
-				previousRowPtr[columnIndex] = localCost;
+				previousRowPtr[0] = localCost;
 				lastSubstitutionCost = lastDeletionCost;
-				columnIndex++;
+				previousRowPtr++;
+				targetPtr++;
 			}
 
 			while (rowColumnsRemaining > 0)
@@ -199,17 +210,18 @@ namespace Quickenshtein
 				rowColumnsRemaining--;
 
 				localCost = lastSubstitutionCost;
-				lastDeletionCost = previousRowPtr[columnIndex];
-				if (sourcePrevChar != targetPtr[columnIndex])
+				lastDeletionCost = previousRowPtr[0];
+				if (sourcePrevChar != targetPtr[0])
 				{
 					localCost = Math.Min(lastInsertionCost, localCost);
 					localCost = Math.Min(lastDeletionCost, localCost);
 					localCost++;
 				}
 				lastInsertionCost = localCost;
-				previousRowPtr[columnIndex] = localCost;
+				previousRowPtr[0] = localCost;
 				lastSubstitutionCost = lastDeletionCost;
-				columnIndex++;
+				previousRowPtr++;
+				targetPtr++;
 			}
 		}
 
