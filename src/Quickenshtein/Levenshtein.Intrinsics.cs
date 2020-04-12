@@ -130,6 +130,9 @@ namespace Quickenshtein
 
 			for (; rowIndex < acceptableRowCount; rowIndex += 4)
 			{
+				var localTargetPtr = targetPtr;
+				var localPreviousRowPtr = previousRowPtr;
+
 				sourceChar1 = sourcePtr[rowIndex];
 				sourceChar2 = sourcePtr[rowIndex + 1];
 				sourceChar3 = sourcePtr[rowIndex + 2];
@@ -140,40 +143,39 @@ namespace Quickenshtein
 				row4Costs = Sse2.Add(row3Costs, allOnesVector); //Insert, Sub
 				row5Costs = Sse2.Add(row4Costs, allOnesVector); //Insert
 
-				var columnIndex = 0;
 				var rowColumnsRemaining = targetLength;
 
 				while (rowColumnsRemaining >= 8)
 				{
 					rowColumnsRemaining -= 8;
-					lastDeletionCostVector = Sse2.LoadVector128(previousRowPtr + columnIndex);
-					CalculateColumn_4Rows_Sse41(targetPtr, previousRowPtr, ref lastDeletionCostVector, ref row1Costs, ref row2Costs, ref row3Costs, ref row4Costs, ref row5Costs, ref allOnesVector, sourceChar1, sourceChar2, sourceChar3, sourceChar4, ref columnIndex);
-					CalculateColumn_4Rows_Sse41(targetPtr, previousRowPtr, ref lastDeletionCostVector, ref row1Costs, ref row2Costs, ref row3Costs, ref row4Costs, ref row5Costs, ref allOnesVector, sourceChar1, sourceChar2, sourceChar3, sourceChar4, ref columnIndex);
-					CalculateColumn_4Rows_Sse41(targetPtr, previousRowPtr, ref lastDeletionCostVector, ref row1Costs, ref row2Costs, ref row3Costs, ref row4Costs, ref row5Costs, ref allOnesVector, sourceChar1, sourceChar2, sourceChar3, sourceChar4, ref columnIndex);
-					CalculateColumn_4Rows_Sse41(targetPtr, previousRowPtr, ref lastDeletionCostVector, ref row1Costs, ref row2Costs, ref row3Costs, ref row4Costs, ref row5Costs, ref allOnesVector, sourceChar1, sourceChar2, sourceChar3, sourceChar4, ref columnIndex);
+					lastDeletionCostVector = Sse2.LoadVector128(localPreviousRowPtr);
+					CalculateColumn_4Rows_Sse41(ref localTargetPtr, ref localPreviousRowPtr, ref lastDeletionCostVector, ref row1Costs, ref row2Costs, ref row3Costs, ref row4Costs, ref row5Costs, ref allOnesVector, sourceChar1, sourceChar2, sourceChar3, sourceChar4);
+					CalculateColumn_4Rows_Sse41(ref localTargetPtr, ref localPreviousRowPtr, ref lastDeletionCostVector, ref row1Costs, ref row2Costs, ref row3Costs, ref row4Costs, ref row5Costs, ref allOnesVector, sourceChar1, sourceChar2, sourceChar3, sourceChar4);
+					CalculateColumn_4Rows_Sse41(ref localTargetPtr, ref localPreviousRowPtr, ref lastDeletionCostVector, ref row1Costs, ref row2Costs, ref row3Costs, ref row4Costs, ref row5Costs, ref allOnesVector, sourceChar1, sourceChar2, sourceChar3, sourceChar4);
+					CalculateColumn_4Rows_Sse41(ref localTargetPtr, ref localPreviousRowPtr, ref lastDeletionCostVector, ref row1Costs, ref row2Costs, ref row3Costs, ref row4Costs, ref row5Costs, ref allOnesVector, sourceChar1, sourceChar2, sourceChar3, sourceChar4);
 
-					lastDeletionCostVector = Sse2.LoadVector128(previousRowPtr + columnIndex);
-					CalculateColumn_4Rows_Sse41(targetPtr, previousRowPtr, ref lastDeletionCostVector, ref row1Costs, ref row2Costs, ref row3Costs, ref row4Costs, ref row5Costs, ref allOnesVector, sourceChar1, sourceChar2, sourceChar3, sourceChar4, ref columnIndex);
-					CalculateColumn_4Rows_Sse41(targetPtr, previousRowPtr, ref lastDeletionCostVector, ref row1Costs, ref row2Costs, ref row3Costs, ref row4Costs, ref row5Costs, ref allOnesVector, sourceChar1, sourceChar2, sourceChar3, sourceChar4, ref columnIndex);
-					CalculateColumn_4Rows_Sse41(targetPtr, previousRowPtr, ref lastDeletionCostVector, ref row1Costs, ref row2Costs, ref row3Costs, ref row4Costs, ref row5Costs, ref allOnesVector, sourceChar1, sourceChar2, sourceChar3, sourceChar4, ref columnIndex);
-					CalculateColumn_4Rows_Sse41(targetPtr, previousRowPtr, ref lastDeletionCostVector, ref row1Costs, ref row2Costs, ref row3Costs, ref row4Costs, ref row5Costs, ref allOnesVector, sourceChar1, sourceChar2, sourceChar3, sourceChar4, ref columnIndex);
+					lastDeletionCostVector = Sse2.LoadVector128(localPreviousRowPtr);
+					CalculateColumn_4Rows_Sse41(ref localTargetPtr, ref localPreviousRowPtr, ref lastDeletionCostVector, ref row1Costs, ref row2Costs, ref row3Costs, ref row4Costs, ref row5Costs, ref allOnesVector, sourceChar1, sourceChar2, sourceChar3, sourceChar4);
+					CalculateColumn_4Rows_Sse41(ref localTargetPtr, ref localPreviousRowPtr, ref lastDeletionCostVector, ref row1Costs, ref row2Costs, ref row3Costs, ref row4Costs, ref row5Costs, ref allOnesVector, sourceChar1, sourceChar2, sourceChar3, sourceChar4);
+					CalculateColumn_4Rows_Sse41(ref localTargetPtr, ref localPreviousRowPtr, ref lastDeletionCostVector, ref row1Costs, ref row2Costs, ref row3Costs, ref row4Costs, ref row5Costs, ref allOnesVector, sourceChar1, sourceChar2, sourceChar3, sourceChar4);
+					CalculateColumn_4Rows_Sse41(ref localTargetPtr, ref localPreviousRowPtr, ref lastDeletionCostVector, ref row1Costs, ref row2Costs, ref row3Costs, ref row4Costs, ref row5Costs, ref allOnesVector, sourceChar1, sourceChar2, sourceChar3, sourceChar4);
 				}
 
 				if (rowColumnsRemaining >= 4)
 				{
 					rowColumnsRemaining -= 4;
-					lastDeletionCostVector = Sse2.LoadVector128(previousRowPtr + columnIndex);
-					CalculateColumn_4Rows_Sse41(targetPtr, previousRowPtr, ref lastDeletionCostVector, ref row1Costs, ref row2Costs, ref row3Costs, ref row4Costs, ref row5Costs, ref allOnesVector, sourceChar1, sourceChar2, sourceChar3, sourceChar4, ref columnIndex);
-					CalculateColumn_4Rows_Sse41(targetPtr, previousRowPtr, ref lastDeletionCostVector, ref row1Costs, ref row2Costs, ref row3Costs, ref row4Costs, ref row5Costs, ref allOnesVector, sourceChar1, sourceChar2, sourceChar3, sourceChar4, ref columnIndex);
-					CalculateColumn_4Rows_Sse41(targetPtr, previousRowPtr, ref lastDeletionCostVector, ref row1Costs, ref row2Costs, ref row3Costs, ref row4Costs, ref row5Costs, ref allOnesVector, sourceChar1, sourceChar2, sourceChar3, sourceChar4, ref columnIndex);
-					CalculateColumn_4Rows_Sse41(targetPtr, previousRowPtr, ref lastDeletionCostVector, ref row1Costs, ref row2Costs, ref row3Costs, ref row4Costs, ref row5Costs, ref allOnesVector, sourceChar1, sourceChar2, sourceChar3, sourceChar4, ref columnIndex);
+					lastDeletionCostVector = Sse2.LoadVector128(localPreviousRowPtr);
+					CalculateColumn_4Rows_Sse41(ref localTargetPtr, ref localPreviousRowPtr, ref lastDeletionCostVector, ref row1Costs, ref row2Costs, ref row3Costs, ref row4Costs, ref row5Costs, ref allOnesVector, sourceChar1, sourceChar2, sourceChar3, sourceChar4);
+					CalculateColumn_4Rows_Sse41(ref localTargetPtr, ref localPreviousRowPtr, ref lastDeletionCostVector, ref row1Costs, ref row2Costs, ref row3Costs, ref row4Costs, ref row5Costs, ref allOnesVector, sourceChar1, sourceChar2, sourceChar3, sourceChar4);
+					CalculateColumn_4Rows_Sse41(ref localTargetPtr, ref localPreviousRowPtr, ref lastDeletionCostVector, ref row1Costs, ref row2Costs, ref row3Costs, ref row4Costs, ref row5Costs, ref allOnesVector, sourceChar1, sourceChar2, sourceChar3, sourceChar4);
+					CalculateColumn_4Rows_Sse41(ref localTargetPtr, ref localPreviousRowPtr, ref lastDeletionCostVector, ref row1Costs, ref row2Costs, ref row3Costs, ref row4Costs, ref row5Costs, ref allOnesVector, sourceChar1, sourceChar2, sourceChar3, sourceChar4);
 				}
 
-				lastDeletionCostVector = Sse2.LoadVector128(previousRowPtr + columnIndex);
+				lastDeletionCostVector = Sse2.LoadVector128(localPreviousRowPtr);
 				while (rowColumnsRemaining > 0)
 				{
 					rowColumnsRemaining--;
-					CalculateColumn_4Rows_Sse41(targetPtr, previousRowPtr, ref lastDeletionCostVector, ref row1Costs, ref row2Costs, ref row3Costs, ref row4Costs, ref row5Costs, ref allOnesVector, sourceChar1, sourceChar2, sourceChar3, sourceChar4, ref columnIndex);
+					CalculateColumn_4Rows_Sse41(ref localTargetPtr, ref localPreviousRowPtr, ref lastDeletionCostVector, ref row1Costs, ref row2Costs, ref row3Costs, ref row4Costs, ref row5Costs, ref allOnesVector, sourceChar1, sourceChar2, sourceChar3, sourceChar4);
 				}
 			}
 		}
@@ -198,8 +200,8 @@ namespace Quickenshtein
 		/// <param name="columnIndex"></param>
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		private static unsafe void CalculateColumn_4Rows_Sse41(
-			char* targetPtr,
-			int* previousRowPtr,
+			ref char* targetPtr,
+			ref int* previousRowPtr,
 			ref Vector128<int> lastDeletionCostVector,
 			ref Vector128<int> row1Costs,
 			ref Vector128<int> row2Costs,
@@ -210,11 +212,10 @@ namespace Quickenshtein
 			char sourceChar1,
 			char sourceChar2,
 			char sourceChar3,
-			char sourceChar4,
-			ref int columnIndex
+			char sourceChar4
 		)
 		{
-			var targetChar = targetPtr[columnIndex];
+			var targetChar = targetPtr[0];
 			var lastDeletionCost = lastDeletionCostVector;
 
 			var localCost = row1Costs;
@@ -281,9 +282,10 @@ namespace Quickenshtein
 			}
 			row4Costs = lastDeletionCost;
 			row5Costs = localCost;
-			previousRowPtr[columnIndex] = row5Costs.GetElement(0);
+			previousRowPtr[0] = row5Costs.GetElement(0);
 
-			columnIndex++;
+			previousRowPtr++;
+			targetPtr++;
 			lastDeletionCostVector = Sse2.ShiftRightLogical128BitLane(lastDeletionCostVector, 4);
 		}
 
