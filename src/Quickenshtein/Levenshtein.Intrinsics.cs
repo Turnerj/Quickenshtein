@@ -104,9 +104,10 @@ namespace Quickenshtein
 				);
 			}
 			lastInsertionCostVector = localCostVector;
-			previousRowPtr[columnIndex++] = localCostVector.GetElement(0);
+			previousRowPtr[columnIndex] = localCostVector.GetElement(0);
 			lastSubstitutionCostVector = lastDeletionCostVector;
 
+			columnIndex++;
 			lastDeletionCostVector = Sse2.ShiftRightLogical128BitLane(lastDeletionCostVector, 4);
 		}
 
@@ -282,8 +283,9 @@ namespace Quickenshtein
 			}
 			row4Costs = lastDeletionCost;
 			row5Costs = localCost;
-			previousRowPtr[columnIndex++] = row5Costs.GetElement(0);
+			previousRowPtr[columnIndex] = row5Costs.GetElement(0);
 
+			columnIndex++;
 			lastDeletionCostVector = Sse2.ShiftRightLogical128BitLane(lastDeletionCostVector, 4);
 		}
 
@@ -531,7 +533,9 @@ namespace Quickenshtein
 			}
 			row8Costs = lastDeletionCost;
 			row9Costs = localCost;
-			previousRowPtr[columnIndex++] = row9Costs.GetElement(0);
+			previousRowPtr[columnIndex] = row9Costs.GetElement(0);
+
+			columnIndex++;
 		}
 	}
 }

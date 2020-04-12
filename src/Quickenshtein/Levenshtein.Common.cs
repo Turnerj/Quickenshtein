@@ -41,8 +41,9 @@ namespace Quickenshtein
 					localCost++;
 				}
 				lastInsertionCost = localCost;
-				previousRowPtr[columnIndex++] = localCost;
+				previousRowPtr[columnIndex] = localCost;
 				lastSubstitutionCost = lastDeletionCost;
+				columnIndex++;
 
 				localCost = lastSubstitutionCost;
 				lastDeletionCost = previousRowPtr[columnIndex];
@@ -53,8 +54,9 @@ namespace Quickenshtein
 					localCost++;
 				}
 				lastInsertionCost = localCost;
-				previousRowPtr[columnIndex++] = localCost;
+				previousRowPtr[columnIndex] = localCost;
 				lastSubstitutionCost = lastDeletionCost;
+				columnIndex++;
 
 				localCost = lastSubstitutionCost;
 				lastDeletionCost = previousRowPtr[columnIndex];
@@ -65,8 +67,9 @@ namespace Quickenshtein
 					localCost++;
 				}
 				lastInsertionCost = localCost;
-				previousRowPtr[columnIndex++] = localCost;
+				previousRowPtr[columnIndex] = localCost;
 				lastSubstitutionCost = lastDeletionCost;
+				columnIndex++;
 
 				localCost = lastSubstitutionCost;
 				lastDeletionCost = previousRowPtr[columnIndex];
@@ -77,8 +80,9 @@ namespace Quickenshtein
 					localCost++;
 				}
 				lastInsertionCost = localCost;
-				previousRowPtr[columnIndex++] = localCost;
+				previousRowPtr[columnIndex] = localCost;
 				lastSubstitutionCost = lastDeletionCost;
+				columnIndex++;
 
 				localCost = lastSubstitutionCost;
 				lastDeletionCost = previousRowPtr[columnIndex];
@@ -89,8 +93,9 @@ namespace Quickenshtein
 					localCost++;
 				}
 				lastInsertionCost = localCost;
-				previousRowPtr[columnIndex++] = localCost;
+				previousRowPtr[columnIndex] = localCost;
 				lastSubstitutionCost = lastDeletionCost;
+				columnIndex++;
 
 				localCost = lastSubstitutionCost;
 				lastDeletionCost = previousRowPtr[columnIndex];
@@ -101,8 +106,9 @@ namespace Quickenshtein
 					localCost++;
 				}
 				lastInsertionCost = localCost;
-				previousRowPtr[columnIndex++] = localCost;
+				previousRowPtr[columnIndex] = localCost;
 				lastSubstitutionCost = lastDeletionCost;
+				columnIndex++;
 
 				localCost = lastSubstitutionCost;
 				lastDeletionCost = previousRowPtr[columnIndex];
@@ -113,8 +119,9 @@ namespace Quickenshtein
 					localCost++;
 				}
 				lastInsertionCost = localCost;
-				previousRowPtr[columnIndex++] = localCost;
+				previousRowPtr[columnIndex] = localCost;
 				lastSubstitutionCost = lastDeletionCost;
+				columnIndex++;
 
 				localCost = lastSubstitutionCost;
 				lastDeletionCost = previousRowPtr[columnIndex];
@@ -125,8 +132,9 @@ namespace Quickenshtein
 					localCost++;
 				}
 				lastInsertionCost = localCost;
-				previousRowPtr[columnIndex++] = localCost;
+				previousRowPtr[columnIndex] = localCost;
 				lastSubstitutionCost = lastDeletionCost;
+				columnIndex++;
 			}
 
 			if (rowColumnsRemaining > 4)
@@ -142,8 +150,9 @@ namespace Quickenshtein
 					localCost++;
 				}
 				lastInsertionCost = localCost;
-				previousRowPtr[columnIndex++] = localCost;
+				previousRowPtr[columnIndex] = localCost;
 				lastSubstitutionCost = lastDeletionCost;
+				columnIndex++;
 
 				localCost = lastSubstitutionCost;
 				lastDeletionCost = previousRowPtr[columnIndex];
@@ -154,8 +163,9 @@ namespace Quickenshtein
 					localCost++;
 				}
 				lastInsertionCost = localCost;
-				previousRowPtr[columnIndex++] = localCost;
+				previousRowPtr[columnIndex] = localCost;
 				lastSubstitutionCost = lastDeletionCost;
+				columnIndex++;
 
 				localCost = lastSubstitutionCost;
 				lastDeletionCost = previousRowPtr[columnIndex];
@@ -166,8 +176,9 @@ namespace Quickenshtein
 					localCost++;
 				}
 				lastInsertionCost = localCost;
-				previousRowPtr[columnIndex++] = localCost;
+				previousRowPtr[columnIndex] = localCost;
 				lastSubstitutionCost = lastDeletionCost;
+				columnIndex++;
 
 				localCost = lastSubstitutionCost;
 				lastDeletionCost = previousRowPtr[columnIndex];
@@ -178,8 +189,9 @@ namespace Quickenshtein
 					localCost++;
 				}
 				lastInsertionCost = localCost;
-				previousRowPtr[columnIndex++] = localCost;
+				previousRowPtr[columnIndex] = localCost;
 				lastSubstitutionCost = lastDeletionCost;
+				columnIndex++;
 			}
 
 			while (rowColumnsRemaining > 0)
@@ -195,8 +207,9 @@ namespace Quickenshtein
 					localCost++;
 				}
 				lastInsertionCost = localCost;
-				previousRowPtr[columnIndex++] = localCost;
+				previousRowPtr[columnIndex] = localCost;
 				lastSubstitutionCost = lastDeletionCost;
+				columnIndex++;
 			}
 		}
 
@@ -313,7 +326,8 @@ namespace Quickenshtein
 				localCost++;
 			}
 			row4Costs = lastDeletionCost;
-			previousRowPtr[columnIndex++] = row5Costs = localCost;
+			previousRowPtr[columnIndex] = row5Costs = localCost;
+			columnIndex++;
 		}
 	}
 }
