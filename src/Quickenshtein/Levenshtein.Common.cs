@@ -243,41 +243,43 @@ namespace Quickenshtein
 
 			for (; rowIndex < acceptableRowCount;)
 			{
+				var localTargetPtr = targetPtr;
+				var localPreviousRowPtr = previousRowPtr;
+
 				sourceChar1 = sourcePtr[row1Costs = rowIndex]; //Sub
 				sourceChar2 = sourcePtr[row2Costs = rowIndex + 1]; //Insert, Sub
 				sourceChar3 = sourcePtr[row3Costs = rowIndex + 2]; //Insert, Sub
 				sourceChar4 = sourcePtr[row4Costs = rowIndex + 3]; //Insert, Sub
 				row5Costs = rowIndex += 4; //Insert
 				
-				var columnIndex = 0;
 				var rowColumnsRemaining = targetLength;
 
 				while (rowColumnsRemaining >= 8)
 				{
 					rowColumnsRemaining -= 8;
-					CalculateColumn_4Rows(targetPtr, previousRowPtr, ref row1Costs, ref row2Costs, ref row3Costs, ref row4Costs, ref row5Costs, sourceChar1, sourceChar2, sourceChar3, sourceChar4, ref columnIndex);
-					CalculateColumn_4Rows(targetPtr, previousRowPtr, ref row1Costs, ref row2Costs, ref row3Costs, ref row4Costs, ref row5Costs, sourceChar1, sourceChar2, sourceChar3, sourceChar4, ref columnIndex);
-					CalculateColumn_4Rows(targetPtr, previousRowPtr, ref row1Costs, ref row2Costs, ref row3Costs, ref row4Costs, ref row5Costs, sourceChar1, sourceChar2, sourceChar3, sourceChar4, ref columnIndex);
-					CalculateColumn_4Rows(targetPtr, previousRowPtr, ref row1Costs, ref row2Costs, ref row3Costs, ref row4Costs, ref row5Costs, sourceChar1, sourceChar2, sourceChar3, sourceChar4, ref columnIndex);
-					CalculateColumn_4Rows(targetPtr, previousRowPtr, ref row1Costs, ref row2Costs, ref row3Costs, ref row4Costs, ref row5Costs, sourceChar1, sourceChar2, sourceChar3, sourceChar4, ref columnIndex);
-					CalculateColumn_4Rows(targetPtr, previousRowPtr, ref row1Costs, ref row2Costs, ref row3Costs, ref row4Costs, ref row5Costs, sourceChar1, sourceChar2, sourceChar3, sourceChar4, ref columnIndex);
-					CalculateColumn_4Rows(targetPtr, previousRowPtr, ref row1Costs, ref row2Costs, ref row3Costs, ref row4Costs, ref row5Costs, sourceChar1, sourceChar2, sourceChar3, sourceChar4, ref columnIndex);
-					CalculateColumn_4Rows(targetPtr, previousRowPtr, ref row1Costs, ref row2Costs, ref row3Costs, ref row4Costs, ref row5Costs, sourceChar1, sourceChar2, sourceChar3, sourceChar4, ref columnIndex);
+					CalculateColumn_4Rows(ref localTargetPtr, ref localPreviousRowPtr, ref row1Costs, ref row2Costs, ref row3Costs, ref row4Costs, ref row5Costs, sourceChar1, sourceChar2, sourceChar3, sourceChar4);
+					CalculateColumn_4Rows(ref localTargetPtr, ref localPreviousRowPtr, ref row1Costs, ref row2Costs, ref row3Costs, ref row4Costs, ref row5Costs, sourceChar1, sourceChar2, sourceChar3, sourceChar4);
+					CalculateColumn_4Rows(ref localTargetPtr, ref localPreviousRowPtr, ref row1Costs, ref row2Costs, ref row3Costs, ref row4Costs, ref row5Costs, sourceChar1, sourceChar2, sourceChar3, sourceChar4);
+					CalculateColumn_4Rows(ref localTargetPtr, ref localPreviousRowPtr, ref row1Costs, ref row2Costs, ref row3Costs, ref row4Costs, ref row5Costs, sourceChar1, sourceChar2, sourceChar3, sourceChar4);
+					CalculateColumn_4Rows(ref localTargetPtr, ref localPreviousRowPtr, ref row1Costs, ref row2Costs, ref row3Costs, ref row4Costs, ref row5Costs, sourceChar1, sourceChar2, sourceChar3, sourceChar4);
+					CalculateColumn_4Rows(ref localTargetPtr, ref localPreviousRowPtr, ref row1Costs, ref row2Costs, ref row3Costs, ref row4Costs, ref row5Costs, sourceChar1, sourceChar2, sourceChar3, sourceChar4);
+					CalculateColumn_4Rows(ref localTargetPtr, ref localPreviousRowPtr, ref row1Costs, ref row2Costs, ref row3Costs, ref row4Costs, ref row5Costs, sourceChar1, sourceChar2, sourceChar3, sourceChar4);
+					CalculateColumn_4Rows(ref localTargetPtr, ref localPreviousRowPtr, ref row1Costs, ref row2Costs, ref row3Costs, ref row4Costs, ref row5Costs, sourceChar1, sourceChar2, sourceChar3, sourceChar4);
 				}
 
 				if (rowColumnsRemaining >= 4)
 				{
 					rowColumnsRemaining -= 4;
-					CalculateColumn_4Rows(targetPtr, previousRowPtr, ref row1Costs, ref row2Costs, ref row3Costs, ref row4Costs, ref row5Costs, sourceChar1, sourceChar2, sourceChar3, sourceChar4, ref columnIndex);
-					CalculateColumn_4Rows(targetPtr, previousRowPtr, ref row1Costs, ref row2Costs, ref row3Costs, ref row4Costs, ref row5Costs, sourceChar1, sourceChar2, sourceChar3, sourceChar4, ref columnIndex);
-					CalculateColumn_4Rows(targetPtr, previousRowPtr, ref row1Costs, ref row2Costs, ref row3Costs, ref row4Costs, ref row5Costs, sourceChar1, sourceChar2, sourceChar3, sourceChar4, ref columnIndex);
-					CalculateColumn_4Rows(targetPtr, previousRowPtr, ref row1Costs, ref row2Costs, ref row3Costs, ref row4Costs, ref row5Costs, sourceChar1, sourceChar2, sourceChar3, sourceChar4, ref columnIndex);
+					CalculateColumn_4Rows(ref localTargetPtr, ref localPreviousRowPtr, ref row1Costs, ref row2Costs, ref row3Costs, ref row4Costs, ref row5Costs, sourceChar1, sourceChar2, sourceChar3, sourceChar4);
+					CalculateColumn_4Rows(ref localTargetPtr, ref localPreviousRowPtr, ref row1Costs, ref row2Costs, ref row3Costs, ref row4Costs, ref row5Costs, sourceChar1, sourceChar2, sourceChar3, sourceChar4);
+					CalculateColumn_4Rows(ref localTargetPtr, ref localPreviousRowPtr, ref row1Costs, ref row2Costs, ref row3Costs, ref row4Costs, ref row5Costs, sourceChar1, sourceChar2, sourceChar3, sourceChar4);
+					CalculateColumn_4Rows(ref localTargetPtr, ref localPreviousRowPtr, ref row1Costs, ref row2Costs, ref row3Costs, ref row4Costs, ref row5Costs, sourceChar1, sourceChar2, sourceChar3, sourceChar4);
 				}
 
 				while (rowColumnsRemaining > 0)
 				{
 					rowColumnsRemaining--;
-					CalculateColumn_4Rows(targetPtr, previousRowPtr, ref row1Costs, ref row2Costs, ref row3Costs, ref row4Costs, ref row5Costs, sourceChar1, sourceChar2, sourceChar3, sourceChar4, ref columnIndex);
+					CalculateColumn_4Rows(ref localTargetPtr, ref localPreviousRowPtr, ref row1Costs, ref row2Costs, ref row3Costs, ref row4Costs, ref row5Costs, sourceChar1, sourceChar2, sourceChar3, sourceChar4);
 				}
 			}
 		}
@@ -297,12 +299,11 @@ namespace Quickenshtein
 		/// <param name="sourceChar2"></param>
 		/// <param name="sourceChar3"></param>
 		/// <param name="sourceChar4"></param>
-		/// <param name="columnIndex"></param>
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private static unsafe void CalculateColumn_4Rows(char* targetPtr, int* previousRowPtr, ref int row1Costs, ref int row2Costs, ref int row3Costs, ref int row4Costs, ref int row5Costs, char sourceChar1, char sourceChar2, char sourceChar3, char sourceChar4, ref int columnIndex)
+		private static unsafe void CalculateColumn_4Rows(ref char* targetPtr, ref int* previousRowPtr, ref int row1Costs, ref int row2Costs, ref int row3Costs, ref int row4Costs, ref int row5Costs, char sourceChar1, char sourceChar2, char sourceChar3, char sourceChar4)
 		{
-			var targetChar = targetPtr[columnIndex];
-			var lastDeletionCost = previousRowPtr[columnIndex];
+			var targetChar = targetPtr[0];
+			var lastDeletionCost = previousRowPtr[0];
 			var localCost = row1Costs;
 			if (sourceChar1 != targetChar)
 			{
@@ -338,8 +339,10 @@ namespace Quickenshtein
 				localCost++;
 			}
 			row4Costs = lastDeletionCost;
-			previousRowPtr[columnIndex] = row5Costs = localCost;
-			columnIndex++;
+			previousRowPtr[0] = row5Costs = localCost;
+
+			previousRowPtr++;
+			targetPtr++;
 		}
 	}
 }
