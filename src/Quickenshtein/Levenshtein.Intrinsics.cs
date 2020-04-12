@@ -309,6 +309,9 @@ namespace Quickenshtein
 
 			for (; rowIndex < acceptableRowCount; rowIndex += 8)
 			{
+				var localTargetPtr = targetPtr;
+				var localPreviousRowPtr = previousRowPtr;
+
 				sourceChar1 = sourcePtr[rowIndex];
 				sourceChar2 = sourcePtr[rowIndex + 1];
 				sourceChar3 = sourcePtr[rowIndex + 2];
@@ -327,35 +330,34 @@ namespace Quickenshtein
 				row8Costs = Sse2.Add(row7Costs, allOnesVector); //Insert, Sub
 				row9Costs = Sse2.Add(row8Costs, allOnesVector); //Insert
 
-				var columnIndex = 0;
 				var rowColumnsRemaining = targetLength;
 
 				while (rowColumnsRemaining >= 8)
 				{
 					rowColumnsRemaining -= 8;
-					CalculateColumn_8Rows_Sse41(targetPtr, previousRowPtr, ref row1Costs, ref row2Costs, ref row3Costs, ref row4Costs, ref row5Costs, ref row6Costs, ref row7Costs, ref row8Costs, ref row9Costs, ref allOnesVector, sourceChar1, sourceChar2, sourceChar3, sourceChar4, sourceChar5, sourceChar6, sourceChar7, sourceChar8, ref columnIndex);
-					CalculateColumn_8Rows_Sse41(targetPtr, previousRowPtr, ref row1Costs, ref row2Costs, ref row3Costs, ref row4Costs, ref row5Costs, ref row6Costs, ref row7Costs, ref row8Costs, ref row9Costs, ref allOnesVector, sourceChar1, sourceChar2, sourceChar3, sourceChar4, sourceChar5, sourceChar6, sourceChar7, sourceChar8, ref columnIndex);
-					CalculateColumn_8Rows_Sse41(targetPtr, previousRowPtr, ref row1Costs, ref row2Costs, ref row3Costs, ref row4Costs, ref row5Costs, ref row6Costs, ref row7Costs, ref row8Costs, ref row9Costs, ref allOnesVector, sourceChar1, sourceChar2, sourceChar3, sourceChar4, sourceChar5, sourceChar6, sourceChar7, sourceChar8, ref columnIndex);
-					CalculateColumn_8Rows_Sse41(targetPtr, previousRowPtr, ref row1Costs, ref row2Costs, ref row3Costs, ref row4Costs, ref row5Costs, ref row6Costs, ref row7Costs, ref row8Costs, ref row9Costs, ref allOnesVector, sourceChar1, sourceChar2, sourceChar3, sourceChar4, sourceChar5, sourceChar6, sourceChar7, sourceChar8, ref columnIndex);
-					CalculateColumn_8Rows_Sse41(targetPtr, previousRowPtr, ref row1Costs, ref row2Costs, ref row3Costs, ref row4Costs, ref row5Costs, ref row6Costs, ref row7Costs, ref row8Costs, ref row9Costs, ref allOnesVector, sourceChar1, sourceChar2, sourceChar3, sourceChar4, sourceChar5, sourceChar6, sourceChar7, sourceChar8, ref columnIndex);
-					CalculateColumn_8Rows_Sse41(targetPtr, previousRowPtr, ref row1Costs, ref row2Costs, ref row3Costs, ref row4Costs, ref row5Costs, ref row6Costs, ref row7Costs, ref row8Costs, ref row9Costs, ref allOnesVector, sourceChar1, sourceChar2, sourceChar3, sourceChar4, sourceChar5, sourceChar6, sourceChar7, sourceChar8, ref columnIndex);
-					CalculateColumn_8Rows_Sse41(targetPtr, previousRowPtr, ref row1Costs, ref row2Costs, ref row3Costs, ref row4Costs, ref row5Costs, ref row6Costs, ref row7Costs, ref row8Costs, ref row9Costs, ref allOnesVector, sourceChar1, sourceChar2, sourceChar3, sourceChar4, sourceChar5, sourceChar6, sourceChar7, sourceChar8, ref columnIndex);
-					CalculateColumn_8Rows_Sse41(targetPtr, previousRowPtr, ref row1Costs, ref row2Costs, ref row3Costs, ref row4Costs, ref row5Costs, ref row6Costs, ref row7Costs, ref row8Costs, ref row9Costs, ref allOnesVector, sourceChar1, sourceChar2, sourceChar3, sourceChar4, sourceChar5, sourceChar6, sourceChar7, sourceChar8, ref columnIndex);
+					CalculateColumn_8Rows_Sse41(ref localTargetPtr, ref localPreviousRowPtr, ref row1Costs, ref row2Costs, ref row3Costs, ref row4Costs, ref row5Costs, ref row6Costs, ref row7Costs, ref row8Costs, ref row9Costs, ref allOnesVector, sourceChar1, sourceChar2, sourceChar3, sourceChar4, sourceChar5, sourceChar6, sourceChar7, sourceChar8);
+					CalculateColumn_8Rows_Sse41(ref localTargetPtr, ref localPreviousRowPtr, ref row1Costs, ref row2Costs, ref row3Costs, ref row4Costs, ref row5Costs, ref row6Costs, ref row7Costs, ref row8Costs, ref row9Costs, ref allOnesVector, sourceChar1, sourceChar2, sourceChar3, sourceChar4, sourceChar5, sourceChar6, sourceChar7, sourceChar8);
+					CalculateColumn_8Rows_Sse41(ref localTargetPtr, ref localPreviousRowPtr, ref row1Costs, ref row2Costs, ref row3Costs, ref row4Costs, ref row5Costs, ref row6Costs, ref row7Costs, ref row8Costs, ref row9Costs, ref allOnesVector, sourceChar1, sourceChar2, sourceChar3, sourceChar4, sourceChar5, sourceChar6, sourceChar7, sourceChar8);
+					CalculateColumn_8Rows_Sse41(ref localTargetPtr, ref localPreviousRowPtr, ref row1Costs, ref row2Costs, ref row3Costs, ref row4Costs, ref row5Costs, ref row6Costs, ref row7Costs, ref row8Costs, ref row9Costs, ref allOnesVector, sourceChar1, sourceChar2, sourceChar3, sourceChar4, sourceChar5, sourceChar6, sourceChar7, sourceChar8);
+					CalculateColumn_8Rows_Sse41(ref localTargetPtr, ref localPreviousRowPtr, ref row1Costs, ref row2Costs, ref row3Costs, ref row4Costs, ref row5Costs, ref row6Costs, ref row7Costs, ref row8Costs, ref row9Costs, ref allOnesVector, sourceChar1, sourceChar2, sourceChar3, sourceChar4, sourceChar5, sourceChar6, sourceChar7, sourceChar8);
+					CalculateColumn_8Rows_Sse41(ref localTargetPtr, ref localPreviousRowPtr, ref row1Costs, ref row2Costs, ref row3Costs, ref row4Costs, ref row5Costs, ref row6Costs, ref row7Costs, ref row8Costs, ref row9Costs, ref allOnesVector, sourceChar1, sourceChar2, sourceChar3, sourceChar4, sourceChar5, sourceChar6, sourceChar7, sourceChar8);
+					CalculateColumn_8Rows_Sse41(ref localTargetPtr, ref localPreviousRowPtr, ref row1Costs, ref row2Costs, ref row3Costs, ref row4Costs, ref row5Costs, ref row6Costs, ref row7Costs, ref row8Costs, ref row9Costs, ref allOnesVector, sourceChar1, sourceChar2, sourceChar3, sourceChar4, sourceChar5, sourceChar6, sourceChar7, sourceChar8);
+					CalculateColumn_8Rows_Sse41(ref localTargetPtr, ref localPreviousRowPtr, ref row1Costs, ref row2Costs, ref row3Costs, ref row4Costs, ref row5Costs, ref row6Costs, ref row7Costs, ref row8Costs, ref row9Costs, ref allOnesVector, sourceChar1, sourceChar2, sourceChar3, sourceChar4, sourceChar5, sourceChar6, sourceChar7, sourceChar8);
 				}
 
 				if (rowColumnsRemaining >= 4)
 				{
 					rowColumnsRemaining -= 4;
-					CalculateColumn_8Rows_Sse41(targetPtr, previousRowPtr, ref row1Costs, ref row2Costs, ref row3Costs, ref row4Costs, ref row5Costs, ref row6Costs, ref row7Costs, ref row8Costs, ref row9Costs, ref allOnesVector, sourceChar1, sourceChar2, sourceChar3, sourceChar4, sourceChar5, sourceChar6, sourceChar7, sourceChar8, ref columnIndex);
-					CalculateColumn_8Rows_Sse41(targetPtr, previousRowPtr, ref row1Costs, ref row2Costs, ref row3Costs, ref row4Costs, ref row5Costs, ref row6Costs, ref row7Costs, ref row8Costs, ref row9Costs, ref allOnesVector, sourceChar1, sourceChar2, sourceChar3, sourceChar4, sourceChar5, sourceChar6, sourceChar7, sourceChar8, ref columnIndex);
-					CalculateColumn_8Rows_Sse41(targetPtr, previousRowPtr, ref row1Costs, ref row2Costs, ref row3Costs, ref row4Costs, ref row5Costs, ref row6Costs, ref row7Costs, ref row8Costs, ref row9Costs, ref allOnesVector, sourceChar1, sourceChar2, sourceChar3, sourceChar4, sourceChar5, sourceChar6, sourceChar7, sourceChar8, ref columnIndex);
-					CalculateColumn_8Rows_Sse41(targetPtr, previousRowPtr, ref row1Costs, ref row2Costs, ref row3Costs, ref row4Costs, ref row5Costs, ref row6Costs, ref row7Costs, ref row8Costs, ref row9Costs, ref allOnesVector, sourceChar1, sourceChar2, sourceChar3, sourceChar4, sourceChar5, sourceChar6, sourceChar7, sourceChar8, ref columnIndex);
+					CalculateColumn_8Rows_Sse41(ref localTargetPtr, ref localPreviousRowPtr, ref row1Costs, ref row2Costs, ref row3Costs, ref row4Costs, ref row5Costs, ref row6Costs, ref row7Costs, ref row8Costs, ref row9Costs, ref allOnesVector, sourceChar1, sourceChar2, sourceChar3, sourceChar4, sourceChar5, sourceChar6, sourceChar7, sourceChar8);
+					CalculateColumn_8Rows_Sse41(ref localTargetPtr, ref localPreviousRowPtr, ref row1Costs, ref row2Costs, ref row3Costs, ref row4Costs, ref row5Costs, ref row6Costs, ref row7Costs, ref row8Costs, ref row9Costs, ref allOnesVector, sourceChar1, sourceChar2, sourceChar3, sourceChar4, sourceChar5, sourceChar6, sourceChar7, sourceChar8);
+					CalculateColumn_8Rows_Sse41(ref localTargetPtr, ref localPreviousRowPtr, ref row1Costs, ref row2Costs, ref row3Costs, ref row4Costs, ref row5Costs, ref row6Costs, ref row7Costs, ref row8Costs, ref row9Costs, ref allOnesVector, sourceChar1, sourceChar2, sourceChar3, sourceChar4, sourceChar5, sourceChar6, sourceChar7, sourceChar8);
+					CalculateColumn_8Rows_Sse41(ref localTargetPtr, ref localPreviousRowPtr, ref row1Costs, ref row2Costs, ref row3Costs, ref row4Costs, ref row5Costs, ref row6Costs, ref row7Costs, ref row8Costs, ref row9Costs, ref allOnesVector, sourceChar1, sourceChar2, sourceChar3, sourceChar4, sourceChar5, sourceChar6, sourceChar7, sourceChar8);
 				}
 
 				while (rowColumnsRemaining > 0)
 				{
 					rowColumnsRemaining--;
-					CalculateColumn_8Rows_Sse41(targetPtr, previousRowPtr, ref row1Costs, ref row2Costs, ref row3Costs, ref row4Costs, ref row5Costs, ref row6Costs, ref row7Costs, ref row8Costs, ref row9Costs, ref allOnesVector, sourceChar1, sourceChar2, sourceChar3, sourceChar4, sourceChar5, sourceChar6, sourceChar7, sourceChar8, ref columnIndex);
+					CalculateColumn_8Rows_Sse41(ref localTargetPtr, ref localPreviousRowPtr, ref row1Costs, ref row2Costs, ref row3Costs, ref row4Costs, ref row5Costs, ref row6Costs, ref row7Costs, ref row8Costs, ref row9Costs, ref allOnesVector, sourceChar1, sourceChar2, sourceChar3, sourceChar4, sourceChar5, sourceChar6, sourceChar7, sourceChar8);
 				}
 			}
 		}
@@ -377,11 +379,10 @@ namespace Quickenshtein
 		/// <param name="sourceChar2"></param>
 		/// <param name="sourceChar3"></param>
 		/// <param name="sourceChar4"></param>
-		/// <param name="columnIndex"></param>
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		private static unsafe void CalculateColumn_8Rows_Sse41(
-			char* targetPtr,
-			int* previousRowPtr,
+			ref char* targetPtr,
+			ref int* previousRowPtr,
 			ref Vector128<int> row1Costs,
 			ref Vector128<int> row2Costs,
 			ref Vector128<int> row3Costs,
@@ -399,12 +400,11 @@ namespace Quickenshtein
 			char sourceChar5,
 			char sourceChar6,
 			char sourceChar7,
-			char sourceChar8,
-			ref int columnIndex
+			char sourceChar8
 		)
 		{
-			var targetChar = targetPtr[columnIndex];
-			var lastDeletionCost = Vector128.Create(previousRowPtr[columnIndex]);
+			var targetChar = targetPtr[0];
+			var lastDeletionCost = Vector128.Create(previousRowPtr[0]);
 			var localCost = row1Costs;
 			if (sourceChar1 != targetChar)
 			{
@@ -533,9 +533,10 @@ namespace Quickenshtein
 			}
 			row8Costs = lastDeletionCost;
 			row9Costs = localCost;
-			previousRowPtr[columnIndex] = row9Costs.GetElement(0);
+			previousRowPtr[0] = row9Costs.GetElement(0);
 
-			columnIndex++;
+			previousRowPtr++;
+			targetPtr++;
 		}
 	}
 }
