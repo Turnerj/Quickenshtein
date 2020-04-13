@@ -32,34 +32,47 @@ namespace Quickenshtein.Internal
 #if NETCOREAPP
 			SequentialFill(targetPtr, 1, length);
 #else
-			var index = 0;
+			var value = 0;
 
 			while (length >= 8)
 			{
 				length -= 8;
-				targetPtr[index] = ++index;
-				targetPtr[index] = ++index;
-				targetPtr[index] = ++index;
-				targetPtr[index] = ++index;
-				targetPtr[index] = ++index;
-				targetPtr[index] = ++index;
-				targetPtr[index] = ++index;
-				targetPtr[index] = ++index;
+				*targetPtr = ++value;
+				targetPtr++;
+				*targetPtr = ++value;
+				targetPtr++;
+				*targetPtr = ++value;
+				targetPtr++;
+				*targetPtr = ++value;
+				targetPtr++;
+				*targetPtr = ++value;
+				targetPtr++;
+				*targetPtr = ++value;
+				targetPtr++;
+				*targetPtr = ++value;
+				targetPtr++;
+				*targetPtr = ++value;
+				targetPtr++;
 			}
 
 			if (length > 4)
 			{
 				length -= 4;
-				targetPtr[index] = ++index;
-				targetPtr[index] = ++index;
-				targetPtr[index] = ++index;
-				targetPtr[index] = ++index;
+				*targetPtr = ++value;
+				targetPtr++;
+				*targetPtr = ++value;
+				targetPtr++;
+				*targetPtr = ++value;
+				targetPtr++;
+				*targetPtr = ++value;
+				targetPtr++;
 			}
 
 			while (length > 0)
 			{
 				length--;
-				targetPtr[index] = ++index;
+				*targetPtr = ++value;
+				targetPtr++;
 			}
 #endif
 		}
@@ -67,47 +80,74 @@ namespace Quickenshtein.Internal
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static unsafe void SequentialFill(int* targetPtr, int startValue, int length)
 		{
-			var index = 0;
 			var value = startValue;
 			nint lengthToProcess = length;
 
 #if NETCOREAPP
+			nint alignmentCount = length;
 			if (Sse2.IsSupported && length >= Vector128<int>.Count * 2)
 			{
-				lengthToProcess = UnalignedCountVector128(targetPtr);
+				alignmentCount = UnalignedCountVector128(targetPtr);
+				lengthToProcess = alignmentCount;
 			}
 #endif
 
 			while (lengthToProcess >= 8)
 			{
 				lengthToProcess -= 8;
-				targetPtr[index++] = value++;
-				targetPtr[index++] = value++;
-				targetPtr[index++] = value++;
-				targetPtr[index++] = value++;
-				targetPtr[index++] = value++;
-				targetPtr[index++] = value++;
-				targetPtr[index++] = value++;
-				targetPtr[index++] = value++;
+				*targetPtr = value;
+				value++;
+				targetPtr++;
+				*targetPtr = value;
+				value++;
+				targetPtr++;
+				*targetPtr = value;
+				value++;
+				targetPtr++;
+				*targetPtr = value;
+				value++;
+				targetPtr++;
+				*targetPtr = value;
+				value++;
+				targetPtr++;
+				*targetPtr = value;
+				value++;
+				targetPtr++;
+				*targetPtr = value;
+				value++;
+				targetPtr++;
+				*targetPtr = value;
+				value++;
+				targetPtr++;
 			}
 
 			if (lengthToProcess > 4)
 			{
 				lengthToProcess -= 4;
-				targetPtr[index++] = value++;
-				targetPtr[index++] = value++;
-				targetPtr[index++] = value++;
-				targetPtr[index++] = value++;
+				*targetPtr = value;
+				value++;
+				targetPtr++;
+				*targetPtr = value;
+				value++;
+				targetPtr++;
+				*targetPtr = value;
+				value++;
+				targetPtr++;
+				*targetPtr = value;
+				value++;
+				targetPtr++;
 			}
 
 			while (lengthToProcess > 0)
 			{
 				lengthToProcess--;
-				targetPtr[index++] = value++;
+				*targetPtr = value;
+				value++;
+				targetPtr++;
 			}
 
 #if NETCOREAPP
-			lengthToProcess = length - index;
+			lengthToProcess = length - alignmentCount;
 			if (lengthToProcess > 0)
 			{
 				if (Avx2.IsSupported)
@@ -117,16 +157,16 @@ namespace Quickenshtein.Internal
 
 					while (lengthToProcess >= Vector256<int>.Count)
 					{
-						Avx.Store(targetPtr + index, lastVector256);
+						Avx.Store(targetPtr, lastVector256);
 						lastVector256 = Avx2.Add(lastVector256, shiftVector256);
-						index += Vector256<int>.Count;
+						targetPtr += Vector256<int>.Count;
 						lengthToProcess -= Vector256<int>.Count;
 					}
 
 					if (lengthToProcess >= Vector128<int>.Count)
 					{
-						Sse2.Store(targetPtr + index, lastVector256.GetLower());
-						index += Vector128<int>.Count;
+						Sse2.Store(targetPtr, lastVector256.GetLower());
+						targetPtr += Vector128<int>.Count;
 						lengthToProcess -= Vector128<int>.Count;
 						value = lastVector256.GetElement(Vector128<int>.Count);
 					}
@@ -142,9 +182,9 @@ namespace Quickenshtein.Internal
 
 					while (lengthToProcess >= Vector128<int>.Count)
 					{
-						Sse2.Store(targetPtr + index, lastVector128);
+						Sse2.Store(targetPtr, lastVector128);
 						lastVector128 = Sse2.Add(lastVector128, shiftVector128);
-						index += Vector128<int>.Count;
+						targetPtr += Vector128<int>.Count;
 						lengthToProcess -= Vector128<int>.Count;
 					}
 
@@ -154,7 +194,9 @@ namespace Quickenshtein.Internal
 				while (lengthToProcess > 0)
 				{
 					lengthToProcess--;
-					targetPtr[index++] = value++;
+					*targetPtr = value;
+					value++;
+					targetPtr++;
 				}
 			}
 #endif
