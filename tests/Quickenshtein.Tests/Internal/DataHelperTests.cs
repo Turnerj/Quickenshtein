@@ -14,6 +14,7 @@ namespace Quickenshtein.Tests.Internal
 		[DataTestMethod]
 		[DataRow(71, 1, 71)]
 		[DataRow(17, 5, 21)]
+		[DataRow(10, 2, 11)]
 		public unsafe void SequentialFill(int arraySize, int startValue, int expectedEndValue)
 		{
 			var data = new int[arraySize];
