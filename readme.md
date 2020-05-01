@@ -8,7 +8,7 @@ A quick and memory efficient Levenshtein Distance calculator for .NET
 
 ## Performance
 
-Quickenshtein gets its speed and memory effiency from a number of different optimizations.
+Quickenshtein gets its speed and memory efficiency from a number of different optimizations.
 To get the most performance out of the library, you will need .NET Core 3 or higher as this has support for hardware intrinsics.
 
 Quickenshtein takes advantage of the following hardware intrinsics. On any recent x86 system, you will likely have these available.
