@@ -109,6 +109,49 @@ namespace Quickenshtein
 			lastDeletionCostVector = Sse2.ShiftRightLogical128BitLane(lastDeletionCostVector, 4);
 		}
 
+		private static unsafe void CalculateDiagonal_4_Sse41(int* diag1, int* diag2, char* sourcePtr, char* targetPtr, int targetLength, ref int rowIndex, int columnIndex)
+		{
+			if (rowIndex >= 4 && targetLength - columnIndex >= 4)
+			{
+				var a_ = Sse41.ConvertToVector128Int32(Sse3.LoadDquVector128((ushort*)sourcePtr + rowIndex - 4));
+				var b_ = Sse41.ConvertToVector128Int32(Sse3.LoadDquVector128((ushort*)targetPtr + columnIndex - 1));
+				b_ = Sse2.Shuffle(b_, 0x1b); // simple reverse
+				var substitutionCost32 = Sse2.CompareEqual(a_, b_);
+
+				var diag_ = new Vector128<int>[2];
+				var diag2_ = new Vector128<int>[2];
+
+				for (var k = 0; k < 2; ++k)
+				{
+					diag_[k] = Sse3.LoadDquVector128(diag1 + rowIndex - 3 - k * 4);
+					diag2_[k] = Sse3.LoadDquVector128(diag2 + rowIndex - 3 - k * 4);
+				}
+
+				var diag2_i_m1 = Ssse3.AlignRight(diag2_[0], diag2_[1], 12);
+				var diag_i_m1 = Ssse3.AlignRight(diag_[0], diag_[1], 12);
+
+				var result3 = Sse2.Add(diag_i_m1, substitutionCost32);
+				var min = Sse41.Min(Sse41.Min(diag2_i_m1, diag2_[0]), result3);
+				min = Sse2.Add(min, Vector128.Create(1));
+
+				Sse2.Store(diag1 + rowIndex - 3, min);
+				rowIndex -= 4;
+			}
+			else
+			{
+				var min = Math.Min(diag2[rowIndex], diag2[rowIndex - 1]);
+				if (min < diag1[rowIndex - 1])
+				{
+					diag1[rowIndex] = min + 1;
+				}
+				else
+				{
+					diag1[rowIndex] = diag1[rowIndex - 1] + (sourcePtr[rowIndex - 1] != targetPtr[columnIndex - 1] ? 1 : 0);
+				}
+				rowIndex--;
+			}
+		}
+
 		/// <summary>
 		/// Using SSE4.1, calculates the costs for the virtual matrix.
 		/// This performs a 4x outer loop unrolling allowing fewer lookups of target character and deletion cost data across the rows.

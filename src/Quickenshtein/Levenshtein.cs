@@ -103,6 +103,91 @@ namespace Quickenshtein
 				return CalculateDistance_MultiThreaded(sourcePtr, targetPtr, sourceLength, targetLength, calculationOptions);
 			}
 
+#if NETCOREAPP
+			if (Sse41.IsSupported && sourceLength > 4)
+			{
+				var diag1Array = ArrayPool<int>.Shared.Rent(sourceLength + 1);
+				var diag2Array = ArrayPool<int>.Shared.Rent(sourceLength + 1);
+
+				fixed (int* diag1Ptr = diag1Array)
+				fixed (int* diag2Ptr = diag2Array)
+				{
+					DataHelper.Fill(diag1Ptr, sourceLength + 1, 0);
+					DataHelper.Fill(diag2Ptr, sourceLength + 1, 0);
+
+					var localDiag1Ptr = diag1Ptr;
+					var localDiag2Ptr = diag2Ptr;
+
+					int rowIndex, columnIndex, counter;
+
+					counter = 0;
+					for (counter = 1; ; ++counter)
+					{
+						var startRow = counter > targetLength ? counter - targetLength : 1;
+						var endRow = counter > sourceLength ? sourceLength : counter - 1;
+
+						for (rowIndex = endRow; rowIndex >= startRow;)
+						{
+							columnIndex = counter - rowIndex;
+							CalculateDiagonal_4_Sse41(diag1Ptr, diag2Ptr, sourcePtr, targetPtr, targetLength, ref rowIndex, columnIndex);
+						}
+
+						localDiag1Ptr[0] = counter;
+
+						if (counter <= sourceLength)
+						{
+							localDiag1Ptr[counter] = counter;
+						}
+
+						if (counter == sourceLength + targetLength)
+						{
+							var result = localDiag1Ptr[startRow];
+							ArrayPool<int>.Shared.Return(diag1Array);
+							ArrayPool<int>.Shared.Return(diag2Array);
+							return result;
+						}
+
+						// switch buffers
+						var tempPtr = localDiag1Ptr;
+						localDiag1Ptr = localDiag2Ptr;
+						localDiag2Ptr = tempPtr;
+					}
+				}
+			}
+			else
+			{
+				var pooledArray = ArrayPool<int>.Shared.Rent(targetLength);
+
+				fixed (int* previousRowPtr = pooledArray)
+				{
+					DataHelper.SequentialFill(previousRowPtr, targetLength);
+
+					var rowIndex = 0;
+
+					//Calculate Single Rows
+					for (; rowIndex < sourceLength; rowIndex++)
+					{
+						var lastSubstitutionCost = rowIndex;
+						var lastInsertionCost = rowIndex + 1;
+
+						var sourcePrevChar = sourcePtr[rowIndex];
+
+						if (Sse41.IsSupported)
+						{
+							CalculateRow_Sse41(previousRowPtr, targetPtr, targetLength, sourcePrevChar, lastInsertionCost, lastSubstitutionCost);
+						}
+						else
+						{
+							CalculateRow(previousRowPtr, targetPtr, targetLength, sourcePrevChar, lastInsertionCost, lastSubstitutionCost);
+						}
+					}
+
+					var result = previousRowPtr[targetLength - 1];
+					ArrayPool<int>.Shared.Return(pooledArray);
+					return result;
+				}
+			}
+#else
 			var pooledArray = ArrayPool<int>.Shared.Rent(targetLength);
 
 			fixed (int* previousRowPtr = pooledArray)
@@ -113,25 +198,7 @@ namespace Quickenshtein
 
 				//Levenshtein Distance outer loop unrolling inspired by Gustaf Andersson's JS implementation
 				//https://github.com/gustf/js-levenshtein/blob/55ca1bf22bd55aa81cb5836c63582da6e9fb5fb0/index.js#L71-L90
-#if NETCOREAPP
-				if (Sse41.IsSupported)
-				{
-					if (sourceLength > 7)
-					{
-						CalculateRows_8Rows_Sse41(previousRowPtr, sourcePtr, sourceLength, ref rowIndex, targetPtr, targetLength);
-					}
-					else
-					{
-						CalculateRows_4Rows_Sse41(previousRowPtr, sourcePtr, sourceLength, ref rowIndex, targetPtr, targetLength);
-					}
-				}
-				else
-				{
-					CalculateRows_4Rows(previousRowPtr, sourcePtr, sourceLength, ref rowIndex, targetPtr, targetLength);
-				}
-#else
 				CalculateRows_4Rows(previousRowPtr, sourcePtr, sourceLength, ref rowIndex, targetPtr, targetLength);
-#endif
 
 				//Calculate Single Rows
 				for (; rowIndex < sourceLength; rowIndex++)
@@ -141,24 +208,14 @@ namespace Quickenshtein
 
 					var sourcePrevChar = sourcePtr[rowIndex];
 
-#if NETCOREAPP
-					if (Sse41.IsSupported)
-					{
-						CalculateRow_Sse41(previousRowPtr, targetPtr, targetLength, sourcePrevChar, lastInsertionCost, lastSubstitutionCost);
-					}
-					else
-					{
-						CalculateRow(previousRowPtr, targetPtr, targetLength, sourcePrevChar, lastInsertionCost, lastSubstitutionCost);
-					}
-#else
 					CalculateRow(previousRowPtr, targetPtr, targetLength, sourcePrevChar, lastInsertionCost, lastSubstitutionCost);
-#endif
 				}
 
 				var result = previousRowPtr[targetLength - 1];
 				ArrayPool<int>.Shared.Return(pooledArray);
 				return result;
 			}
+#endif
 		}
 	}
 }

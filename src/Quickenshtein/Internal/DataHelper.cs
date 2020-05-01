@@ -21,6 +21,104 @@ namespace Quickenshtein.Internal
 		private static readonly Vector256<int> VECTOR256_INT_ZERO_TO_SEVEN = Vector256.Create(0, 1, 2, 3, 4, 5, 6, 7);
 #endif
 
+		internal static unsafe void Fill(int* targetPtr, int length, int value)
+		{
+			nint lengthToProcess = length;
+
+#if NETCOREAPP
+			nint alignmentCount = length;
+			if (Sse2.IsSupported && length >= Vector128<int>.Count * 2)
+			{
+				alignmentCount = UnalignedCountVector128(targetPtr);
+				lengthToProcess = alignmentCount;
+			}
+#endif
+
+			while (lengthToProcess >= 8)
+			{
+				lengthToProcess -= 8;
+				*targetPtr = value;
+				targetPtr++;
+				*targetPtr = value;
+				targetPtr++;
+				*targetPtr = value;
+				targetPtr++;
+				*targetPtr = value;
+				targetPtr++;
+				*targetPtr = value;
+				targetPtr++;
+				*targetPtr = value;
+				targetPtr++;
+				*targetPtr = value;
+				targetPtr++;
+				*targetPtr = value;
+				targetPtr++;
+			}
+
+			if (lengthToProcess > 4)
+			{
+				lengthToProcess -= 4;
+				*targetPtr = value;
+				targetPtr++;
+				*targetPtr = value;
+				targetPtr++;
+				*targetPtr = value;
+				targetPtr++;
+				*targetPtr = value;
+				targetPtr++;
+			}
+
+			while (lengthToProcess > 0)
+			{
+				lengthToProcess--;
+				*targetPtr = value;
+				targetPtr++;
+			}
+
+#if NETCOREAPP
+			lengthToProcess = length - alignmentCount;
+			if (lengthToProcess > 0)
+			{
+				if (Avx2.IsSupported)
+				{
+					var lastVector256 = Vector256.Create(value);
+
+					while (lengthToProcess >= Vector256<int>.Count)
+					{
+						Avx.Store(targetPtr, lastVector256);
+						targetPtr += Vector256<int>.Count;
+						lengthToProcess -= Vector256<int>.Count;
+					}
+
+					if (lengthToProcess >= Vector128<int>.Count)
+					{
+						Sse2.Store(targetPtr, lastVector256.GetLower());
+						targetPtr += Vector128<int>.Count;
+						lengthToProcess -= Vector128<int>.Count;
+					}
+				}
+				else if (Sse2.IsSupported)
+				{
+					var lastVector128 = Vector128.Create(value);
+
+					while (lengthToProcess >= Vector128<int>.Count)
+					{
+						Sse2.Store(targetPtr, lastVector128);
+						targetPtr += Vector128<int>.Count;
+						lengthToProcess -= Vector128<int>.Count;
+					}
+				}
+
+				while (lengthToProcess > 0)
+				{
+					lengthToProcess--;
+					*targetPtr = value;
+					targetPtr++;
+				}
+			}
+#endif
+		}
+
 		/// <summary>
 		/// Fills <paramref name="targetPtr"/> with a number sequence from 1 to the length specified.
 		/// </summary>
