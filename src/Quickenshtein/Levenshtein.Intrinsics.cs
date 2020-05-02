@@ -116,23 +116,23 @@ namespace Quickenshtein
 		{
 			if (Avx2.IsSupported && rowIndex >= Vector256<int>.Count && targetLength - columnIndex >= Vector256<int>.Count)
 			{
-				CalculateDiagonal_Eight_Avx2(diag1Ptr, diag2Ptr, sourcePtr, targetPtr, targetLength, ref rowIndex, columnIndex);
+				CalculateDiagonal_Eight_Avx2(diag1Ptr, diag2Ptr, sourcePtr, targetPtr, ref rowIndex, columnIndex);
 				rowIndex -= Vector256<int>.Count;
 			}
 			else if (rowIndex >= Vector128<int>.Count && targetLength - columnIndex >= Vector128<int>.Count)
 			{
-				CalculateDiagonal_Four_Sse41(diag1Ptr, diag2Ptr, sourcePtr, targetPtr, targetLength, ref rowIndex, columnIndex);
+				CalculateDiagonal_Four_Sse41(diag1Ptr, diag2Ptr, sourcePtr, targetPtr, ref rowIndex, columnIndex);
 				rowIndex -= Vector128<int>.Count;
 			}
 			else
 			{
-				CalculateDiagonal_One(diag1Ptr, diag2Ptr, sourcePtr, targetPtr, targetLength, ref rowIndex, columnIndex);
+				CalculateDiagonal_One(diag1Ptr, diag2Ptr, sourcePtr, targetPtr, ref rowIndex, columnIndex);
 				rowIndex--;
 			}
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private static unsafe void CalculateDiagonal_One(int* diag1Ptr, int* diag2Ptr, char* sourcePtr, char* targetPtr, int targetLength, ref int rowIndex, int columnIndex)
+		private static unsafe void CalculateDiagonal_One(int* diag1Ptr, int* diag2Ptr, char* sourcePtr, char* targetPtr, ref int rowIndex, int columnIndex)
 		{
 			var localCost = Math.Min(diag2Ptr[rowIndex], diag2Ptr[rowIndex - 1]);
 			if (localCost < diag1Ptr[rowIndex - 1])
@@ -146,7 +146,7 @@ namespace Quickenshtein
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private static unsafe void CalculateDiagonal_Four_Sse41(int* diag1Ptr, int* diag2Ptr, char* sourcePtr, char* targetPtr, int targetLength, ref int rowIndex, int columnIndex)
+		private static unsafe void CalculateDiagonal_Four_Sse41(int* diag1Ptr, int* diag2Ptr, char* sourcePtr, char* targetPtr, ref int rowIndex, int columnIndex)
 		{
 			var sourceVector = Sse41.ConvertToVector128Int32((ushort*)sourcePtr + rowIndex - 4);
 			var targetVector = Sse41.ConvertToVector128Int32((ushort*)targetPtr + columnIndex - 1);
@@ -166,7 +166,7 @@ namespace Quickenshtein
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private static unsafe void CalculateDiagonal_Eight_Avx2(int* diag1Ptr, int* diag2Ptr, char* sourcePtr, char* targetPtr, int targetLength, ref int rowIndex, int columnIndex)
+		private static unsafe void CalculateDiagonal_Eight_Avx2(int* diag1Ptr, int* diag2Ptr, char* sourcePtr, char* targetPtr, ref int rowIndex, int columnIndex)
 		{
 			var sourceVector = Avx2.ConvertToVector256Int32((ushort*)sourcePtr + rowIndex - 8);
 			var targetVector = Avx2.ConvertToVector256Int32((ushort*)targetPtr + columnIndex - 1);
