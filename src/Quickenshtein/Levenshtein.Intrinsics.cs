@@ -114,58 +114,81 @@ namespace Quickenshtein
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		private static unsafe void CalculateDiagonal_MinSse41(int* diag1Ptr, int* diag2Ptr, char* sourcePtr, char* targetPtr, int targetLength, ref int rowIndex, int columnIndex)
 		{
-			if (Avx2.IsSupported && rowIndex >= Vector256<int>.Count && targetLength - columnIndex >= Vector256<int>.Count)
+			if (Avx2.IsSupported && rowIndex >= Vector256<int>.Count * 2 && targetLength - columnIndex >= Vector256<int>.Count * 2)
 			{
-				var sourceVector = Avx2.ConvertToVector256Int32((ushort*)sourcePtr + rowIndex - 8);
-				var targetVector = Avx2.ConvertToVector256Int32((ushort*)targetPtr + columnIndex - 1);
-				targetVector = Avx2.Shuffle(targetVector, 0x1b);
-				targetVector = Avx2.Permute2x128(targetVector, targetVector, 1);
-				var substitutionCost32 = Avx2.CompareEqual(sourceVector, targetVector);
-
-				var diag1_i_m1 = Avx.LoadDquVector256(diag1Ptr + rowIndex - 8);
-
-				var diag2_1 = Avx.LoadDquVector256(diag2Ptr + rowIndex - 7);
-				var diag2_i_m1 = Avx.LoadDquVector256(diag2Ptr + rowIndex - 8);
-
-				var result3 = Avx2.Add(diag1_i_m1, substitutionCost32);
-				var min = Avx2.Min(Avx2.Min(diag2_i_m1, diag2_1), result3);
-				min = Avx2.Add(min, Vector256.Create(1));
-
-				Avx.Store(diag1Ptr + rowIndex - 7, min);
-				rowIndex -= Vector256<int>.Count;
+				CalculateDiagonal_Eight(diag1Ptr, diag2Ptr, sourcePtr, targetPtr, targetLength, ref rowIndex, columnIndex);
+				CalculateDiagonal_Eight(diag1Ptr, diag2Ptr, sourcePtr, targetPtr, targetLength, ref rowIndex, columnIndex);
+			}
+			else if (Avx2.IsSupported && rowIndex >= Vector256<int>.Count && targetLength - columnIndex >= Vector256<int>.Count)
+			{
+				CalculateDiagonal_Eight(diag1Ptr, diag2Ptr, sourcePtr, targetPtr, targetLength, ref rowIndex, columnIndex);
 			}
 			else if (rowIndex >= Vector128<int>.Count && targetLength - columnIndex >= Vector128<int>.Count)
 			{
-				var sourceVector = Sse41.ConvertToVector128Int32((ushort*)sourcePtr + rowIndex - 4);
-				var targetVector = Sse41.ConvertToVector128Int32((ushort*)targetPtr + columnIndex - 1);
-				targetVector = Sse2.Shuffle(targetVector, 0x1b);
-				var substitutionCost32 = Sse2.CompareEqual(sourceVector, targetVector);
-
-				var diag1_i_m1 = Sse3.LoadDquVector128(diag1Ptr + rowIndex - 4);
-
-				var diag2_1 = Sse3.LoadDquVector128(diag2Ptr + rowIndex - 3);
-				var diag2_i_m1 = Sse3.LoadDquVector128(diag2Ptr + rowIndex - 4);
-
-				var result3 = Sse2.Add(diag1_i_m1, substitutionCost32);
-				var min = Sse41.Min(Sse41.Min(diag2_i_m1, diag2_1), result3);
-				min = Sse2.Add(min, Vector128.Create(1));
-
-				Sse2.Store(diag1Ptr + rowIndex - 3, min);
-				rowIndex -= Vector128<int>.Count;
+				CalculateDiagonal_Four(diag1Ptr, diag2Ptr, sourcePtr, targetPtr, targetLength, ref rowIndex, columnIndex);
 			}
 			else
 			{
-				var localCost = Math.Min(diag2Ptr[rowIndex], diag2Ptr[rowIndex - 1]);
-				if (localCost < diag1Ptr[rowIndex - 1])
-				{
-					diag1Ptr[rowIndex] = localCost + 1;
-				}
-				else
-				{
-					diag1Ptr[rowIndex] = diag1Ptr[rowIndex - 1] + (sourcePtr[rowIndex - 1] != targetPtr[columnIndex - 1] ? 1 : 0);
-				}
-				rowIndex--;
+				CalculateDiagonal_Single(diag1Ptr, diag2Ptr, sourcePtr, targetPtr, targetLength, ref rowIndex, columnIndex);
 			}
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		private static unsafe void CalculateDiagonal_Single(int* diag1Ptr, int* diag2Ptr, char* sourcePtr, char* targetPtr, int targetLength, ref int rowIndex, int columnIndex)
+		{
+			var localCost = Math.Min(diag2Ptr[rowIndex], diag2Ptr[rowIndex - 1]);
+			if (localCost < diag1Ptr[rowIndex - 1])
+			{
+				diag1Ptr[rowIndex] = localCost + 1;
+			}
+			else
+			{
+				diag1Ptr[rowIndex] = diag1Ptr[rowIndex - 1] + (sourcePtr[rowIndex - 1] != targetPtr[columnIndex - 1] ? 1 : 0);
+			}
+			rowIndex--;
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		private static unsafe void CalculateDiagonal_Four(int* diag1Ptr, int* diag2Ptr, char* sourcePtr, char* targetPtr, int targetLength, ref int rowIndex, int columnIndex)
+		{
+			var sourceVector = Sse41.ConvertToVector128Int32((ushort*)sourcePtr + rowIndex - 4);
+			var targetVector = Sse41.ConvertToVector128Int32((ushort*)targetPtr + columnIndex - 1);
+			targetVector = Sse2.Shuffle(targetVector, 0x1b);
+			var substitutionCost32 = Sse2.CompareEqual(sourceVector, targetVector);
+
+			var diag1_i_m1 = Sse3.LoadDquVector128(diag1Ptr + rowIndex - 4);
+
+			var diag2_1 = Sse3.LoadDquVector128(diag2Ptr + rowIndex - 3);
+			var diag2_i_m1 = Sse3.LoadDquVector128(diag2Ptr + rowIndex - 4);
+
+			var result3 = Sse2.Add(diag1_i_m1, substitutionCost32);
+			var min = Sse41.Min(Sse41.Min(diag2_i_m1, diag2_1), result3);
+			min = Sse2.Add(min, Vector128.Create(1));
+
+			Sse2.Store(diag1Ptr + rowIndex - 3, min);
+			rowIndex -= Vector128<int>.Count;
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		private static unsafe void CalculateDiagonal_Eight(int* diag1Ptr, int* diag2Ptr, char* sourcePtr, char* targetPtr, int targetLength, ref int rowIndex, int columnIndex)
+		{
+			var sourceVector = Avx2.ConvertToVector256Int32((ushort*)sourcePtr + rowIndex - 8);
+			var targetVector = Avx2.ConvertToVector256Int32((ushort*)targetPtr + columnIndex - 1);
+			targetVector = Avx2.Shuffle(targetVector, 0x1b);
+			targetVector = Avx2.Permute2x128(targetVector, targetVector, 1);
+			var substitutionCost32 = Avx2.CompareEqual(sourceVector, targetVector);
+
+			var diag1_i_m1 = Avx.LoadDquVector256(diag1Ptr + rowIndex - 8);
+
+			var diag2_1 = Avx.LoadDquVector256(diag2Ptr + rowIndex - 7);
+			var diag2_i_m1 = Avx.LoadDquVector256(diag2Ptr + rowIndex - 8);
+
+			var result3 = Avx2.Add(diag1_i_m1, substitutionCost32);
+			var min = Avx2.Min(Avx2.Min(diag2_i_m1, diag2_1), result3);
+			min = Avx2.Add(min, Vector256.Create(1));
+
+			Avx.Store(diag1Ptr + rowIndex - 7, min);
+			rowIndex -= Vector256<int>.Count;
 		}
 	}
 }
