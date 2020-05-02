@@ -111,6 +111,7 @@ namespace Quickenshtein
 			lastDeletionCostVector = Sse2.ShiftRightLogical128BitLane(lastDeletionCostVector, 4);
 		}
 
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		private static unsafe void CalculateDiagonal_MinSse41(int* diag1Ptr, int* diag2Ptr, char* sourcePtr, char* targetPtr, int targetLength, ref int rowIndex, int columnIndex)
 		{
 			if (false && Avx2.IsSupported && rowIndex >= Vector256<int>.Count && targetLength - columnIndex >= Vector256<int>.Count)
