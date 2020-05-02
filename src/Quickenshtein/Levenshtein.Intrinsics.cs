@@ -109,42 +109,42 @@ namespace Quickenshtein
 			lastDeletionCostVector = Sse2.ShiftRightLogical128BitLane(lastDeletionCostVector, 4);
 		}
 
-		private static unsafe void CalculateDiagonal_4_Sse41(int* diag1, int* diag2, char* sourcePtr, char* targetPtr, int targetLength, ref int rowIndex, int columnIndex)
+		private static unsafe void CalculateDiagonal_4_Sse41(int* diag1Ptr, int* diag2Ptr, char* sourcePtr, char* targetPtr, int targetLength, ref int rowIndex, int columnIndex)
 		{
 			if (rowIndex >= 4 && targetLength - columnIndex >= 4)
 			{
-				var a_ = Sse41.ConvertToVector128Int32(Sse3.LoadDquVector128((ushort*)sourcePtr + rowIndex - 4));
-				var b_ = Sse41.ConvertToVector128Int32(Sse3.LoadDquVector128((ushort*)targetPtr + columnIndex - 1));
-				b_ = Sse2.Shuffle(b_, 0x1b); // simple reverse
-				var substitutionCost32 = Sse2.CompareEqual(a_, b_);
+				var sourceVector = Sse41.ConvertToVector128Int32(Sse3.LoadDquVector128((ushort*)sourcePtr + rowIndex - 4));
+				var targetVector = Sse41.ConvertToVector128Int32(Sse3.LoadDquVector128((ushort*)targetPtr + columnIndex - 1));
+				targetVector = Sse2.Shuffle(targetVector, 0x1b); //Reverse target vector
+				var substitutionCost32 = Sse2.CompareEqual(sourceVector, targetVector);
 
 				Vector128<int> diag1_1, diag1_2, diag2_1, diag2_2;
 
-				diag1_1 = Sse3.LoadDquVector128(diag1 + rowIndex - 3);
-				diag1_2 = Sse3.LoadDquVector128(diag1 + rowIndex - 7);
-				diag2_1 = Sse3.LoadDquVector128(diag2 + rowIndex - 3);
-				diag2_2 = Sse3.LoadDquVector128(diag2 + rowIndex - 7);
+				diag1_1 = Sse3.LoadDquVector128(diag1Ptr + rowIndex - 3);
+				diag1_2 = Sse3.LoadDquVector128(diag1Ptr + rowIndex - 7);
+				diag2_1 = Sse3.LoadDquVector128(diag2Ptr + rowIndex - 3);
+				diag2_2 = Sse3.LoadDquVector128(diag2Ptr + rowIndex - 7);
 
 				var diag2_i_m1 = Ssse3.AlignRight(diag2_1, diag2_2, 12);
-				var diag_i_m1 = Ssse3.AlignRight(diag1_1, diag1_2, 12);
+				var diag1_i_m1 = Ssse3.AlignRight(diag1_1, diag1_2, 12);
 
-				var result3 = Sse2.Add(diag_i_m1, substitutionCost32);
+				var result3 = Sse2.Add(diag1_i_m1, substitutionCost32);
 				var min = Sse41.Min(Sse41.Min(diag2_i_m1, diag2_1), result3);
 				min = Sse2.Add(min, Vector128.Create(1));
 
-				Sse2.Store(diag1 + rowIndex - 3, min);
+				Sse2.Store(diag1Ptr + rowIndex - 3, min);
 				rowIndex -= 4;
 			}
 			else
 			{
-				var min = Math.Min(diag2[rowIndex], diag2[rowIndex - 1]);
-				if (min < diag1[rowIndex - 1])
+				var localCost = Math.Min(diag2Ptr[rowIndex], diag2Ptr[rowIndex - 1]);
+				if (localCost < diag1Ptr[rowIndex - 1])
 				{
-					diag1[rowIndex] = min + 1;
+					diag1Ptr[rowIndex] = localCost + 1;
 				}
 				else
 				{
-					diag1[rowIndex] = diag1[rowIndex - 1] + (sourcePtr[rowIndex - 1] != targetPtr[columnIndex - 1] ? 1 : 0);
+					diag1Ptr[rowIndex] = diag1Ptr[rowIndex - 1] + (sourcePtr[rowIndex - 1] != targetPtr[columnIndex - 1] ? 1 : 0);
 				}
 				rowIndex--;
 			}
