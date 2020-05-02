@@ -117,14 +117,17 @@ namespace Quickenshtein
 			if (Avx2.IsSupported && rowIndex >= Vector256<int>.Count && targetLength - columnIndex >= Vector256<int>.Count)
 			{
 				CalculateDiagonal_Eight_Avx2(diag1Ptr, diag2Ptr, sourcePtr, targetPtr, targetLength, ref rowIndex, columnIndex);
+				rowIndex -= Vector256<int>.Count;
 			}
 			else if (rowIndex >= Vector128<int>.Count && targetLength - columnIndex >= Vector128<int>.Count)
 			{
 				CalculateDiagonal_Four_Sse41(diag1Ptr, diag2Ptr, sourcePtr, targetPtr, targetLength, ref rowIndex, columnIndex);
+				rowIndex -= Vector128<int>.Count;
 			}
 			else
 			{
 				CalculateDiagonal_One(diag1Ptr, diag2Ptr, sourcePtr, targetPtr, targetLength, ref rowIndex, columnIndex);
+				rowIndex--;
 			}
 		}
 
@@ -140,7 +143,6 @@ namespace Quickenshtein
 			{
 				diag1Ptr[rowIndex] = diag1Ptr[rowIndex - 1] + (sourcePtr[rowIndex - 1] != targetPtr[columnIndex - 1] ? 1 : 0);
 			}
-			rowIndex--;
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -161,7 +163,6 @@ namespace Quickenshtein
 			min = Sse2.Add(min, Vector128.Create(1));
 
 			Sse2.Store(diag1Ptr + rowIndex - 3, min);
-			rowIndex -= Vector128<int>.Count;
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -183,7 +184,6 @@ namespace Quickenshtein
 			min = Avx2.Add(min, Vector256.Create(1));
 
 			Avx.Store(diag1Ptr + rowIndex - 7, min);
-			rowIndex -= Vector256<int>.Count;
 		}
 	}
 }
