@@ -114,12 +114,7 @@ namespace Quickenshtein
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		private static unsafe void CalculateDiagonal_MinSse41(int* diag1Ptr, int* diag2Ptr, char* sourcePtr, char* targetPtr, int targetLength, ref int rowIndex, int columnIndex)
 		{
-			if (Avx2.IsSupported && rowIndex >= Vector256<int>.Count * 2 && targetLength - columnIndex >= Vector256<int>.Count * 2)
-			{
-				CalculateDiagonal_Eight_Avx2(diag1Ptr, diag2Ptr, sourcePtr, targetPtr, targetLength, ref rowIndex, columnIndex);
-				CalculateDiagonal_Eight_Avx2(diag1Ptr, diag2Ptr, sourcePtr, targetPtr, targetLength, ref rowIndex, columnIndex);
-			}
-			else if (Avx2.IsSupported && rowIndex >= Vector256<int>.Count && targetLength - columnIndex >= Vector256<int>.Count)
+			if (Avx2.IsSupported && rowIndex >= Vector256<int>.Count && targetLength - columnIndex >= Vector256<int>.Count)
 			{
 				CalculateDiagonal_Eight_Avx2(diag1Ptr, diag2Ptr, sourcePtr, targetPtr, targetLength, ref rowIndex, columnIndex);
 			}
