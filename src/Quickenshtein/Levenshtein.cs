@@ -104,7 +104,7 @@ namespace Quickenshtein
 			}
 
 #if NETCOREAPP
-			if (Sse41.IsSupported && sourceLength > 4)
+			if (Sse41.IsSupported)
 			{
 				var diag1Array = ArrayPool<int>.Shared.Rent(sourceLength + 1);
 				var diag2Array = ArrayPool<int>.Shared.Rent(sourceLength + 1);
@@ -118,10 +118,9 @@ namespace Quickenshtein
 					var localDiag1Ptr = diag1Ptr;
 					var localDiag2Ptr = diag2Ptr;
 
-					int rowIndex, columnIndex, counter;
+					int rowIndex, columnIndex;
 
-					counter = 0;
-					for (counter = 1; ; counter++)
+					for (var counter = 1; ; counter++)
 					{
 						var startRow = counter > targetLength ? counter - targetLength : 1;
 						var endRow = counter > sourceLength ? sourceLength : counter - 1;
@@ -172,14 +171,7 @@ namespace Quickenshtein
 
 						var sourcePrevChar = sourcePtr[rowIndex];
 
-						if (Sse41.IsSupported)
-						{
-							CalculateRow_Sse41(previousRowPtr, targetPtr, targetLength, sourcePrevChar, lastInsertionCost, lastSubstitutionCost);
-						}
-						else
-						{
-							CalculateRow(previousRowPtr, targetPtr, targetLength, sourcePrevChar, lastInsertionCost, lastSubstitutionCost);
-						}
+						CalculateRow(previousRowPtr, targetPtr, targetLength, sourcePrevChar, lastInsertionCost, lastSubstitutionCost);
 					}
 
 					var result = previousRowPtr[targetLength - 1];
