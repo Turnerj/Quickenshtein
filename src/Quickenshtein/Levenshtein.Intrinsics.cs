@@ -151,18 +151,20 @@ namespace Quickenshtein
 			var sourceVector = Sse41.ConvertToVector128Int32((ushort*)sourcePtr + rowIndex - 4);
 			var targetVector = Sse41.ConvertToVector128Int32((ushort*)targetPtr + columnIndex - 1);
 			targetVector = Sse2.Shuffle(targetVector, 0x1b);
-			var substitutionCost32 = Sse2.CompareEqual(sourceVector, targetVector);
+			var substitutionCostAdjustment = Sse2.CompareEqual(sourceVector, targetVector);
 
-			var diag1_i_m1 = Sse3.LoadDquVector128(diag1Ptr + rowIndex - 4);
+			var substitutionCost = Sse2.Add(
+				Sse3.LoadDquVector128(diag1Ptr + rowIndex - 4),
+				substitutionCostAdjustment
+			);
 
-			var diag2_1 = Sse3.LoadDquVector128(diag2Ptr + rowIndex - 3);
-			var diag2_i_m1 = Sse3.LoadDquVector128(diag2Ptr + rowIndex - 4);
+			var deleteCost = Sse3.LoadDquVector128(diag2Ptr + rowIndex - 3);
+			var insertCost = Sse3.LoadDquVector128(diag2Ptr + rowIndex - 4);
 
-			var result3 = Sse2.Add(diag1_i_m1, substitutionCost32);
-			var min = Sse41.Min(Sse41.Min(diag2_i_m1, diag2_1), result3);
-			min = Sse2.Add(min, Vector128.Create(1));
+			var localCost = Sse41.Min(Sse41.Min(insertCost, deleteCost), substitutionCost);
+			localCost = Sse2.Add(localCost, Vector128.Create(1));
 
-			Sse2.Store(diag1Ptr + rowIndex - 3, min);
+			Sse2.Store(diag1Ptr + rowIndex - 3, localCost);
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -172,18 +174,19 @@ namespace Quickenshtein
 			var targetVector = Avx2.ConvertToVector256Int32((ushort*)targetPtr + columnIndex - 1);
 			targetVector = Avx2.Shuffle(targetVector, 0x1b);
 			targetVector = Avx2.Permute2x128(targetVector, targetVector, 1);
-			var substitutionCost32 = Avx2.CompareEqual(sourceVector, targetVector);
+			var substitutionCostAdjustment = Avx2.CompareEqual(sourceVector, targetVector);
 
-			var diag1_i_m1 = Avx.LoadDquVector256(diag1Ptr + rowIndex - 8);
+			var substitutionCost = Avx2.Add(
+				Avx.LoadDquVector256(diag1Ptr + rowIndex - 8),
+				substitutionCostAdjustment
+			);
+			var deleteCost = Avx.LoadDquVector256(diag2Ptr + rowIndex - 7);
+			var insertCost = Avx.LoadDquVector256(diag2Ptr + rowIndex - 8);
 
-			var diag2_1 = Avx.LoadDquVector256(diag2Ptr + rowIndex - 7);
-			var diag2_i_m1 = Avx.LoadDquVector256(diag2Ptr + rowIndex - 8);
+			var localCost = Avx2.Min(Avx2.Min(insertCost, deleteCost), substitutionCost);
+			localCost = Avx2.Add(localCost, Vector256.Create(1));
 
-			var result3 = Avx2.Add(diag1_i_m1, substitutionCost32);
-			var min = Avx2.Min(Avx2.Min(diag2_i_m1, diag2_1), result3);
-			min = Avx2.Add(min, Vector256.Create(1));
-
-			Avx.Store(diag1Ptr + rowIndex - 7, min);
+			Avx.Store(diag1Ptr + rowIndex - 7, localCost);
 		}
 	}
 }
