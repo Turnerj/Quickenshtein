@@ -118,20 +118,18 @@ namespace Quickenshtein
 				b_ = Sse2.Shuffle(b_, 0x1b); // simple reverse
 				var substitutionCost32 = Sse2.CompareEqual(a_, b_);
 
-				var diag_ = new Vector128<int>[2];
-				var diag2_ = new Vector128<int>[2];
+				Vector128<int> diag1_1, diag1_2, diag2_1, diag2_2;
 
-				for (var k = 0; k < 2; k++)
-				{
-					diag_[k] = Sse3.LoadDquVector128(diag1 + rowIndex - 3 - k * 4);
-					diag2_[k] = Sse3.LoadDquVector128(diag2 + rowIndex - 3 - k * 4);
-				}
+				diag1_1 = Sse3.LoadDquVector128(diag1 + rowIndex - 3);
+				diag1_2 = Sse3.LoadDquVector128(diag1 + rowIndex - 7);
+				diag2_1 = Sse3.LoadDquVector128(diag2 + rowIndex - 3);
+				diag2_2 = Sse3.LoadDquVector128(diag2 + rowIndex - 7);
 
-				var diag2_i_m1 = Ssse3.AlignRight(diag2_[0], diag2_[1], 12);
-				var diag_i_m1 = Ssse3.AlignRight(diag_[0], diag_[1], 12);
+				var diag2_i_m1 = Ssse3.AlignRight(diag2_1, diag2_2, 12);
+				var diag_i_m1 = Ssse3.AlignRight(diag1_1, diag1_2, 12);
 
 				var result3 = Sse2.Add(diag_i_m1, substitutionCost32);
-				var min = Sse41.Min(Sse41.Min(diag2_i_m1, diag2_[0]), result3);
+				var min = Sse41.Min(Sse41.Min(diag2_i_m1, diag2_1), result3);
 				min = Sse2.Add(min, Vector128.Create(1));
 
 				Sse2.Store(diag1 + rowIndex - 3, min);
