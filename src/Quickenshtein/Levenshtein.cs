@@ -106,6 +106,8 @@ namespace Quickenshtein
 #if NETCOREAPP
 			if (Sse41.IsSupported)
 			{
+				//Levenshtein Distance diagonal calculation inspired by Anna Henningsen's C implementation
+				//https://github.com/addaleax/levenshtein-sse
 				var diag1Array = ArrayPool<int>.Shared.Rent(sourceLength + 1);
 				var diag2Array = ArrayPool<int>.Shared.Rent(sourceLength + 1);
 
@@ -151,7 +153,6 @@ namespace Quickenshtein
 
 						localDiag1Ptr[0] = counter;
 
-						// switch buffers
 						var tempPtr = localDiag1Ptr;
 						localDiag1Ptr = localDiag2Ptr;
 						localDiag2Ptr = tempPtr;
@@ -160,33 +161,8 @@ namespace Quickenshtein
 					}
 				}
 			}
-			else
-			{
-				var pooledArray = ArrayPool<int>.Shared.Rent(targetLength);
+#endif
 
-				fixed (int* previousRowPtr = pooledArray)
-				{
-					DataHelper.SequentialFill(previousRowPtr, targetLength);
-
-					var rowIndex = 0;
-
-					//Calculate Single Rows
-					for (; rowIndex < sourceLength; rowIndex++)
-					{
-						var lastSubstitutionCost = rowIndex;
-						var lastInsertionCost = rowIndex + 1;
-
-						var sourcePrevChar = sourcePtr[rowIndex];
-
-						CalculateRow(previousRowPtr, targetPtr, targetLength, sourcePrevChar, lastInsertionCost, lastSubstitutionCost);
-					}
-
-					var result = previousRowPtr[targetLength - 1];
-					ArrayPool<int>.Shared.Return(pooledArray);
-					return result;
-				}
-			}
-#else
 			var pooledArray = ArrayPool<int>.Shared.Rent(targetLength);
 
 			fixed (int* previousRowPtr = pooledArray)
@@ -214,7 +190,6 @@ namespace Quickenshtein
 				ArrayPool<int>.Shared.Return(pooledArray);
 				return result;
 			}
-#endif
 		}
 	}
 }
