@@ -21,7 +21,7 @@ namespace Quickenshtein.Benchmarks.Config
 
 			AddColumn(SpeedupRatioColumn.SpeedupOfMean);
 			AddColumn(WorthinessRatioColumn.WorthinessOfMean);
-			AddDiagnoser(new DisassemblyDiagnoser(new DisassemblyDiagnoserConfig()));
+			AddDiagnoser(new DisassemblyDiagnoser(new DisassemblyDiagnoserConfig(maxDepth: 3)));
 		}
 
 		protected void AddFramework(bool asBaseline = false)
