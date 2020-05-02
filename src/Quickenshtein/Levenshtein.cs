@@ -119,8 +119,9 @@ namespace Quickenshtein
 					var localDiag2Ptr = diag2Ptr;
 
 					int rowIndex, columnIndex, endRow;
-
-					for (var counter = 1; ; counter++)
+					
+					var counter = 1;
+					while (true)
 					{
 						var startRow = counter > targetLength ? counter - targetLength : 1;
 
@@ -140,8 +141,6 @@ namespace Quickenshtein
 							CalculateDiagonal_MinSse41(localDiag1Ptr, localDiag2Ptr, sourcePtr, targetPtr, targetLength, ref rowIndex, columnIndex);
 						}
 
-						localDiag1Ptr[0] = counter;
-
 						if (counter == sourceLength + targetLength)
 						{
 							var result = localDiag1Ptr[startRow];
@@ -150,10 +149,14 @@ namespace Quickenshtein
 							return result;
 						}
 
+						localDiag1Ptr[0] = counter;
+
 						// switch buffers
 						var tempPtr = localDiag1Ptr;
 						localDiag1Ptr = localDiag2Ptr;
 						localDiag2Ptr = tempPtr;
+
+						counter++;
 					}
 				}
 			}
