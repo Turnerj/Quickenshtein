@@ -121,7 +121,7 @@ namespace Quickenshtein
 				var diag_ = new Vector128<int>[2];
 				var diag2_ = new Vector128<int>[2];
 
-				for (var k = 0; k < 2; ++k)
+				for (var k = 0; k < 2; k++)
 				{
 					diag_[k] = Sse3.LoadDquVector128(diag1 + rowIndex - 3 - k * 4);
 					diag2_[k] = Sse3.LoadDquVector128(diag2 + rowIndex - 3 - k * 4);

@@ -121,7 +121,7 @@ namespace Quickenshtein
 					int rowIndex, columnIndex, counter;
 
 					counter = 0;
-					for (counter = 1; ; ++counter)
+					for (counter = 1; ; counter++)
 					{
 						var startRow = counter > targetLength ? counter - targetLength : 1;
 						var endRow = counter > sourceLength ? sourceLength : counter - 1;
@@ -129,7 +129,7 @@ namespace Quickenshtein
 						for (rowIndex = endRow; rowIndex >= startRow;)
 						{
 							columnIndex = counter - rowIndex;
-							CalculateDiagonal_4_Sse41(diag1Ptr, diag2Ptr, sourcePtr, targetPtr, targetLength, ref rowIndex, columnIndex);
+							CalculateDiagonal_4_Sse41(localDiag1Ptr, localDiag2Ptr, sourcePtr, targetPtr, targetLength, ref rowIndex, columnIndex);
 						}
 
 						localDiag1Ptr[0] = counter;
