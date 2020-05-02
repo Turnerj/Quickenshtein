@@ -118,12 +118,21 @@ namespace Quickenshtein
 					var localDiag1Ptr = diag1Ptr;
 					var localDiag2Ptr = diag2Ptr;
 
-					int rowIndex, columnIndex;
+					int rowIndex, columnIndex, endRow;
 
 					for (var counter = 1; ; counter++)
 					{
 						var startRow = counter > targetLength ? counter - targetLength : 1;
-						var endRow = counter > sourceLength ? sourceLength : counter - 1;
+
+						if (counter > sourceLength)
+						{
+							endRow = sourceLength;
+						}
+						else
+						{
+							localDiag1Ptr[counter] = counter;
+							endRow = counter - 1;
+						}
 
 						for (rowIndex = endRow; rowIndex >= startRow;)
 						{
@@ -132,11 +141,6 @@ namespace Quickenshtein
 						}
 
 						localDiag1Ptr[0] = counter;
-
-						if (counter <= sourceLength)
-						{
-							localDiag1Ptr[counter] = counter;
-						}
 
 						if (counter == sourceLength + targetLength)
 						{
