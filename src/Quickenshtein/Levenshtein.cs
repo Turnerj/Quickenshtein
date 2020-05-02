@@ -112,8 +112,8 @@ namespace Quickenshtein
 				fixed (int* diag1Ptr = diag1Array)
 				fixed (int* diag2Ptr = diag2Array)
 				{
-					DataHelper.Fill(diag1Ptr, sourceLength + 1, 0);
-					DataHelper.Fill(diag2Ptr, sourceLength + 1, 0);
+					new Span<int>(diag1Ptr, sourceLength + 1).Clear();
+					new Span<int>(diag2Ptr, sourceLength + 1).Clear();
 
 					var localDiag1Ptr = diag1Ptr;
 					var localDiag2Ptr = diag2Ptr;
