@@ -114,7 +114,7 @@ namespace Quickenshtein
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		private static unsafe void CalculateDiagonal_MinSse41(int* diag1Ptr, int* diag2Ptr, char* sourcePtr, char* targetPtr, int targetLength, ref int rowIndex, int columnIndex)
 		{
-			if (false && Avx2.IsSupported && rowIndex >= Vector256<int>.Count && targetLength - columnIndex >= Vector256<int>.Count)
+			if (Avx2.IsSupported && rowIndex >= Vector256<int>.Count && targetLength - columnIndex >= Vector256<int>.Count)
 			{
 				var sourceVector = Avx2.ConvertToVector256Int32((ushort*)sourcePtr + rowIndex - 8);
 				var targetVector = Avx2.ConvertToVector256Int32((ushort*)targetPtr + columnIndex - 1);
@@ -122,17 +122,10 @@ namespace Quickenshtein
 				targetVector = Avx2.Permute2x128(targetVector, targetVector, 1);
 				var substitutionCost32 = Avx2.CompareEqual(sourceVector, targetVector);
 
-				Vector256<int> diag1_1, diag1_2, diag2_1, diag2_2;
+				var diag1_i_m1 = Avx.LoadDquVector256(diag1Ptr + rowIndex - 8);
 
-				diag1_1 = Avx.LoadDquVector256(diag1Ptr + rowIndex - 7);
-				diag1_2 = Avx.LoadDquVector256(diag1Ptr + rowIndex - 15);
-				diag2_1 = Avx.LoadDquVector256(diag2Ptr + rowIndex - 7);
-				diag2_2 = Avx.LoadDquVector256(diag2Ptr + rowIndex - 15);
-
-				var blended = Avx2.Blend(diag2_1, diag2_2, 0x80);
-				var diag2_i_m1 = Avx2.PermuteVar8x32(blended, ROTL1_256);
-				blended = Avx2.Blend(diag1_1, diag1_2, 0x80);
-				var diag1_i_m1 = Avx2.PermuteVar8x32(blended, ROTL1_256);
+				var diag2_1 = Avx.LoadDquVector256(diag2Ptr + rowIndex - 7);
+				var diag2_i_m1 = Avx.LoadDquVector256(diag2Ptr + rowIndex - 8);
 
 				var result3 = Avx2.Add(diag1_i_m1, substitutionCost32);
 				var min = Avx2.Min(Avx2.Min(diag2_i_m1, diag2_1), result3);
