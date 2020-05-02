@@ -147,15 +147,13 @@ namespace Quickenshtein
 				targetVector = Sse2.Shuffle(targetVector, 0x1b);
 				var substitutionCost32 = Sse2.CompareEqual(sourceVector, targetVector);
 
-				Vector128<int> diag1_1, diag1_2, diag2_1, diag2_2;
+				Vector128<int> diag2_1, diag2_2;
 
-				diag1_1 = Sse3.LoadDquVector128(diag1Ptr + rowIndex - 3);
-				diag1_2 = Sse3.LoadDquVector128(diag1Ptr + rowIndex - 7);
+				var diag1_i_m1 = Sse3.LoadDquVector128(diag1Ptr + rowIndex - 4);
 				diag2_1 = Sse3.LoadDquVector128(diag2Ptr + rowIndex - 3);
 				diag2_2 = Sse3.LoadDquVector128(diag2Ptr + rowIndex - 7);
 
 				var diag2_i_m1 = Ssse3.AlignRight(diag2_1, diag2_2, 12);
-				var diag1_i_m1 = Ssse3.AlignRight(diag1_1, diag1_2, 12);
 
 				var result3 = Sse2.Add(diag1_i_m1, substitutionCost32);
 				var min = Sse41.Min(Sse41.Min(diag2_i_m1, diag2_1), result3);
