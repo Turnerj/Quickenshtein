@@ -129,7 +129,7 @@ namespace Quickenshtein
 						for (rowIndex = endRow; rowIndex >= startRow;)
 						{
 							columnIndex = counter - rowIndex;
-							CalculateDiagonal_4_Sse41(localDiag1Ptr, localDiag2Ptr, sourcePtr, targetPtr, targetLength, ref rowIndex, columnIndex);
+							CalculateDiagonal_MinSse41(localDiag1Ptr, localDiag2Ptr, sourcePtr, targetPtr, targetLength, ref rowIndex, columnIndex);
 						}
 
 						localDiag1Ptr[0] = counter;
