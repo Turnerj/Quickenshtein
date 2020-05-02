@@ -113,7 +113,7 @@ namespace Quickenshtein
 
 		private static unsafe void CalculateDiagonal_MinSse41(int* diag1Ptr, int* diag2Ptr, char* sourcePtr, char* targetPtr, int targetLength, ref int rowIndex, int columnIndex)
 		{
-			if (Avx2.IsSupported && rowIndex >= Vector256<int>.Count && targetLength - columnIndex >= Vector256<int>.Count)
+			if (false && Avx2.IsSupported && rowIndex >= Vector256<int>.Count && targetLength - columnIndex >= Vector256<int>.Count)
 			{
 				var sourceVector = Avx2.ConvertToVector256Int32((ushort*)sourcePtr + rowIndex - 8);
 				var targetVector = Avx2.ConvertToVector256Int32((ushort*)targetPtr + columnIndex - 1);
@@ -142,8 +142,8 @@ namespace Quickenshtein
 			}
 			else if (rowIndex >= Vector128<int>.Count && targetLength - columnIndex >= Vector128<int>.Count)
 			{
-				var sourceVector = Sse41.ConvertToVector128Int32(Sse3.LoadDquVector128((ushort*)sourcePtr + rowIndex - 4));
-				var targetVector = Sse41.ConvertToVector128Int32(Sse3.LoadDquVector128((ushort*)targetPtr + columnIndex - 1));
+				var sourceVector = Sse41.ConvertToVector128Int32((ushort*)sourcePtr + rowIndex - 4);
+				var targetVector = Sse41.ConvertToVector128Int32((ushort*)targetPtr + columnIndex - 1);
 				targetVector = Sse2.Shuffle(targetVector, 0x1b);
 				var substitutionCost32 = Sse2.CompareEqual(sourceVector, targetVector);
 
