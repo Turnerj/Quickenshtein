@@ -150,8 +150,7 @@ namespace Quickenshtein
 				var diag1_i_m1 = Sse3.LoadDquVector128(diag1Ptr + rowIndex - 4);
 
 				var diag2_1 = Sse3.LoadDquVector128(diag2Ptr + rowIndex - 3);
-				var diag2_2 = Sse3.LoadDquVector128(diag2Ptr + rowIndex - 7);
-				var diag2_i_m1 = Ssse3.AlignRight(diag2_1, diag2_2, 12);
+				var diag2_i_m1 = Sse3.LoadDquVector128(diag2Ptr + rowIndex - 4);
 
 				var result3 = Sse2.Add(diag1_i_m1, substitutionCost32);
 				var min = Sse41.Min(Sse41.Min(diag2_i_m1, diag2_1), result3);
