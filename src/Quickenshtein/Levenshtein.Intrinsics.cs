@@ -114,32 +114,76 @@ namespace Quickenshtein
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private static unsafe void CalculateDiagonalSection_MinSse41<T>(IntPtr managedDiag1Ptr, IntPtr managedDiag2Ptr, char* sourcePtr, char* targetPtr, int targetLength, ref int rowIndex, int columnIndex) where T : struct
+		private static unsafe T CalculateDiagonal_MinSse41<T>(void* diag1Ptr, void* diag2Ptr, char* sourcePtr, int sourceLength, char* targetPtr, int targetLength) where T : struct
+		{
+			new Span<T>(diag1Ptr, sourceLength + 1).Clear();
+			new Span<T>(diag2Ptr, sourceLength + 1).Clear();
+
+			int rowIndex, columnIndex, endRow;
+
+			var counter = 1;
+			while (true)
+			{
+				var startRow = counter > targetLength ? counter - targetLength : 1;
+
+				if (counter > sourceLength)
+				{
+					endRow = sourceLength;
+				}
+				else
+				{
+					Unsafe.Write(Unsafe.Add<T>(diag1Ptr, counter), Unsafe.As<int, T>(ref counter));
+					endRow = counter - 1;
+				}
+
+				for (rowIndex = endRow; rowIndex >= startRow;)
+				{
+					columnIndex = counter - rowIndex;
+					CalculateDiagonalSection_MinSse41<T>(diag1Ptr, diag2Ptr, sourcePtr, targetPtr, targetLength, ref rowIndex, columnIndex);
+				}
+
+				if (counter == sourceLength + targetLength)
+				{
+					return Unsafe.Read<T>(Unsafe.Add<T>(diag1Ptr, startRow));
+				}
+
+				Unsafe.Write(diag1Ptr, Unsafe.As<int, T>(ref counter));
+
+				var tempPtr = diag1Ptr;
+				diag1Ptr = diag2Ptr;
+				diag2Ptr = tempPtr;
+
+				counter++;
+			}
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		private static unsafe void CalculateDiagonalSection_MinSse41<T>(void* refDiag1Ptr, void* refDiag2Ptr, char* sourcePtr, char* targetPtr, int targetLength, ref int rowIndex, int columnIndex) where T : struct
 		{
 			if (Avx2.IsSupported && rowIndex >= Vector256<T>.Count && targetLength - columnIndex >= Vector256<T>.Count)
 			{
-				CalculateDiagonalSection_Avx2<T>(managedDiag1Ptr, managedDiag2Ptr, sourcePtr, targetPtr, ref rowIndex, columnIndex);
+				CalculateDiagonalSection_Avx2<T>(refDiag1Ptr, refDiag2Ptr, sourcePtr, targetPtr, ref rowIndex, columnIndex);
 				rowIndex -= Vector256<T>.Count;
 			}
 			else if (rowIndex >= Vector128<T>.Count && targetLength - columnIndex >= Vector128<T>.Count)
 			{
-				CalculateDiagonalSection_Sse41<T>(managedDiag1Ptr, managedDiag2Ptr, sourcePtr, targetPtr, ref rowIndex, columnIndex);
+				CalculateDiagonalSection_Sse41<T>(refDiag1Ptr, refDiag2Ptr, sourcePtr, targetPtr, ref rowIndex, columnIndex);
 				rowIndex -= Vector128<T>.Count;
 			}
 			else
 			{
-				CalculateDiagonalSection_Single<T>(managedDiag1Ptr, managedDiag2Ptr, sourcePtr, targetPtr, ref rowIndex, columnIndex);
+				CalculateDiagonalSection_Single<T>(refDiag1Ptr, refDiag2Ptr, sourcePtr, targetPtr, ref rowIndex, columnIndex);
 				rowIndex--;
 			}
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private static unsafe void CalculateDiagonalSection_Single<T>(IntPtr managedDiag1Ptr, IntPtr managedDiag2Ptr, char* sourcePtr, char* targetPtr, ref int rowIndex, int columnIndex) where T : struct
+		private static unsafe void CalculateDiagonalSection_Single<T>(void* refDiag1Ptr, void* refDiag2Ptr, char* sourcePtr, char* targetPtr, ref int rowIndex, int columnIndex) where T : struct
 		{
 			if (typeof(T) == typeof(int))
 			{
-				var diag1Ptr = (int*)managedDiag1Ptr;
-				var diag2Ptr = (int*)managedDiag2Ptr;
+				var diag1Ptr = (int*)refDiag1Ptr;
+				var diag2Ptr = (int*)refDiag2Ptr;
 
 				var localCost = Math.Min(diag2Ptr[rowIndex], diag2Ptr[rowIndex - 1]);
 				if (localCost < diag1Ptr[rowIndex - 1])
@@ -153,8 +197,8 @@ namespace Quickenshtein
 			}
 			else if (typeof(T) == typeof(ushort))
 			{
-				var diag1Ptr = (ushort*)managedDiag1Ptr;
-				var diag2Ptr = (ushort*)managedDiag2Ptr;
+				var diag1Ptr = (ushort*)refDiag1Ptr;
+				var diag2Ptr = (ushort*)refDiag2Ptr;
 
 				var localCost = Math.Min(diag2Ptr[rowIndex], diag2Ptr[rowIndex - 1]);
 				if (localCost < diag1Ptr[rowIndex - 1])
@@ -169,12 +213,12 @@ namespace Quickenshtein
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private static unsafe void CalculateDiagonalSection_Sse41<T>(IntPtr managedDiag1Ptr, IntPtr managedDiag2Ptr, char* sourcePtr, char* targetPtr, ref int rowIndex, int columnIndex) where T : struct
+		private static unsafe void CalculateDiagonalSection_Sse41<T>(void* refDiag1Ptr, void* refDiag2Ptr, char* sourcePtr, char* targetPtr, ref int rowIndex, int columnIndex) where T : struct
 		{
 			if (typeof(T) == typeof(int))
 			{
-				var diag1Ptr = (int*)managedDiag1Ptr;
-				var diag2Ptr = (int*)managedDiag2Ptr;
+				var diag1Ptr = (int*)refDiag1Ptr;
+				var diag2Ptr = (int*)refDiag2Ptr;
 
 				var sourceVector = Sse41.ConvertToVector128Int32((ushort*)sourcePtr + rowIndex - Vector128<T>.Count);
 				var targetVector = Sse41.ConvertToVector128Int32((ushort*)targetPtr + columnIndex - 1);
@@ -196,8 +240,8 @@ namespace Quickenshtein
 			}
 			else if (typeof(T) == typeof(ushort))
 			{
-				var diag1Ptr = (ushort*)managedDiag1Ptr;
-				var diag2Ptr = (ushort*)managedDiag2Ptr;
+				var diag1Ptr = (ushort*)refDiag1Ptr;
+				var diag2Ptr = (ushort*)refDiag2Ptr;
 
 				var sourceVector = Sse3.LoadDquVector128((ushort*)sourcePtr + rowIndex - Vector128<T>.Count);
 				var targetVector = Sse3.LoadDquVector128((ushort*)targetPtr + columnIndex - 1);
@@ -220,12 +264,12 @@ namespace Quickenshtein
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private static unsafe void CalculateDiagonalSection_Avx2<T>(IntPtr managedDiag1Ptr, IntPtr managedDiag2Ptr, char* sourcePtr, char* targetPtr, ref int rowIndex, int columnIndex) where T : struct
+		private static unsafe void CalculateDiagonalSection_Avx2<T>(void* refDiag1Ptr, void* refDiag2Ptr, char* sourcePtr, char* targetPtr, ref int rowIndex, int columnIndex) where T : struct
 		{
 			if (typeof(T) == typeof(int))
 			{
-				var diag1Ptr = (int*)managedDiag1Ptr;
-				var diag2Ptr = (int*)managedDiag2Ptr;
+				var diag1Ptr = (int*)refDiag1Ptr;
+				var diag2Ptr = (int*)refDiag2Ptr;
 
 				var sourceVector = Avx2.ConvertToVector256Int32((ushort*)sourcePtr + rowIndex - Vector256<T>.Count);
 				var targetVector = Avx2.ConvertToVector256Int32((ushort*)targetPtr + columnIndex - 1);
@@ -247,8 +291,8 @@ namespace Quickenshtein
 			}
 			else if (typeof(T) == typeof(ushort))
 			{
-				var diag1Ptr = (ushort*)managedDiag1Ptr;
-				var diag2Ptr = (ushort*)managedDiag2Ptr;
+				var diag1Ptr = (ushort*)refDiag1Ptr;
+				var diag2Ptr = (ushort*)refDiag2Ptr;
 
 				var sourceVector = Avx.LoadDquVector256((ushort*)sourcePtr + rowIndex - Vector256<T>.Count);
 				var targetVector = Avx.LoadDquVector256((ushort*)targetPtr + columnIndex - 1);

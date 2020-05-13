@@ -113,54 +113,13 @@ namespace Quickenshtein
 					var diag1Array = ArrayPool<ushort>.Shared.Rent(sourceLength + 1);
 					var diag2Array = ArrayPool<ushort>.Shared.Rent(sourceLength + 1);
 
-					fixed (ushort* diag1Ptr = diag1Array)
-					fixed (ushort* diag2Ptr = diag2Array)
+					fixed (void* diag1Ptr = diag1Array)
+					fixed (void* diag2Ptr = diag2Array)
 					{
-						new Span<ushort>(diag1Ptr, sourceLength + 1).Clear();
-						new Span<ushort>(diag2Ptr, sourceLength + 1).Clear();
-
-						var localDiag1Ptr = diag1Ptr;
-						var localDiag2Ptr = diag2Ptr;
-
-						int rowIndex, columnIndex, endRow;
-
-						var counter = 1;
-						while (true)
-						{
-							var startRow = counter > targetLength ? counter - targetLength : 1;
-
-							if (counter > sourceLength)
-							{
-								endRow = sourceLength;
-							}
-							else
-							{
-								localDiag1Ptr[counter] = (ushort)counter;
-								endRow = counter - 1;
-							}
-
-							for (rowIndex = endRow; rowIndex >= startRow;)
-							{
-								columnIndex = counter - rowIndex;
-								CalculateDiagonalSection_MinSse41<ushort>((IntPtr)localDiag1Ptr, (IntPtr)localDiag2Ptr, sourcePtr, targetPtr, targetLength, ref rowIndex, columnIndex);
-							}
-
-							if (counter == sourceLength + targetLength)
-							{
-								var result = localDiag1Ptr[startRow];
-								ArrayPool<ushort>.Shared.Return(diag1Array);
-								ArrayPool<ushort>.Shared.Return(diag2Array);
-								return result;
-							}
-
-							localDiag1Ptr[0] = (ushort)counter;
-
-							var tempPtr = localDiag1Ptr;
-							localDiag1Ptr = localDiag2Ptr;
-							localDiag2Ptr = tempPtr;
-
-							counter++;
-						}
+						var result = CalculateDiagonal_MinSse41<ushort>(diag1Ptr, diag2Ptr, sourcePtr, sourceLength, targetPtr, targetLength);
+						ArrayPool<ushort>.Shared.Return(diag1Array);
+						ArrayPool<ushort>.Shared.Return(diag2Array);
+						return result;
 					}
 				}
 				else
@@ -168,54 +127,13 @@ namespace Quickenshtein
 					var diag1Array = ArrayPool<int>.Shared.Rent(sourceLength + 1);
 					var diag2Array = ArrayPool<int>.Shared.Rent(sourceLength + 1);
 
-					fixed (int* diag1Ptr = diag1Array)
-					fixed (int* diag2Ptr = diag2Array)
+					fixed (void* diag1Ptr = diag1Array)
+					fixed (void* diag2Ptr = diag2Array)
 					{
-						new Span<int>(diag1Ptr, sourceLength + 1).Clear();
-						new Span<int>(diag2Ptr, sourceLength + 1).Clear();
-
-						var localDiag1Ptr = diag1Ptr;
-						var localDiag2Ptr = diag2Ptr;
-
-						int rowIndex, columnIndex, endRow;
-
-						var counter = 1;
-						while (true)
-						{
-							var startRow = counter > targetLength ? counter - targetLength : 1;
-
-							if (counter > sourceLength)
-							{
-								endRow = sourceLength;
-							}
-							else
-							{
-								localDiag1Ptr[counter] = counter;
-								endRow = counter - 1;
-							}
-
-							for (rowIndex = endRow; rowIndex >= startRow;)
-							{
-								columnIndex = counter - rowIndex;
-								CalculateDiagonalSection_MinSse41<int>((IntPtr)localDiag1Ptr, (IntPtr)localDiag2Ptr, sourcePtr, targetPtr, targetLength, ref rowIndex, columnIndex);
-							}
-
-							if (counter == sourceLength + targetLength)
-							{
-								var result = localDiag1Ptr[startRow];
-								ArrayPool<int>.Shared.Return(diag1Array);
-								ArrayPool<int>.Shared.Return(diag2Array);
-								return result;
-							}
-
-							localDiag1Ptr[0] = counter;
-
-							var tempPtr = localDiag1Ptr;
-							localDiag1Ptr = localDiag2Ptr;
-							localDiag2Ptr = tempPtr;
-
-							counter++;
-						}
+						var result = CalculateDiagonal_MinSse41<int>(diag1Ptr, diag2Ptr, sourcePtr, sourceLength, targetPtr, targetLength);
+						ArrayPool<int>.Shared.Return(diag1Array);
+						ArrayPool<int>.Shared.Return(diag2Array);
+						return result;
 					}
 				}
 			}
