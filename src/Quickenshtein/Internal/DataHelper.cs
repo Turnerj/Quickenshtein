@@ -337,9 +337,13 @@ namespace Quickenshtein.Internal
 				}
 			}
 #endif
+			sourcePtr += sourceLength - 1;
+			targetPtr += targetLength - 1;
 
-			while (searchLength > 0 && sourcePtr[sourceLength - 1] == targetPtr[targetLength - 1])
+			while (searchLength > 0 && sourcePtr[0] == targetPtr[0])
 			{
+				sourcePtr--;
+				targetPtr--;
 				sourceLength--;
 				targetLength--;
 				searchLength--;
