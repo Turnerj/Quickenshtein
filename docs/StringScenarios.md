@@ -63,23 +63,23 @@ This is combined with the fact that this is a worst case run with no matching ch
 
 |                      Method |        Job |       Runtime | NumberOfCharacters |        Mean |     Error |    StdDev | Ratio | Speedup | Worthiness | RatioSD | Code Size | Gen 0 | Gen 1 | Gen 2 | Allocated |
 |---------------------------- |----------- |-------------- |------------------- |------------:|----------:|----------:|------:|--------:|-----------:|--------:|----------:|------:|------:|------:|----------:|
-|   Quickenshtein_NoThreading | Job-XUTCZT |    .NET 4.7.2 |               8192 |    89.91 ms |  0.586 ms |  0.548 ms |  1.00 |    1.00 |       1.00 |    0.00 |    3689 B |     - |     - |     - |         - |
-|   Quickenshtein_NoThreading | Job-DRGSBT | .NET Core 3.0 |               8192 |    27.04 ms |  0.140 ms |  0.124 ms |  0.30 |    3.33 |       3.57 |    0.00 |    3439 B |     - |     - |     - |         - |
+|   Quickenshtein_NoThreading | Job-KPDJFU |    .NET 4.7.2 |               8192 |    89.91 ms |  1.245 ms |  1.039 ms |  1.00 |    1.00 |       1.00 |    0.00 |    3705 B |     - |     - |     - |         - |
+|   Quickenshtein_NoThreading | Job-PTMVLW | .NET Core 3.0 |               8192 |    21.32 ms |  0.192 ms |  0.179 ms |  0.24 |    4.21 |       3.44 |    0.00 |    4536 B |     - |     - |     - |         - |
 |                             |            |               |                    |             |           |           |       |         |            |         |           |       |       |       |           |
-| Quickenshtein_WithThreading | Job-XUTCZT |    .NET 4.7.2 |               8192 |    28.42 ms |  0.555 ms |  0.545 ms |  1.00 |    1.00 |       1.00 |    0.00 |    5029 B |     - |     - |     - |    1024 B |
-| Quickenshtein_WithThreading | Job-DRGSBT | .NET Core 3.0 |               8192 |    17.96 ms |  0.286 ms |  0.294 ms |  0.63 |    1.58 |       0.84 |    0.02 |    9514 B |     - |     - |     - |     800 B |
+| Quickenshtein_WithThreading | Job-KPDJFU |    .NET 4.7.2 |               8192 |    24.62 ms |  0.463 ms |  0.476 ms |  1.00 |    1.00 |       1.00 |    0.00 |    5045 B |     - |     - |     - |    1024 B |
+| Quickenshtein_WithThreading | Job-PTMVLW | .NET Core 3.0 |               8192 |    17.57 ms |  0.200 ms |  0.177 ms |  0.71 |    1.40 |       0.67 |    0.02 |   10611 B |     - |     - |     - |     800 B |
 |                             |            |               |                    |             |           |           |       |         |            |         |           |       |       |       |           |
-|                Fastenshtein | Job-XUTCZT |    .NET 4.7.2 |               8192 |   161.42 ms |  1.479 ms |  1.383 ms |  1.00 |    1.00 |       1.00 |    0.00 |     328 B |     - |     - |     - |   32816 B |
-|                Fastenshtein | Job-DRGSBT | .NET Core 3.0 |               8192 |   148.11 ms |  2.213 ms |  2.070 ms |  0.92 |    1.09 |       1.09 |    0.02 |     329 B |     - |     - |     - |   32792 B |
+|                Fastenshtein | Job-KPDJFU |    .NET 4.7.2 |               8192 |   158.37 ms |  0.520 ms |  0.461 ms |  1.00 |    1.00 |       1.00 |    0.00 |     328 B |     - |     - |     - |   32816 B |
+|                Fastenshtein | Job-PTMVLW | .NET Core 3.0 |               8192 |   144.73 ms |  1.862 ms |  1.651 ms |  0.91 |    1.09 |       1.09 |    0.01 |     329 B |     - |     - |     - |   32934 B |
 |                             |            |               |                    |             |           |           |       |         |            |         |           |       |       |       |           |
-|   Quickenshtein_NoThreading | Job-XUTCZT |    .NET 4.7.2 |              32768 | 1,427.36 ms |  3.808 ms |  3.375 ms |  1.00 |    1.00 |       1.00 |    0.00 |    3689 B |     - |     - |     - |         - |
-|   Quickenshtein_NoThreading | Job-DRGSBT | .NET Core 3.0 |              32768 |   450.70 ms |  4.090 ms |  3.626 ms |  0.32 |    3.17 |       6.36 |    0.00 |    1836 B |     - |     - |     - |    1344 B |
+|   Quickenshtein_NoThreading | Job-KPDJFU |    .NET 4.7.2 |              32768 | 1,428.83 ms |  5.793 ms |  5.419 ms |  1.00 |    1.00 |       1.00 |    0.00 |    3705 B |     - |     - |     - |         - |
+|   Quickenshtein_NoThreading | Job-PTMVLW | .NET Core 3.0 |              32768 |   342.46 ms |  3.376 ms |  2.993 ms |  0.24 |    4.17 |       5.27 |    0.00 |    2933 B |     - |     - |     - |    1344 B |
 |                             |            |               |                    |             |           |           |       |         |            |         |           |       |       |       |           |
-| Quickenshtein_WithThreading | Job-XUTCZT |    .NET 4.7.2 |              32768 |   412.56 ms |  4.516 ms |  3.526 ms |  1.00 |    1.00 |       1.00 |    0.00 |    5029 B |     - |     - |     - |    8192 B |
-| Quickenshtein_WithThreading | Job-DRGSBT | .NET Core 3.0 |              32768 |   274.29 ms |  1.931 ms |  1.613 ms |  0.66 |    1.50 |       0.80 |    0.00 |    9480 B |     - |     - |     - |     800 B |
+| Quickenshtein_WithThreading | Job-KPDJFU |    .NET 4.7.2 |              32768 |   368.65 ms |  1.814 ms |  1.416 ms |  1.00 |    1.00 |       1.00 |    0.00 |    5045 B |     - |     - |     - |    8192 B |
+| Quickenshtein_WithThreading | Job-PTMVLW | .NET Core 3.0 |              32768 |   272.40 ms |  0.888 ms |  0.742 ms |  0.74 |    1.35 |       0.65 |    0.00 |   10577 B |     - |     - |     - |     800 B |
 |                             |            |               |                    |             |           |           |       |         |            |         |           |       |       |       |           |
-|                Fastenshtein | Job-XUTCZT |    .NET 4.7.2 |              32768 | 2,575.96 ms |  9.110 ms |  8.521 ms |  1.00 |    1.00 |       1.00 |    0.00 |     328 B |     - |     - |     - |  131096 B |
-|                Fastenshtein | Job-DRGSBT | .NET Core 3.0 |              32768 | 2,359.66 ms | 22.966 ms | 21.483 ms |  0.92 |    1.09 |       1.05 |    0.01 |     340 B |     - |     - |     - |  131096 B |
+|                Fastenshtein | Job-KPDJFU |    .NET 4.7.2 |              32768 | 2,544.47 ms |  9.147 ms |  8.109 ms |  1.00 |    1.00 |       1.00 |    0.00 |     328 B |     - |     - |     - |  131096 B |
+|                Fastenshtein | Job-PTMVLW | .NET Core 3.0 |              32768 | 2,294.76 ms | 14.595 ms | 12.938 ms |  0.90 |    1.11 |       1.07 |    0.01 |     340 B |     - |     - |     - |  131096 B |
 
 ## Edge Match Benchmark
 
@@ -87,17 +87,17 @@ This benchmark shows how well the calculator can optimise matching characters at
 
 |        Method |        Job |       Runtime | NumberOfCharacters |             Mean |           Error |          StdDev | Ratio | Speedup | Worthiness | RatioSD | Code Size |  Gen 0 | Gen 1 | Gen 2 | Allocated |
 |-------------- |----------- |-------------- |------------------- |-----------------:|----------------:|----------------:|------:|--------:|-----------:|--------:|----------:|-------:|------:|------:|----------:|
-| Quickenshtein | Job-YKPFGX |    .NET 4.7.2 |                 40 |         128.3 ns |         3.02 ns |         8.91 ns |  1.00 |    1.00 |       1.00 |    0.00 |    3689 B |      - |     - |     - |         - |
-| Quickenshtein | Job-OFHMSW | .NET Core 3.0 |                 40 |         187.9 ns |         1.08 ns |         1.01 ns |  1.38 |    0.73 |       0.78 |    0.10 |    3439 B |      - |     - |     - |         - |
+| Quickenshtein | Job-MQWIAE |    .NET 4.7.2 |                 40 |         114.6 ns |         1.14 ns |         1.01 ns |  1.00 |    1.00 |       1.00 |    0.00 |    3705 B |      - |     - |     - |         - |
+| Quickenshtein | Job-YJOGZP | .NET Core 3.0 |                 40 |         185.5 ns |         1.31 ns |         1.22 ns |  1.62 |    0.62 |       0.50 |    0.02 |    4536 B |      - |     - |     - |         - |
 |               |            |               |                    |                  |                 |                 |       |         |            |         |           |        |       |       |           |
-|  Fastenshtein | Job-YKPFGX |    .NET 4.7.2 |                 40 |       2,934.3 ns |        21.09 ns |        19.73 ns |  1.00 |    1.00 |       1.00 |    0.00 |     328 B | 0.0572 |     - |     - |     185 B |
-|  Fastenshtein | Job-OFHMSW | .NET Core 3.0 |                 40 |       3,329.6 ns |        16.07 ns |        15.03 ns |  1.13 |    0.88 |       0.88 |    0.01 |     329 B | 0.0572 |     - |     - |     184 B |
+|  Fastenshtein | Job-MQWIAE |    .NET 4.7.2 |                 40 |       2,929.8 ns |        21.55 ns |        20.16 ns |  1.00 |    1.00 |       1.00 |    0.00 |     328 B | 0.0572 |     - |     - |     185 B |
+|  Fastenshtein | Job-YJOGZP | .NET Core 3.0 |                 40 |       3,318.1 ns |        26.25 ns |        24.56 ns |  1.13 |    0.88 |       0.88 |    0.01 |     329 B | 0.0572 |     - |     - |     184 B |
 |               |            |               |                    |                  |                 |                 |       |         |            |         |           |        |       |       |           |
-| Quickenshtein | Job-YKPFGX |    .NET 4.7.2 |               8192 |       7,222.4 ns |        45.59 ns |        35.59 ns |  1.00 |    1.00 |       1.00 |    0.00 |    3689 B |      - |     - |     - |         - |
-| Quickenshtein | Job-OFHMSW | .NET Core 3.0 |               8192 |         816.0 ns |         6.44 ns |         6.03 ns |  0.11 |    8.86 |       9.50 |    0.00 |    3439 B |      - |     - |     - |         - |
+| Quickenshtein | Job-MQWIAE |    .NET 4.7.2 |               8192 |       5,751.0 ns |        44.15 ns |        41.30 ns |  1.00 |    1.00 |       1.00 |    0.00 |    3705 B |      - |     - |     - |         - |
+| Quickenshtein | Job-YJOGZP | .NET Core 3.0 |               8192 |         811.8 ns |         6.59 ns |         5.51 ns |  0.14 |    7.08 |       5.79 |    0.00 |    4536 B |      - |     - |     - |         - |
 |               |            |               |                    |                  |                 |                 |       |         |            |         |           |        |       |       |           |
-|  Fastenshtein | Job-YKPFGX |    .NET 4.7.2 |               8192 | 103,060,980.0 ns | 1,186,548.01 ns | 1,109,897.74 ns |  1.00 |    1.00 |       1.00 |    0.00 |     328 B |      - |     - |     - |   32816 B |
-|  Fastenshtein | Job-OFHMSW | .NET Core 3.0 |               8192 | 102,817,096.0 ns |   602,997.70 ns |   564,044.43 ns |  1.00 |    1.00 |       1.00 |    0.01 |     329 B |      - |     - |     - |   33059 B |
+|  Fastenshtein | Job-MQWIAE |    .NET 4.7.2 |               8192 | 102,255,864.0 ns |   773,749.43 ns |   723,765.70 ns |  1.00 |    1.00 |       1.00 |    0.00 |     328 B |      - |     - |     - |   32816 B |
+|  Fastenshtein | Job-YJOGZP | .NET Core 3.0 |               8192 | 117,574,852.0 ns | 1,249,410.65 ns | 1,168,699.49 ns |  1.15 |    0.87 |       0.87 |    0.02 |     329 B |      - |     - |     - |   32792 B |
 
 ## Empty Text Benchmark
 
