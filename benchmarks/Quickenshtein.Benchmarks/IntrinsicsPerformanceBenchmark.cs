@@ -3,6 +3,9 @@ using Quickenshtein.Benchmarks.Config;
 
 namespace Quickenshtein.Benchmarks
 {
+	/// <summary>
+	/// Shows how SIMD/Intrinsics help improve the performance of the calculation, especially for long strings.
+	/// </summary>
 	[Config(typeof(FullRuntimeConfig))]
 	public class IntrinsicsPerformanceBenchmark
 	{

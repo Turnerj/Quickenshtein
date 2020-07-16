@@ -1,13 +1,24 @@
 ﻿#if NETCOREAPP
 using System;
 using BenchmarkDotNet.Attributes;
+using BenchmarkDotNet.Diagnosers;
 using Quickenshtein.Benchmarks.Config;
 
 namespace Quickenshtein.Benchmarks.Profiling
 {
-	[Config(typeof(CoreOnlyRuntimeConfig))]
-	public class CalculateRowBenchmark
+	[Config(typeof(CustomConfig))]
+	public class CoreCalculateRowBenchmark
 	{
+		class CustomConfig : CustomIntrinsicConfig
+		{
+			public CustomConfig() : base()
+			{
+				AddCore();
+
+				AddHardwareCounters(HardwareCounter.BranchMispredictions, HardwareCounter.CacheMisses);
+			}
+		}
+
 		[Params(10, 400, 8000)]
 		public int NumberOfCharacters;
 

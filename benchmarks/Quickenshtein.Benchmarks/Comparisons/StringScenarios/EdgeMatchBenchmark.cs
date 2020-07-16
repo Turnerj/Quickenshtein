@@ -1,7 +1,7 @@
 ﻿using BenchmarkDotNet.Attributes;
 using Quickenshtein.Benchmarks.Config;
 
-namespace Quickenshtein.Benchmarks.StringScenarios
+namespace Quickenshtein.Benchmarks.Comparisons.StringScenarios
 {
 	/// <summary>
 	/// This benchmark shows how well the calculator can optimise matching characters at the start and end.

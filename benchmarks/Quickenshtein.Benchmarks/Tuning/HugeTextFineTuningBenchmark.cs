@@ -1,15 +1,28 @@
 ﻿using BenchmarkDotNet.Attributes;
+using BenchmarkDotNet.Diagnosers;
 using Quickenshtein.Benchmarks.Config;
 
-namespace Quickenshtein.Benchmarks
+namespace Quickenshtein.Benchmarks.Tuning
 {
-	[Config(typeof(BaseRuntimeQuickConfig))]
-	public class QuickComparisonBenchmark
+	[Config(typeof(CustomConfig))]
+	public class HugeTextFineTuningBenchmark
 	{
-		[Params(0, 10, 400, 8000)]
+		private class CustomConfig : CustomIntrinsicConfig
+		{
+			public CustomConfig()
+			{
+				AddFramework();
+				AddCore();
+
+				AddHardwareCounters(HardwareCounter.BranchMispredictions, HardwareCounter.CacheMisses);
+			}
+		}
+
+		[Params(16000, 32000)]
 		public int NumberOfCharacters;
 
 		public string StringA;
+
 		public string StringB;
 
 		[GlobalSetup]
@@ -19,28 +32,16 @@ namespace Quickenshtein.Benchmarks
 			StringB = Utilities.BuildString("babdacbaabcedcbaa", NumberOfCharacters);
 		}
 
-		[Benchmark(Baseline = true)]
-		public int Baseline()
-		{
-			return LevenshteinBaseline.GetDistance(StringA, StringB);
-		}
-
 		[Benchmark]
 		public int Quickenshtein()
 		{
-			return global::Quickenshtein.Levenshtein.GetDistance(StringA, StringB);
+			return global::Quickenshtein.Levenshtein.GetDistance(StringA, StringB, CalculationOptions.Default);
 		}
 
 		[Benchmark]
 		public int Quickenshtein_Threaded()
 		{
 			return global::Quickenshtein.Levenshtein.GetDistance(StringA, StringB, CalculationOptions.DefaultWithThreading);
-		}
-
-		[Benchmark]
-		public int Fastenshtein()
-		{
-			return global::Fastenshtein.Levenshtein.Distance(StringA, StringB);
 		}
 	}
 }

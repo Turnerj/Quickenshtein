@@ -1,7 +1,7 @@
 ﻿using BenchmarkDotNet.Attributes;
 using Quickenshtein.Benchmarks.Config;
 
-namespace Quickenshtein.Benchmarks.StringScenarios
+namespace Quickenshtein.Benchmarks.Comparisons.StringScenarios
 {
 	/// <summary>
 	/// This benchmark eliminates bonuses for trimming equal characters at the start and end.

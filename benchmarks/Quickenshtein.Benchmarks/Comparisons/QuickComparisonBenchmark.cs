@@ -1,27 +1,25 @@
 ﻿using BenchmarkDotNet.Attributes;
 using Quickenshtein.Benchmarks.Config;
 
-namespace Quickenshtein.Benchmarks.StringScenarios
+namespace Quickenshtein.Benchmarks.Comparisons
 {
 	/// <summary>
-	/// This benchmark shows the impact of various, though relatively short, string lengths.
-	/// The calculation is forced to compute the worst possible case due to no matching characters.
+	/// This is the overall comparison benchmark between different implementations for different string sizes.
 	/// </summary>
-	[Config(typeof(BaseRuntimeConfig))]
-	public class TextLengthBenchmark
+	[Config(typeof(BaseRuntimeQuickConfig))]
+	public class QuickComparisonBenchmark
 	{
-		[Params(5, 20, 40)]
+		[Params(10, 400, 8000)]
 		public int NumberOfCharacters;
 
 		public string StringA;
-
 		public string StringB;
 
 		[GlobalSetup]
 		public void Setup()
 		{
-			StringA = Utilities.BuildString("abcdef", NumberOfCharacters);
-			StringB = Utilities.BuildString("zyxwvu", NumberOfCharacters);
+			StringA = Utilities.BuildString("aabcdecbaabcadbab", NumberOfCharacters);
+			StringB = Utilities.BuildString("babdacbaabcedcbaa", NumberOfCharacters);
 		}
 
 		[Benchmark(Baseline = true)]
@@ -34,6 +32,12 @@ namespace Quickenshtein.Benchmarks.StringScenarios
 		public int Quickenshtein()
 		{
 			return global::Quickenshtein.Levenshtein.GetDistance(StringA, StringB);
+		}
+
+		[Benchmark]
+		public int Quickenshtein_Threaded()
+		{
+			return global::Quickenshtein.Levenshtein.GetDistance(StringA, StringB, CalculationOptions.DefaultWithThreading);
 		}
 
 		[Benchmark]

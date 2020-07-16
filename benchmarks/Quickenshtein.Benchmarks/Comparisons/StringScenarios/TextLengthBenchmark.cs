@@ -1,17 +1,16 @@
 ﻿using BenchmarkDotNet.Attributes;
 using Quickenshtein.Benchmarks.Config;
 
-namespace Quickenshtein.Benchmarks.StringScenarios
+namespace Quickenshtein.Benchmarks.Comparisons.StringScenarios
 {
 	/// <summary>
-	/// This benchmark shows the impact of extremely long string lengths.
+	/// This benchmark shows the impact of various, though relatively short, string lengths.
 	/// The calculation is forced to compute the worst possible case due to no matching characters.
-	/// The baseline calculator however can't perform calculations this large so it is omitted.
 	/// </summary>
 	[Config(typeof(BaseRuntimeConfig))]
-	public class HugeTextBenchmark
+	public class TextLengthBenchmark
 	{
-		[Params(8192, 32768)]
+		[Params(5, 20, 40)]
 		public int NumberOfCharacters;
 
 		public string StringA;
@@ -25,20 +24,16 @@ namespace Quickenshtein.Benchmarks.StringScenarios
 			StringB = Utilities.BuildString("zyxwvu", NumberOfCharacters);
 		}
 
-		[Benchmark]
-		public int Quickenshtein_NoThreading()
+		[Benchmark(Baseline = true)]
+		public int Baseline()
 		{
-			return global::Quickenshtein.Levenshtein.GetDistance(StringA, StringB);
+			return LevenshteinBaseline.GetDistance(StringA, StringB);
 		}
 
 		[Benchmark]
-		public int Quickenshtein_WithThreading()
+		public int Quickenshtein()
 		{
-			return global::Quickenshtein.Levenshtein.GetDistance(StringA, StringB, new CalculationOptions 
-			{
-				EnableThreadingAfterXCharacters = 0,
-				MinimumCharactersPerThread = 16
-			});
+			return global::Quickenshtein.Levenshtein.GetDistance(StringA, StringB);
 		}
 
 		[Benchmark]

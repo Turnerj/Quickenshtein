@@ -1,7 +1,7 @@
 ﻿using BenchmarkDotNet.Attributes;
 using Quickenshtein.Benchmarks.Config;
 
-namespace Quickenshtein.Benchmarks.StringScenarios
+namespace Quickenshtein.Benchmarks.Comparisons.StringScenarios
 {
 	/// <summary>
 	/// This benchmark shows how well the calculator can optimise an empty string in either the source or target.
