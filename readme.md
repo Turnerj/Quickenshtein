@@ -48,3 +48,21 @@ You can view results to these benchmarks at the links below:
 - [Benchmarking against Fastenshtein](/docs/OverallComparison.md)
 - [Isolated Benchmarks](/docs/StringScenarios.md)
 - [Intrinsics Performance](/docs/IntrinsicsPerformance.md)
+
+## Example Usage
+
+```csharp
+using Quickenshtein;
+
+// Common usage (uses default CalculationOptions with threading disabled)
+var distance1 = Levenshtein.GetDistance("Saturday", "Sunday");
+
+// Enable threading
+var distance2 = Levenshtein.GetDistance("Saturday", "Sunday", CalculationOptions.DefaultWithThreading);
+
+// Custom calculation options (helps with tuning for your specific workload and environment - you should benchmark your configurations on your system)
+var distance3 = Levenshtein.GetDistance("Saturday", "Sunday", new CalculationOptions {
+    EnableThreadingAfterXCharacters = 10000,
+    MinimumCharactersPerThread = 25000
+});
+```
