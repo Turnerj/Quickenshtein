@@ -1,4 +1,5 @@
-﻿using BenchmarkDotNet.Configs;
+﻿using BenchmarkDotNet.Columns;
+using BenchmarkDotNet.Configs;
 using BenchmarkDotNet.Diagnosers;
 using BenchmarkDotNet.Environments;
 using BenchmarkDotNet.Jobs;
@@ -17,10 +18,10 @@ namespace Quickenshtein.Benchmarks.Config
 				.AsBaseline());
 
 			AddJob(Job.Default
-				.WithRuntime(CoreRuntime.Core30));
+				.WithRuntime(CoreRuntime.Core50));
 
+			AddColumn(StatisticColumn.OperationsPerSecond);
 			AddColumn(SpeedupRatioColumn.SpeedupOfMean);
-			AddColumn(WorthinessRatioColumn.WorthinessOfMean);
 			AddDiagnoser(new DisassemblyDiagnoser(new DisassemblyDiagnoserConfig(maxDepth: 3)));
 		}
 	}
