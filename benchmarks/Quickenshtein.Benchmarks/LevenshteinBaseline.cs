@@ -15,25 +15,25 @@ namespace Quickenshtein.Benchmarks
 			  .Select(line => new int[target.Length + 1])
 			  .ToArray();
 
-			for (var i = 1; i <= source.Length; ++i)
+			for (var rowIndex = 1; rowIndex <= source.Length; rowIndex++)
 			{
-				costMatrix[i][0] = i;
+				costMatrix[rowIndex][0] = rowIndex;
 			}
 
-			for (var i = 1; i <= target.Length; ++i)
+			for (var columnIndex = 1; columnIndex <= target.Length; columnIndex++)
 			{
-				costMatrix[0][i] = i;
+				costMatrix[0][columnIndex] = columnIndex;
 			}
 
-			for (var i = 1; i <= source.Length; ++i)
+			for (var rowIndex = 1; rowIndex <= source.Length; rowIndex++)
 			{
-				for (var j = 1; j <= target.Length; ++j)
+				for (var columnIndex = 1; columnIndex <= target.Length; columnIndex++)
 				{
-					var insertion = costMatrix[i][j - 1] + 1;
-					var deletion = costMatrix[i - 1][j] + 1;
-					var substitution = costMatrix[i - 1][j - 1] + (source[i - 1] == target[j - 1] ? 0 : 1);
+					var insertion = costMatrix[rowIndex][columnIndex - 1] + 1;
+					var deletion = costMatrix[rowIndex - 1][columnIndex] + 1;
+					var substitution = costMatrix[rowIndex - 1][columnIndex - 1] + (source[rowIndex - 1] == target[columnIndex - 1] ? 0 : 1);
 
-					costMatrix[i][j] = Math.Min(Math.Min(insertion, deletion), substitution);
+					costMatrix[rowIndex][columnIndex] = Math.Min(Math.Min(insertion, deletion), substitution);
 				}
 			}
 
