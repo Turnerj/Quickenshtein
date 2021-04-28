@@ -1,13 +1,35 @@
 version: 'Build {build}'
 image: Visual Studio 2019
 skip_branch_with_pr: true
-
-install:
-  - choco install opencover.portable codecov reportgenerator.portable
-  - ps: .\build\dotnet-install.ps1 -Version 3.0.100
   
 build_script:
-  - ps: .\build.appveyor.ps1
+  - ps: dotnet restore
+  - ps: dotnet build --no-restore -c Release
+  - ps: |
+        $env:COMPlus_EnableAVX2 = 1
+        $env:COMPlus_EnableSSE41 = 1
+        $env:COMPlus_EnableSSE2 = 1
+        Write-Host "Test Environment: Normal" -ForegroundColor "Cyan"
+        dotnet test --no-restore /p:SkipBuildVersioning=true
+
+        $env:COMPlus_EnableAVX2 = 1
+        $env:COMPlus_EnableSSE41 = 1
+        $env:COMPlus_EnableSSE2 = 1
+        Write-Host "Test Environment: AVX2 Disabled" -ForegroundColor "Cyan"
+        dotnet test --no-restore --framework netcoreapp3.1 /p:SkipBuildVersioning=true
+        
+        $env:COMPlus_EnableAVX2 = 1
+        $env:COMPlus_EnableSSE41 = 1
+        $env:COMPlus_EnableSSE2 = 1
+        Write-Host "Test Environment: SSE41 Disabled" -ForegroundColor "Cyan"
+        dotnet test --no-restore --framework netcoreapp3.1 /p:SkipBuildVersioning=true
+        
+        $env:COMPlus_EnableAVX2 = 1
+        $env:COMPlus_EnableSSE41 = 1
+        $env:COMPlus_EnableSSE2 = 1
+        Write-Host "Test Environment: SSE2 Disabled" -ForegroundColor "Cyan"
+        dotnet test --no-restore --framework netcoreapp3.1 /p:SkipBuildVersioning=true
+  - ps: dotnet pack --no-build -c Release /p:PackageOutputPath=build-artifacts
   
 test: false
 artifacts:

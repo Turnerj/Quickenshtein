@@ -4,12 +4,13 @@
     <PackageId>$(AssemblyName)</PackageId>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <PackageLicenseFile>License.txt</PackageLicenseFile>
+    <PackageReadmeFile>readme.md</PackageReadmeFile>
     <PackageProjectUrl>https://github.com/Turnerj/Quickenshtein</PackageProjectUrl>
     <PackageBaseTags>levenshtein,distance</PackageBaseTags>
     
     <RepositoryUrl>https://github.com/Turnerj/Quickenshtein.git</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
-    <RepositoryBranch>master</RepositoryBranch>
+    <RepositoryBranch>main</RepositoryBranch>
 
     <!-- SourceLink Support -->
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
@@ -21,10 +22,12 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All" />
+    <PackageReference Include="TurnerSoftware.BuildVersioning" Version="0.2.1" PrivateAssets="All" />
   </ItemGroup>
 
   <ItemGroup>
     <None Include="..\..\License.txt" Pack="true" PackagePath="$(PackageLicenseFile)"/>
+    <None Include="..\..\readme.md" Pack="true" PackagePath="$(PackageReadmeFile)"/>
   </ItemGroup>
   
 </Project>
