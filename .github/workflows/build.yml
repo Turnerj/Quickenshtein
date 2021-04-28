@@ -31,6 +31,7 @@ jobs:
     - name: Build
       run: dotnet build --no-restore -c Release
     - name: Test with Coverage
+      shell: powershell
       run: |
         $env:COMPlus_EnableAVX2 = 1
         $env:COMPlus_EnableSSE41 = 1
