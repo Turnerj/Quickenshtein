@@ -13,7 +13,6 @@ namespace Quickenshtein
 	/// </summary>
 	public static partial class Levenshtein
 	{
-#if NETSTANDARD
 		public static int GetDistance(string source, string target)
 		{
 			return GetDistance(source, target, CalculationOptions.Default);
@@ -38,7 +37,6 @@ namespace Quickenshtein
 				return CalculateDistance(sourcePtr, targetPtr, source.Length, target.Length, calculationOptions);
 			}
 		}
-#endif
 
 		public static unsafe int GetDistance(ReadOnlySpan<char> source, ReadOnlySpan<char> target)
 		{
