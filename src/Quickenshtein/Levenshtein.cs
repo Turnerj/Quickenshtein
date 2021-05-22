@@ -18,24 +18,9 @@ namespace Quickenshtein
 			return GetDistance(source, target, CalculationOptions.Default);
 		}
 
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static unsafe int GetDistance(string source, string target, CalculationOptions calculationOptions)
+		public static int GetDistance(string source, string target, CalculationOptions calculationOptions)
 		{
-			//Shortcut any processing if either string is empty
-			if (source == null || source.Length == 0)
-			{
-				return target?.Length ?? 0;
-			}
-			if (target == null || target.Length == 0)
-			{
-				return source.Length;
-			}
-
-			fixed (char* sourcePtr = source)
-			fixed (char* targetPtr = target)
-			{
-				return CalculateDistance(sourcePtr, targetPtr, source.Length, target.Length, calculationOptions);
-			}
+			return GetDistance(source.AsSpan(), target.AsSpan(), calculationOptions);
 		}
 
 		public static unsafe int GetDistance(ReadOnlySpan<char> source, ReadOnlySpan<char> target)
