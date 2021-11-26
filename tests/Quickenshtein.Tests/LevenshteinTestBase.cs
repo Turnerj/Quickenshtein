@@ -7,7 +7,6 @@ namespace Quickenshtein.Tests
 	{
 		protected CalculationOptions CalculationOptions { get; set; }
 
-#if NET472
 		[TestMethod]
 		public void Null_FirstArg_1()
 		{
@@ -35,7 +34,6 @@ namespace Quickenshtein.Tests
 			var distance = Levenshtein.GetDistance("test", null, CalculationOptions);
 			Assert.AreEqual(4, distance);
 		}
-#endif
 
 		[DataTestMethod]
 		[DataRow("", "", DisplayName = "Empty")]

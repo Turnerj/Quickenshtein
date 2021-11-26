@@ -6,14 +6,12 @@ namespace Quickenshtein.Tests
 	[TestClass]
 	public class NoOptionsLevenshteinTests
 	{
-#if NET472
 		[TestMethod]
 		public void GetDistanceFromString()
 		{
 			var distance = Levenshtein.GetDistance("test", string.Empty);
 			Assert.AreEqual(4, distance);
 		}
-#endif
 
 		[TestMethod]
 		public void GetDistanceFromReadOnlySpan()
