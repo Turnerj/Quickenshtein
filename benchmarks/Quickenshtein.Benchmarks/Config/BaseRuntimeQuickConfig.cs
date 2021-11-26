@@ -18,7 +18,7 @@ namespace Quickenshtein.Benchmarks.Config
 				.AsBaseline());
 
 			AddJob(Job.ShortRun
-				.WithRuntime(CoreRuntime.Core50));
+				.WithRuntime(CoreRuntime.Core60));
 
 			AddColumn(StatisticColumn.OperationsPerSecond);
 			AddColumn(SpeedupRatioColumn.SpeedupOfMean);
