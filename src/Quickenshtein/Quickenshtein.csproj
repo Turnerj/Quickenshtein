@@ -1,11 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;netcoreapp3.0</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;netcoreapp3.1</TargetFrameworks>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     
     <Title>Quickenshtein</Title>
-    <Description>A quick and memory efficient Levenshtein Distance calculator for .NET</Description>
+    <Description>The quickest and most memory efficient implementation of Levenshtein Distance with SIMD and Threading support</Description>
     <PackageTags>$(PackageBaseTags)</PackageTags>
     <Authors>James Turner</Authors>
   </PropertyGroup>
