@@ -71,3 +71,16 @@ var distance3 = Levenshtein.GetDistance("Saturday", "Sunday", new CalculationOpt
     MinimumCharactersPerThread = 25000
 });
 ```
+
+## Learning Resources
+
+I've written quite a bit about Levenshtein Distance and various ways you can extract performance from it:
+
+- [Levenshtein Distance Part 1: What is it?](https://turnerj.com/blog/levenshtein-distance-part-1-what-is-it)
+- [Levenshtein Distance Part 2: Gotta Go Fast](https://turnerj.com/blog/levenshtein-distance-part-2-gotta-go-fast)
+- [Levenshtein Distance Part 3: Optimize Everything!](https://turnerj.com/blog/levenshtein-distance-part-3-optimize-everything)
+- [Levenshtein Distance with SIMD](https://turnerj.com/blog/levenshtein-distance-with-simd)
+
+If you prefer video:
+
+- [Maximising Algorithm Performance in .NET: Levenshtein Distance](https://www.youtube.com/watch?v=JiOYajl2Mds) at .NET Conf 2020
