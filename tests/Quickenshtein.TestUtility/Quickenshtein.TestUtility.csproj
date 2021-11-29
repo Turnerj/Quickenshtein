@@ -1,15 +1,15 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <OutputType>Exe</OutputType>
-    <TargetFramework>net6.0</TargetFramework>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <IsPackable>false</IsPackable>
-  </PropertyGroup>
+	<PropertyGroup>
+		<OutputType>Exe</OutputType>
+		<TargetFramework>net6.0</TargetFramework>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+		<IsPackable>false</IsPackable>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\..\benchmarks\Quickenshtein.Benchmarks\Quickenshtein.Benchmarks.csproj" />
-    <ProjectReference Include="..\..\src\Quickenshtein\Quickenshtein.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\..\benchmarks\Quickenshtein.Benchmarks\Quickenshtein.Benchmarks.csproj" />
+		<ProjectReference Include="..\..\src\Quickenshtein\Quickenshtein.csproj" />
+	</ItemGroup>
 
 </Project>

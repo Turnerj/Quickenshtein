@@ -1,17 +1,17 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;netcoreapp3.1</TargetFrameworks>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    
-    <Title>Quickenshtein</Title>
-    <Description>The quickest and most memory efficient implementation of Levenshtein Distance with SIMD and Threading support</Description>
-    <PackageTags>$(PackageBaseTags)</PackageTags>
-    <Authors>James Turner</Authors>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFrameworks>netstandard2.0;netcoreapp3.1</TargetFrameworks>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 
-  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
-    <PackageReference Include="System.Memory" Version="4.5.4" />
-  </ItemGroup>
+		<Title>Quickenshtein</Title>
+		<Description>The quickest and most memory efficient implementation of Levenshtein Distance with SIMD and Threading support</Description>
+		<PackageTags>$(PackageBaseTags)</PackageTags>
+		<Authors>James Turner</Authors>
+	</PropertyGroup>
+
+	<ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
+		<PackageReference Include="System.Memory" Version="4.5.4" />
+	</ItemGroup>
 
 </Project>
