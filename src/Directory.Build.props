@@ -1,33 +1,30 @@
 <Project>
 
-  <PropertyGroup>
-    <PackageId>$(AssemblyName)</PackageId>
-    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
-    <PackageLicenseFile>License.txt</PackageLicenseFile>
-    <PackageReadmeFile>readme.md</PackageReadmeFile>
-    <PackageProjectUrl>https://github.com/Turnerj/Quickenshtein</PackageProjectUrl>
-    <PackageBaseTags>levenshtein,distance</PackageBaseTags>
-    
-    <RepositoryUrl>https://github.com/Turnerj/Quickenshtein.git</RepositoryUrl>
-    <RepositoryType>git</RepositoryType>
-    <RepositoryBranch>main</RepositoryBranch>
+	<PropertyGroup>
+		<PackageId>$(AssemblyName)</PackageId>
+		<PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<PackageIcon>icon.png</PackageIcon>
+		<PackageReadmeFile>readme.md</PackageReadmeFile>
+		<PackageProjectUrl>https://github.com/Turnerj/Quickenshtein</PackageProjectUrl>
+		<PackageBaseTags>levenshtein,distance</PackageBaseTags>
 
-    <!-- SourceLink Support -->
-    <PublishRepositoryUrl>true</PublishRepositoryUrl>
-    <EmbedUntrackedSources>true</EmbedUntrackedSources>
-    <IncludeSymbols>true</IncludeSymbols>
-    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+		<!-- SourceLink Support -->
+		<PublishRepositoryUrl>true</PublishRepositoryUrl>
+		<EmbedUntrackedSources>true</EmbedUntrackedSources>
+		<IncludeSymbols>true</IncludeSymbols>
+		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
 
-    <LangVersion>Latest</LangVersion>
-  </PropertyGroup>
-  <ItemGroup>
-    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All" />
-    <PackageReference Include="TurnerSoftware.BuildVersioning" Version="0.2.1" PrivateAssets="All" />
-  </ItemGroup>
+		<LangVersion>Latest</LangVersion>
+	</PropertyGroup>
+	<ItemGroup>
+		<PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All" />
+		<PackageReference Include="TurnerSoftware.BuildVersioning" Version="0.4.0" PrivateAssets="All" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <None Include="..\..\License.txt" Pack="true" PackagePath="$(PackageLicenseFile)"/>
-    <None Include="..\..\readme.md" Pack="true" PackagePath="$(PackageReadmeFile)"/>
-  </ItemGroup>
-  
+	<ItemGroup>
+		<None Include="..\..\images\$(PackageIcon)" Pack="true" PackagePath="/" />
+		<None Include="..\..\readme.md" Pack="true" PackagePath="$(PackageReadmeFile)"/>
+	</ItemGroup>
+
 </Project>

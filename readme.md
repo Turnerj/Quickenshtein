@@ -1,3 +1,7 @@
+<div align="center">
+
+![Icon](images/icon.png)
+
 # Quickenshtein
 
 A quick and memory efficient Levenshtein Distance calculator for .NET
@@ -5,6 +9,7 @@ A quick and memory efficient Levenshtein Distance calculator for .NET
 [![AppVeyor](https://img.shields.io/appveyor/ci/Turnerj/Quickenshtein/master.svg)](https://ci.appveyor.com/project/Turnerj/Quickenshtein)
 [![Codecov](https://img.shields.io/codecov/c/github/Turnerj/Quickenshtein/master.svg)](https://codecov.io/gh/Turnerj/Quickenshtein)
 [![NuGet](https://img.shields.io/nuget/v/Quickenshtein.svg)](https://www.nuget.org/packages/Quickenshtein/)
+</div>
 
 ## Performance
 

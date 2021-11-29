@@ -4,6 +4,8 @@ on:
   push:
     branches: [ main ]
   pull_request: 
+  release:
+    types: [ published ]
 
 env:
   # Disable the .NET logo in the console output.
@@ -25,11 +27,16 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v2
-
+    - name: Install .NET SDK
+      uses: actions/setup-dotnet@v1.9.0
+      with:
+        dotnet-version: |
+          3.1.x
+          6.0.x
     - name: Install dependencies
       run: dotnet restore
     - name: Build
-      run: dotnet build --no-restore -c Release
+      run: dotnet build --no-restore -c Release /p:ContinuousIntegrationBuild=true -bl:${{env.BUILD_ARTIFACT_PATH}}/msbuild-build.binlog
     - name: Test with Coverage
       shell: pwsh
       run: |
@@ -57,9 +64,10 @@ jobs:
         Write-Host "Test Environment: SSE2 Disabled" -ForegroundColor "Cyan"
         dotnet test --no-restore --logger trx --results-directory ${{env.BUILD_ARTIFACT_PATH}}/coverage --collect "XPlat Code Coverage" --settings CodeCoverage.runsettings --framework netcoreapp3.1 /p:SkipBuildVersioning=true
     - name: Pack
-      run: dotnet pack --no-build -c Release /p:PackageOutputPath=${{env.BUILD_ARTIFACT_PATH}}
+      run: dotnet pack --no-build -c Release /p:PackageOutputPath=${{env.BUILD_ARTIFACT_PATH}} /p:ContinuousIntegrationBuild=true -bl:${{env.BUILD_ARTIFACT_PATH}}/msbuild-pack.binlog
     - name: Publish artifacts
       uses: actions/upload-artifact@v2
+      if: always()
       with:
         name: ${{matrix.os}}
         path: ${{env.BUILD_ARTIFACT_PATH}}
@@ -87,3 +95,39 @@ jobs:
       with:
         name: coverage-report
         path: Cobertura.xml
+
+  push-to-github-packages:
+    name: 'Push GitHub Packages'
+    needs: build
+    if: github.ref == 'refs/heads/main' || github.event_name == 'release'
+    environment:
+      name: 'GitHub Packages'
+      url: https://github.com/Turnerj/Quickenshtein/packages
+    permissions:
+      packages: write
+    runs-on: ubuntu-latest
+    steps:
+      - name: 'Download build'
+        uses: actions/download-artifact@v2
+        with:
+          name: 'ubuntu-latest'
+      - name: 'Add NuGet source'
+        run: dotnet nuget add source https://nuget.pkg.github.com/Turnerj/index.json --name GitHub --username Turnerj --password ${{secrets.GITHUB_TOKEN}} --store-password-in-clear-text
+      - name: 'Upload NuGet package'
+        run: dotnet nuget push *.nupkg --api-key ${{secrets.GH_PACKAGE_REGISTRY_API_KEY}} --source GitHub --skip-duplicate --no-symbols true
+
+  push-to-nuget:
+    name: 'Push NuGet Packages'
+    needs: build
+    if: github.event_name == 'release'
+    environment:
+      name: 'NuGet'
+      url: https://www.nuget.org/packages/Quickenshtein
+    runs-on: ubuntu-latest
+    steps:
+      - name: 'Download build'
+        uses: actions/download-artifact@v2
+        with:
+          name: 'ubuntu-latest'
+      - name: 'Upload NuGet package and symbols'
+        run: dotnet nuget push *.nupkg --source https://api.nuget.org/v3/index.json --skip-duplicate --api-key ${{secrets.NUGET_API_KEY}}
