@@ -36,7 +36,7 @@ jobs:
     - name: Install dependencies
       run: dotnet restore
     - name: Build
-      run: dotnet build --no-restore -c Release
+      run: dotnet build --no-restore -c Release /p:ContinuousIntegrationBuild=true -bl:${{env.BUILD_ARTIFACT_PATH}}/msbuild-build.binlog
     - name: Test with Coverage
       shell: pwsh
       run: |
@@ -64,9 +64,10 @@ jobs:
         Write-Host "Test Environment: SSE2 Disabled" -ForegroundColor "Cyan"
         dotnet test --no-restore --logger trx --results-directory ${{env.BUILD_ARTIFACT_PATH}}/coverage --collect "XPlat Code Coverage" --settings CodeCoverage.runsettings --framework netcoreapp3.1 /p:SkipBuildVersioning=true
     - name: Pack
-      run: dotnet pack --no-build -c Release /p:PackageOutputPath=${{env.BUILD_ARTIFACT_PATH}}
+      run: dotnet pack --no-build -c Release /p:PackageOutputPath=${{env.BUILD_ARTIFACT_PATH}} /p:ContinuousIntegrationBuild=true -bl:${{env.BUILD_ARTIFACT_PATH}}/msbuild-pack.binlog
     - name: Publish artifacts
       uses: actions/upload-artifact@v2
+      if: always()
       with:
         name: ${{matrix.os}}
         path: ${{env.BUILD_ARTIFACT_PATH}}
