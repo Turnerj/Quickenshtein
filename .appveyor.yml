@@ -22,21 +22,21 @@ build_script:
         Write-Host "Test Environment: Normal" -ForegroundColor "Cyan"
         dotnet test --no-restore /p:SkipBuildVersioning=true
 
-        $env:COMPlus_EnableAVX2 = 1
+        $env:COMPlus_EnableAVX2 = 0
         $env:COMPlus_EnableSSE41 = 1
         $env:COMPlus_EnableSSE2 = 1
         Write-Host "Test Environment: AVX2 Disabled" -ForegroundColor "Cyan"
         dotnet test --no-restore --framework netcoreapp3.1 /p:SkipBuildVersioning=true
         
-        $env:COMPlus_EnableAVX2 = 1
-        $env:COMPlus_EnableSSE41 = 1
+        $env:COMPlus_EnableAVX2 = 0
+        $env:COMPlus_EnableSSE41 = 0
         $env:COMPlus_EnableSSE2 = 1
         Write-Host "Test Environment: SSE41 Disabled" -ForegroundColor "Cyan"
         dotnet test --no-restore --framework netcoreapp3.1 /p:SkipBuildVersioning=true
         
-        $env:COMPlus_EnableAVX2 = 1
-        $env:COMPlus_EnableSSE41 = 1
-        $env:COMPlus_EnableSSE2 = 1
+        $env:COMPlus_EnableAVX2 = 0
+        $env:COMPlus_EnableSSE41 = 0
+        $env:COMPlus_EnableSSE2 = 0
         Write-Host "Test Environment: SSE2 Disabled" -ForegroundColor "Cyan"
         dotnet test --no-restore --framework netcoreapp3.1 /p:SkipBuildVersioning=true
   - ps: dotnet pack --no-build -c Release /p:PackageOutputPath=$env:BUILD_ARTIFACT_PATH /p:ContinuousIntegrationBuild=true -bl:$env:BUILD_ARTIFACT_PATH/msbuild-pack.binlog
