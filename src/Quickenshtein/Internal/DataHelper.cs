@@ -212,34 +212,31 @@ namespace Quickenshtein.Internal
 			var sourceUShortPtr = (ushort*)sourcePtr;
 			var targetUShortPtr = (ushort*)targetPtr;
 
-			if (Sse2.IsSupported && searchLength >= Vector128<ushort>.Count * 2)
+			if (Avx2.IsSupported)
 			{
-				if (Avx2.IsSupported)
+				var bound = searchLength & ~(Vector256<ushort>.Count - 1);
+				for (; index < bound; index += Vector256<ushort>.Count)
 				{
-					while (searchLength >= Vector256<ushort>.Count)
+					var sourceVector = Avx.LoadDquVector256(sourceUShortPtr + index);
+					var targetVector = Avx.LoadDquVector256(targetUShortPtr + index);
+					var match = (uint)Avx2.MoveMask(
+						Avx2.CompareEqual(
+							sourceVector,
+							targetVector
+						).AsByte()
+					);
+
+					if (match != uint.MaxValue)
 					{
-						var sourceVector = Avx.LoadDquVector256(sourceUShortPtr + index);
-						var targetVector = Avx.LoadDquVector256(targetUShortPtr + index);
-						var match = (uint)Avx2.MoveMask(
-							Avx2.CompareEqual(
-								sourceVector,
-								targetVector
-							).AsByte()
-						);
-
-						if (match == uint.MaxValue)
-						{
-							index += Vector256<ushort>.Count;
-							searchLength -= Vector256<ushort>.Count;
-							continue;
-						}
-
 						index += BitOperations.TrailingZeroCount(match ^ uint.MaxValue) / sizeof(ushort);
 						return index;
 					}
 				}
-
-				while (searchLength >= Vector128<ushort>.Count)
+			}
+			else if (Sse2.IsSupported)
+			{
+				var bound = searchLength & ~(Vector128<ushort>.Count - 1);
+				for (; index < bound; index += Vector128<ushort>.Count)
 				{
 					var sourceVector = Sse2.LoadVector128(sourceUShortPtr + index);
 					var targetVector = Sse2.LoadVector128(targetUShortPtr + index);
@@ -250,22 +247,17 @@ namespace Quickenshtein.Internal
 						).AsByte()
 					);
 
-					if (match == ushort.MaxValue)
+					if (match != ushort.MaxValue)
 					{
-						index += Vector128<ushort>.Count;
-						searchLength -= Vector128<ushort>.Count;
-						continue;
+						index += BitOperations.TrailingZeroCount(match ^ uint.MaxValue) / sizeof(ushort);
+						return index;
 					}
-
-					index += BitOperations.TrailingZeroCount(match ^ ushort.MaxValue) / sizeof(ushort);
-					return index;
 				}
 			}
 #endif
 
-			while (searchLength > 0 && sourcePtr[index] == targetPtr[index])
+			while (index < searchLength && sourcePtr[index] == targetPtr[index])
 			{
-				searchLength--;
 				index++;
 			}
 
@@ -278,43 +270,42 @@ namespace Quickenshtein.Internal
 			var searchLength = Math.Min(sourceLength, targetLength);
 
 #if NETCOREAPP
-			var sourceUShortPtr = (ushort*)sourcePtr;
-			var targetUShortPtr = (ushort*)targetPtr;
+			var sourceUShortPtr = (ushort*)sourcePtr + sourceLength;
+			var targetUShortPtr = (ushort*)targetPtr + targetLength;
 
-			if (Sse2.IsSupported && searchLength >= Vector128<ushort>.Count * 2)
+			if (Avx2.IsSupported)
 			{
-				if (Avx2.IsSupported)
+				while (searchLength >= Vector256<ushort>.Count)
 				{
-					while (searchLength >= Vector256<ushort>.Count)
+					var sourceVector = Avx.LoadDquVector256(sourceUShortPtr - Vector256<ushort>.Count);
+					var targetVector = Avx.LoadDquVector256(targetUShortPtr - Vector256<ushort>.Count);
+					var match = (uint)Avx2.MoveMask(
+						Avx2.CompareEqual(
+							sourceVector,
+							targetVector
+						).AsByte()
+					);
+
+					if (match != uint.MaxValue)
 					{
-						var sourceVector = Avx.LoadDquVector256(sourceUShortPtr + sourceLength - Vector256<ushort>.Count);
-						var targetVector = Avx.LoadDquVector256(targetUShortPtr + targetLength - Vector256<ushort>.Count);
-						var match = (uint)Avx2.MoveMask(
-							Avx2.CompareEqual(
-								sourceVector,
-								targetVector
-							).AsByte()
-						);
-
-						if (match == uint.MaxValue)
-						{
-							sourceLength -= Vector256<ushort>.Count;
-							targetLength -= Vector256<ushort>.Count;
-							searchLength -= Vector256<ushort>.Count;
-							continue;
-						}
-
 						var lastMatch = BitOperations.LeadingZeroCount(match ^ uint.MaxValue) / sizeof(ushort);
-						sourceLength -= lastMatch;
-						targetLength -= lastMatch;
+						sourceLength = (int)(sourceUShortPtr - (ushort*)sourcePtr) - lastMatch;
+						targetLength = (int)(targetUShortPtr - (ushort*)targetPtr) - lastMatch;
 						return;
 					}
-				}
 
+					sourceLength -= Vector256<ushort>.Count;
+					sourceUShortPtr -= Vector256<ushort>.Count;
+					targetUShortPtr -= Vector256<ushort>.Count;
+					searchLength -= Vector256<ushort>.Count;
+				}
+			}
+			else if (Sse2.IsSupported)
+			{
 				while (searchLength >= Vector128<ushort>.Count)
 				{
-					var sourceVector = Sse2.LoadVector128(sourceUShortPtr + sourceLength - Vector128<ushort>.Count);
-					var targetVector = Sse2.LoadVector128(targetUShortPtr + targetLength - Vector128<ushort>.Count);
+					var sourceVector = Sse2.LoadVector128(sourceUShortPtr - Vector128<ushort>.Count);
+					var targetVector = Sse2.LoadVector128(targetUShortPtr - Vector128<ushort>.Count);
 					var match = (uint)Sse2.MoveMask(
 						Sse2.CompareEqual(
 							sourceVector,
@@ -322,20 +313,22 @@ namespace Quickenshtein.Internal
 						).AsByte()
 					);
 
-					if (match == ushort.MaxValue)
+					if (match != ushort.MaxValue)
 					{
-						sourceLength -= Vector128<ushort>.Count;
-						targetLength -= Vector128<ushort>.Count;
-						searchLength -= Vector128<ushort>.Count;
-						continue;
+						var lastMatch = BitOperations.LeadingZeroCount(match ^ ushort.MaxValue) / sizeof(ushort) - Vector128<ushort>.Count;
+						sourceLength = (int)(sourceUShortPtr - (ushort*)sourcePtr) - lastMatch;
+						targetLength = (int)(targetUShortPtr - (ushort*)targetPtr) - lastMatch;
+						return;
 					}
 
-					var lastMatch = BitOperations.LeadingZeroCount(match ^ ushort.MaxValue) / sizeof(ushort) - Vector128<ushort>.Count;
-					sourceLength -= lastMatch;
-					targetLength -= lastMatch;
-					return;
+					sourceUShortPtr -= Vector128<ushort>.Count;
+					targetUShortPtr -= Vector128<ushort>.Count;
+					searchLength -= Vector128<ushort>.Count;
 				}
 			}
+
+			sourceLength = (int)(sourceUShortPtr - (ushort*)sourcePtr);
+			targetLength = (int)(targetUShortPtr - (ushort*)targetPtr);
 #endif
 			sourcePtr += sourceLength - 1;
 			targetPtr += targetLength - 1;
