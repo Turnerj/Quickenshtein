@@ -163,16 +163,12 @@ namespace Quickenshtein.Internal
 						lengthToProcess -= Vector256<int>.Count;
 					}
 
-					if (lengthToProcess >= Vector128<int>.Count)
+					if (lengthToProcess > 0)
 					{
-						Sse2.Store(targetPtr, lastVector256.GetLower());
-						targetPtr += Vector128<int>.Count;
-						lengthToProcess -= Vector128<int>.Count;
-						value = lastVector256.GetElement(Vector128<int>.Count);
-					}
-					else
-					{
-						value = lastVector256.GetElement(0);
+						var remainingOffset = Vector256<int>.Count + (int)lengthToProcess;
+						lastVector256 = Avx2.Subtract(lastVector256, Vector256.Create(remainingOffset));
+						targetPtr -= remainingOffset;
+						Avx.Store(targetPtr, lastVector256);
 					}
 				}
 				else if (Sse2.IsSupported)
@@ -188,15 +184,13 @@ namespace Quickenshtein.Internal
 						lengthToProcess -= Vector128<int>.Count;
 					}
 
-					value = lastVector128.GetElement(0);
-				}
-
-				while (lengthToProcess > 0)
-				{
-					lengthToProcess--;
-					*targetPtr = value;
-					value++;
-					targetPtr++;
+					if (lengthToProcess > 0)
+					{
+						var remainingOffset = Vector128<int>.Count + (int)lengthToProcess;
+						lastVector128 = Sse2.Subtract(lastVector128, Vector128.Create(remainingOffset));
+						targetPtr -= remainingOffset;
+						Sse2.Store(targetPtr, lastVector128);
+					}
 				}
 			}
 #endif
