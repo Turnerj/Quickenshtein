@@ -35,8 +35,8 @@ namespace Quickenshtein
 				lastDeletionCost = previousRowPtr[0];
 				if (sourcePrevChar != targetPtr[0])
 				{
-					localCost = Math.Min(lastInsertionCost, localCost);
-					localCost = Math.Min(lastDeletionCost, localCost);
+					localCost = AdvOperations.MathMin(lastInsertionCost, localCost);
+					localCost = AdvOperations.MathMin(lastDeletionCost, localCost);
 					localCost++;
 				}
 				lastInsertionCost = localCost;
@@ -49,8 +49,8 @@ namespace Quickenshtein
 				lastDeletionCost = previousRowPtr[0];
 				if (sourcePrevChar != targetPtr[0])
 				{
-					localCost = Math.Min(lastInsertionCost, localCost);
-					localCost = Math.Min(lastDeletionCost, localCost);
+					localCost = AdvOperations.MathMin(lastInsertionCost, localCost);
+					localCost = AdvOperations.MathMin(lastDeletionCost, localCost);
 					localCost++;
 				}
 				lastInsertionCost = localCost;
@@ -63,8 +63,8 @@ namespace Quickenshtein
 				lastDeletionCost = previousRowPtr[0];
 				if (sourcePrevChar != targetPtr[0])
 				{
-					localCost = Math.Min(lastInsertionCost, localCost);
-					localCost = Math.Min(lastDeletionCost, localCost);
+					localCost = AdvOperations.MathMin(lastInsertionCost, localCost);
+					localCost = AdvOperations.MathMin(lastDeletionCost, localCost);
 					localCost++;
 				}
 				lastInsertionCost = localCost;
@@ -77,8 +77,8 @@ namespace Quickenshtein
 				lastDeletionCost = previousRowPtr[0];
 				if (sourcePrevChar != targetPtr[0])
 				{
-					localCost = Math.Min(lastInsertionCost, localCost);
-					localCost = Math.Min(lastDeletionCost, localCost);
+					localCost = AdvOperations.MathMin(lastInsertionCost, localCost);
+					localCost = AdvOperations.MathMin(lastDeletionCost, localCost);
 					localCost++;
 				}
 				lastInsertionCost = localCost;
@@ -91,8 +91,8 @@ namespace Quickenshtein
 				lastDeletionCost = previousRowPtr[0];
 				if (sourcePrevChar != targetPtr[0])
 				{
-					localCost = Math.Min(lastInsertionCost, localCost);
-					localCost = Math.Min(lastDeletionCost, localCost);
+					localCost = AdvOperations.MathMin(lastInsertionCost, localCost);
+					localCost = AdvOperations.MathMin(lastDeletionCost, localCost);
 					localCost++;
 				}
 				lastInsertionCost = localCost;
@@ -105,8 +105,8 @@ namespace Quickenshtein
 				lastDeletionCost = previousRowPtr[0];
 				if (sourcePrevChar != targetPtr[0])
 				{
-					localCost = Math.Min(lastInsertionCost, localCost);
-					localCost = Math.Min(lastDeletionCost, localCost);
+					localCost = AdvOperations.MathMin(lastInsertionCost, localCost);
+					localCost = AdvOperations.MathMin(lastDeletionCost, localCost);
 					localCost++;
 				}
 				lastInsertionCost = localCost;
@@ -119,8 +119,8 @@ namespace Quickenshtein
 				lastDeletionCost = previousRowPtr[0];
 				if (sourcePrevChar != targetPtr[0])
 				{
-					localCost = Math.Min(lastInsertionCost, localCost);
-					localCost = Math.Min(lastDeletionCost, localCost);
+					localCost = AdvOperations.MathMin(lastInsertionCost, localCost);
+					localCost = AdvOperations.MathMin(lastDeletionCost, localCost);
 					localCost++;
 				}
 				lastInsertionCost = localCost;
@@ -133,8 +133,8 @@ namespace Quickenshtein
 				lastDeletionCost = previousRowPtr[0];
 				if (sourcePrevChar != targetPtr[0])
 				{
-					localCost = Math.Min(lastInsertionCost, localCost);
-					localCost = Math.Min(lastDeletionCost, localCost);
+					localCost = AdvOperations.MathMin(lastInsertionCost, localCost);
+					localCost = AdvOperations.MathMin(lastDeletionCost, localCost);
 					localCost++;
 				}
 				lastInsertionCost = localCost;
@@ -152,8 +152,8 @@ namespace Quickenshtein
 				lastDeletionCost = previousRowPtr[0];
 				if (sourcePrevChar != targetPtr[0])
 				{
-					localCost = Math.Min(lastInsertionCost, localCost);
-					localCost = Math.Min(lastDeletionCost, localCost);
+					localCost = AdvOperations.MathMin(lastInsertionCost, localCost);
+					localCost = AdvOperations.MathMin(lastDeletionCost, localCost);
 					localCost++;
 				}
 				lastInsertionCost = localCost;
@@ -166,8 +166,8 @@ namespace Quickenshtein
 				lastDeletionCost = previousRowPtr[0];
 				if (sourcePrevChar != targetPtr[0])
 				{
-					localCost = Math.Min(lastInsertionCost, localCost);
-					localCost = Math.Min(lastDeletionCost, localCost);
+					localCost = AdvOperations.MathMin(lastInsertionCost, localCost);
+					localCost = AdvOperations.MathMin(lastDeletionCost, localCost);
 					localCost++;
 				}
 				lastInsertionCost = localCost;
@@ -180,8 +180,8 @@ namespace Quickenshtein
 				lastDeletionCost = previousRowPtr[0];
 				if (sourcePrevChar != targetPtr[0])
 				{
-					localCost = Math.Min(lastInsertionCost, localCost);
-					localCost = Math.Min(lastDeletionCost, localCost);
+					localCost = AdvOperations.MathMin(lastInsertionCost, localCost);
+					localCost = AdvOperations.MathMin(lastDeletionCost, localCost);
 					localCost++;
 				}
 				lastInsertionCost = localCost;
@@ -194,8 +194,8 @@ namespace Quickenshtein
 				lastDeletionCost = previousRowPtr[0];
 				if (sourcePrevChar != targetPtr[0])
 				{
-					localCost = Math.Min(lastInsertionCost, localCost);
-					localCost = Math.Min(lastDeletionCost, localCost);
+					localCost = AdvOperations.MathMin(lastInsertionCost, localCost);
+					localCost = AdvOperations.MathMin(lastDeletionCost, localCost);
 					localCost++;
 				}
 				lastInsertionCost = localCost;
@@ -213,8 +213,8 @@ namespace Quickenshtein
 				lastDeletionCost = previousRowPtr[0];
 				if (sourcePrevChar != targetPtr[0])
 				{
-					localCost = Math.Min(lastInsertionCost, localCost);
-					localCost = Math.Min(lastDeletionCost, localCost);
+					localCost = AdvOperations.MathMin(lastInsertionCost, localCost);
+					localCost = AdvOperations.MathMin(lastDeletionCost, localCost);
 					localCost++;
 				}
 				lastInsertionCost = localCost;
@@ -307,8 +307,8 @@ namespace Quickenshtein
 			var localCost = row1Costs;
 			if (sourceChar1 != targetChar)
 			{
-				localCost = Math.Min(row2Costs, localCost);
-				localCost = Math.Min(lastDeletionCost, localCost);
+				localCost = AdvOperations.MathMin(row2Costs, localCost);
+				localCost = AdvOperations.MathMin(lastDeletionCost, localCost);
 				localCost++;
 			}
 			row1Costs = lastDeletionCost;
@@ -316,8 +316,8 @@ namespace Quickenshtein
 			localCost = row2Costs;
 			if (sourceChar2 != targetChar)
 			{
-				localCost = Math.Min(row3Costs, localCost);
-				localCost = Math.Min(lastDeletionCost, localCost);
+				localCost = AdvOperations.MathMin(row3Costs, localCost);
+				localCost = AdvOperations.MathMin(lastDeletionCost, localCost);
 				localCost++;
 			}
 			row2Costs = lastDeletionCost;
@@ -325,8 +325,8 @@ namespace Quickenshtein
 			localCost = row3Costs;
 			if (sourceChar3 != targetChar)
 			{
-				localCost = Math.Min(row4Costs, localCost);
-				localCost = Math.Min(lastDeletionCost, localCost);
+				localCost = AdvOperations.MathMin(row4Costs, localCost);
+				localCost = AdvOperations.MathMin(lastDeletionCost, localCost);
 				localCost++;
 			}
 			row3Costs = lastDeletionCost;
@@ -334,8 +334,8 @@ namespace Quickenshtein
 			localCost = row4Costs;
 			if (sourceChar4 != targetChar)
 			{
-				localCost = Math.Min(row5Costs, localCost);
-				localCost = Math.Min(lastDeletionCost, localCost);
+				localCost = AdvOperations.MathMin(row5Costs, localCost);
+				localCost = AdvOperations.MathMin(lastDeletionCost, localCost);
 				localCost++;
 			}
 			row4Costs = lastDeletionCost;
